@@ -33,7 +33,7 @@ export default function Warning() {
       <View style={styles.pose}>
         <Image
           style={styles.image}
-          source={require("../assets/cameraWarning.jpg")}
+          source={require("../assets/cameraWarning.png")}
         ></Image>
         <Text style={styles.warning}>
           Please move to a location where you have room to move around and
