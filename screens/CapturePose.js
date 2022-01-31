@@ -6,32 +6,33 @@ import * as MediaLibrary from "expo-media-library";
 export default () => {
 	const cameraRef = useRef();
 
-	const [hasPermission, setHasPermission] = useState(null);
+	const [cameraPermission, setCameraPermission] = useState(null);
 	const [type, setType] = useState(Camera.Constants.Type.front);
-	const [cameraIsReady, setCameraIsReady] = useState(false);
+	const [cameraReady, setCameraReady] = useState(false);
+	const [mediaPermission, setMediaPermission] = useState(null);
 
 	useEffect(() => {
 		(async () => {
-			const { status } = await Camera.requestCameraPermissionsAsync();
-			setHasPermission(status === "granted");
-			const response = await MediaLibrary.requestPermissionsAsync(true);
-			console.log("🧑🏻‍💻 response", response);
+			const cameraResponse = await Camera.requestCameraPermissionsAsync();
+			setCameraPermission(cameraResponse.status === "granted");
+			const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
+			setMediaPermission(mediaResponse.status === "granted");
 		})();
 	}, []);
 
 	const handleCapture = async () => {
-		if (!cameraIsReady) console.log("🧑🏻‍💻 Camera is not ready!");
+		if (!cameraReady) console.log("🧑🏻‍💻 Camera is not ready!");
 		else {
 			const imageData = await cameraRef.current.takePictureAsync({
 				base64: true,
 			});
-			console.log("🧑🏻‍💻 image", imageData);
-			await MediaLibrary.saveToLibraryAsync(imageData.uri);
+			if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
+			else console.log("🧑🏻‍💻 Media permission not granted!");
 		}
 	};
 
-	if (hasPermission === null) return <View />;
-	if (hasPermission === false) return <Text>No access to camera</Text>;
+	if (cameraPermission === null) return <View />;
+	if (cameraPermission === false) return <Text>No access to camera</Text>;
 	return (
 		<View style={styles.container}>
 			<Camera
@@ -40,7 +41,7 @@ export default () => {
 				type={type}
 				autoFocus={true}
 				onCameraReady={() => {
-					setCameraIsReady(true);
+					setCameraReady(true);
 				}}
 			></Camera>
 			<Pressable
