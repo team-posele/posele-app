@@ -12,8 +12,8 @@ export default function App() {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator>
-				{/* <Stack.Screen name="MyTabs" component={MyTabs} />
-				<Stack.Screen name="DisplayPose" component={DisplayPose} /> */}
+				<Stack.Screen name="MyTabs" component={MyTabs} />
+				<Stack.Screen name="DisplayPose" component={DisplayPose} />
 				<Stack.Screen
 					name="CapturePose"
 					component={CapturePose}

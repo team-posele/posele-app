@@ -14,7 +14,7 @@ export default () => {
 		(async () => {
 			const { status } = await Camera.requestCameraPermissionsAsync();
 			setHasPermission(status === "granted");
-			const response = await MediaLibrary.requestPermissionsAsync();
+			const response = await MediaLibrary.requestPermissionsAsync(true);
 			console.log("🧑🏻‍💻 response", response);
 		})();
 	}, []);
@@ -26,7 +26,7 @@ export default () => {
 				base64: true,
 			});
 			console.log("🧑🏻‍💻 image", imageData);
-			// await MediaLibrary.saveToLibraryAsync(imageData.uri);
+			await MediaLibrary.saveToLibraryAsync(imageData.uri);
 		}
 	};
 
