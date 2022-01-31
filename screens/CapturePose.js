@@ -40,7 +40,12 @@ export default () => {
 			></Camera>
 			<Pressable
 				onPress={() => handleImageCapture()}
-				style={styles.captureButton}
+				style={({ pressed }) => [
+					{
+						backgroundColor: pressed ? "gray" : "white",
+					},
+					styles.captureButton,
+				]}
 			></Pressable>
 		</View>
 	);
@@ -61,7 +66,6 @@ const styles = StyleSheet.create({
 		width: 100,
 		zIndex: 100,
 		height: 100,
-		backgroundColor: "white",
 		borderRadius: 50,
 	},
 });
