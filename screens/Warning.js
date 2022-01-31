@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
@@ -13,9 +14,10 @@ import { StatusBar } from "expo-status-bar";
 export default function Warning() {
   const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
+      <View style={styles.container}></View>
       <View style={styles.instructionsView}>
-        <Text style={[styles.instructionsText, { textAlign: "center" }]}>
+        <Text style={[styles.instructionsText, styles.instructionsHeader]}>
           Playing Posele:
         </Text>
         <Text style={styles.instructionsText}>
@@ -28,19 +30,25 @@ export default function Warning() {
           3. You have five seconds to line up your shot and match the pose in
           the image.
         </Text>
-        <Text style={styles.instructionsText}>Good luck! </Text>
-      </View>
-      <View style={styles.pose}>
-        <Image
-          style={styles.image}
-          source={require("../assets/cameraWarning.png")}
-        ></Image>
-        <Text style={styles.warning}>
-          Please move to a location where you have room to move around and
-          permission to take pictures. Be aware of other people, pets, and
-          objects.
+        <Text style={[styles.instructionsText, styles.instructionsHeader]}>
+          Good luck!{" "}
         </Text>
       </View>
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.image}
+          source={require("../assets/cameraWarning.jpg")}
+        ></Image>
+        <Image
+          style={styles.image}
+          source={require("../assets/movement.png")}
+        ></Image>
+      </View>
+      <Text style={styles.warning}>
+        Please move to a location where you have room to move around and
+        permission to take pictures. Be aware of other people, pets, and
+        objects.
+      </Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={[styles.button, styles.smallButton]}>
           <Text
@@ -60,7 +68,7 @@ export default function Warning() {
         </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -73,31 +81,43 @@ const styles = StyleSheet.create({
   },
   instructionsView: {
     flex: 2,
-    marginTop: 30,
-    alignContent: "center",
+    alignContent: "flex-end",
     justifyContent: "flex-end",
     marginHorizontal: 10,
+    backgroundColor: "#414BB2CC",
+    borderRadius: 5,
+    paddingHorizontal: 5,
   },
   instructionsText: {
-    backgroundColor: "#414BB2",
+    // backgroundColor: "#414BB2",
     color: "white",
-    fontSize: 20,
-    padding: 10,
+    fontSize: 16,
+    padding: 5,
   },
-  pose: {
+  instructionsHeader: {
+    // backgroundColor: "#414BB2",
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+    padding: 10,
+    textAlign: "center",
+  },
+  imageContainer: {
     flex: 2,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    width: "85%",
   },
   warning: {
     color: "red",
     textAlign: "center",
-    width: "50%",
+    width: "85%",
     fontSize: 20,
     margin: 5,
   },
   image: {
+    flex: 1,
     resizeMode: "contain",
     width: "35%",
     margin: 5,
@@ -117,7 +137,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   buttonContainer: {
-    flex: 1,
+    flex: 2,
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
