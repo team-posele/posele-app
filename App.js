@@ -13,10 +13,26 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="MyTabs" component={MyTabs} />
-        <Stack.Screen name="DisplayPose" component={DisplayPose} />
-        <Stack.Screen name="CapturePose" component={CapturePose} />
+        <Stack.Screen
+          name="Login"
+          options={{ headerShown: false }}
+          component={Login}
+        />
+        <Stack.Screen
+          name="MyTabs"
+          options={{ headerShown: false }}
+          component={MyTabs}
+        />
+        <Stack.Screen
+          name="DisplayPose"
+          options={{ headerShown: false }}
+          component={DisplayPose}
+        />
+        <Stack.Screen
+          name="CapturePose"
+          options={{ headerShown: false }}
+          component={CapturePose}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
