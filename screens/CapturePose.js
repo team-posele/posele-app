@@ -1,42 +1,58 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, View, Dimensions, Pressable } from "react-native";
 import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 
 export default () => {
-	const [hasPermission, setHasPermission] = useState(null);
-	const [type, setType] = useState(Camera.Constants.Type.back);
+	const cameraRef = useRef();
+
+	const [cameraPermission, setCameraPermission] = useState(null);
+	const [type, setType] = useState(Camera.Constants.Type.front);
+	const [cameraReady, setCameraReady] = useState(false);
+	const [mediaPermission, setMediaPermission] = useState(null);
 
 	useEffect(() => {
 		(async () => {
-			const { status } = await Camera.requestCameraPermissionsAsync();
-			setHasPermission(status === "granted");
+			const cameraResponse = await Camera.requestCameraPermissionsAsync();
+			setCameraPermission(cameraResponse.status === "granted");
+			const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
+			setMediaPermission(mediaResponse.status === "granted");
 		})();
 	}, []);
 
-	if (hasPermission === null) {
-		return <View />;
-	}
-	if (hasPermission === false) {
-		return <Text>No access to camera</Text>;
-	}
+	const handleCapture = async () => {
+		if (!cameraReady) console.log("🧑🏻‍💻 Camera is not ready!");
+		else {
+			const imageData = await cameraRef.current.takePictureAsync({
+				base64: true,
+			});
+			if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
+			else console.log("🧑🏻‍💻 Media permission not granted!");
+		}
+	};
+
+	if (cameraPermission === null) return <View />;
+	if (cameraPermission === false) return <Text>No access to camera</Text>;
 	return (
 		<View style={styles.container}>
-			<Camera style={styles.camera} type={type} autoFocus={true}>
-				<View style={styles.buttonContainer}>
-					<TouchableOpacity
-						style={styles.button}
-						onPress={() => {
-							setType(
-								type === Camera.Constants.Type.back
-									? Camera.Constants.Type.front
-									: Camera.Constants.Type.back
-							);
-						}}
-					>
-						<Text style={styles.text}> Flip </Text>
-					</TouchableOpacity>
-				</View>
-			</Camera>
+			<Camera
+				ref={cameraRef}
+				style={styles.camera}
+				type={type}
+				autoFocus={true}
+				onCameraReady={() => {
+					setCameraReady(true);
+				}}
+			></Camera>
+			<Pressable
+				onPress={() => handleCapture()}
+				style={({ pressed }) => [
+					{
+						backgroundColor: pressed ? "gray" : "white",
+					},
+					styles.captureButton,
+				]}
+			></Pressable>
 		</View>
 	);
 };
@@ -46,23 +62,16 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	camera: {
-		flex: 1,
 		width: "100%",
 		height: "100%",
 	},
-	buttonContainer: {
-		flex: 1,
-		backgroundColor: "transparent",
-		flexDirection: "row",
-		margin: 20,
-	},
-	button: {
-		flex: 0.1,
-		alignSelf: "flex-end",
-		alignItems: "center",
-	},
-	text: {
-		fontSize: 18,
-		color: "white",
+	captureButton: {
+		position: "absolute",
+		left: Dimensions.get("screen").width / 2 - 50,
+		bottom: 40,
+		width: 100,
+		zIndex: 100,
+		height: 100,
+		borderRadius: 50,
 	},
 });
