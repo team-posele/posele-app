@@ -5,26 +5,28 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MyTabs from "./screens/MyTabs";
 import DisplayPose from "./screens/DisplayPose";
 import CapturePose from "./screens/CapturePose";
+import Login from "./screens/Login";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-	return (
-		<NavigationContainer>
-			<Stack.Navigator>
-				<Stack.Screen name="MyTabs" component={MyTabs} />
-				<Stack.Screen name="DisplayPose" component={DisplayPose} />
-				<Stack.Screen name="CapturePose" component={CapturePose} />
-			</Stack.Navigator>
-		</NavigationContainer>
-	);
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="MyTabs" component={MyTabs} />
+        <Stack.Screen name="DisplayPose" component={DisplayPose} />
+        <Stack.Screen name="CapturePose" component={CapturePose} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
