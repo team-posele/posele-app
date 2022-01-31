@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Dimensions, Pressable } from "react-native";
 import { Camera } from "expo-camera";
 
 export default () => {
 	const cameraRef = useRef();
 
 	const [hasPermission, setHasPermission] = useState(null);
-	const [type, setType] = useState(Camera.Constants.Type.back);
+	const [type, setType] = useState(Camera.Constants.Type.front);
 	const [cameraIsReady, setCameraIsReady] = useState(false);
 
 	useEffect(() => {
@@ -16,16 +16,17 @@ export default () => {
 		})();
 	}, []);
 
-	useEffect(() => {
-		console.log("🧑🏻‍💻 cameraIsReady", cameraIsReady);
-	}, [cameraIsReady]);
+	const handleImageCapture = async () => {
+		if (!cameraIsReady) console.log("🧑🏻‍💻 Camera is not ready!");
+		else {
+			console.log("🧑🏻‍💻 camera", cameraRef);
+			const photo = await cameraRef.current.takePictureAsync();
+			console.log("🧑🏻‍💻 photo", photo);
+		}
+	};
 
-	if (hasPermission === null) {
-		return <View />;
-	}
-	if (hasPermission === false) {
-		return <Text>No access to camera</Text>;
-	}
+	if (hasPermission === null) return <View />;
+	if (hasPermission === false) return <Text>No access to camera</Text>;
 	return (
 		<View style={styles.container}>
 			<Camera
@@ -36,22 +37,11 @@ export default () => {
 				onCameraReady={() => {
 					setCameraIsReady(true);
 				}}
-			>
-				<View style={styles.buttonContainer}>
-					<TouchableOpacity
-						style={styles.button}
-						onPress={() => {
-							setType(
-								type === Camera.Constants.Type.back
-									? Camera.Constants.Type.front
-									: Camera.Constants.Type.back
-							);
-						}}
-					>
-						<Text style={styles.text}> Flip </Text>
-					</TouchableOpacity>
-				</View>
-			</Camera>
+			></Camera>
+			<Pressable
+				onPress={() => handleImageCapture()}
+				style={styles.captureButton}
+			></Pressable>
 		</View>
 	);
 };
@@ -61,23 +51,17 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	camera: {
-		flex: 1,
 		width: "100%",
 		height: "100%",
 	},
-	buttonContainer: {
-		flex: 1,
-		backgroundColor: "transparent",
-		flexDirection: "row",
-		margin: 20,
-	},
-	button: {
-		flex: 0.1,
-		alignSelf: "flex-end",
-		alignItems: "center",
-	},
-	text: {
-		fontSize: 18,
-		color: "white",
+	captureButton: {
+		position: "absolute",
+		left: Dimensions.get("screen").width / 2 - 50,
+		bottom: 40,
+		width: 100,
+		zIndex: 100,
+		height: 100,
+		backgroundColor: "white",
+		borderRadius: 50,
 	},
 });
