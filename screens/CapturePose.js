@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "expo-camera";
 
 export default () => {
+	const cameraRef = useRef();
+
 	const [hasPermission, setHasPermission] = useState(null);
 	const [type, setType] = useState(Camera.Constants.Type.back);
+	const [cameraIsReady, setCameraIsReady] = useState(false);
 
 	useEffect(() => {
 		(async () => {
@@ -12,6 +15,10 @@ export default () => {
 			setHasPermission(status === "granted");
 		})();
 	}, []);
+
+	useEffect(() => {
+		console.log("🧑🏻‍💻 cameraIsReady", cameraIsReady);
+	}, [cameraIsReady]);
 
 	if (hasPermission === null) {
 		return <View />;
@@ -21,7 +28,15 @@ export default () => {
 	}
 	return (
 		<View style={styles.container}>
-			<Camera style={styles.camera} type={type} autoFocus={true}>
+			<Camera
+				ref={cameraRef}
+				style={styles.camera}
+				type={type}
+				autoFocus={true}
+				onCameraReady={() => {
+					setCameraIsReady(true);
+				}}
+			>
 				<View style={styles.buttonContainer}>
 					<TouchableOpacity
 						style={styles.button}
