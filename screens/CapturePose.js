@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View, Dimensions, Pressable } from "react-native";
 import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 
 export default () => {
 	const cameraRef = useRef();
@@ -13,15 +14,19 @@ export default () => {
 		(async () => {
 			const { status } = await Camera.requestCameraPermissionsAsync();
 			setHasPermission(status === "granted");
+			const response = await MediaLibrary.requestPermissionsAsync();
+			console.log("🧑🏻‍💻 response", response);
 		})();
 	}, []);
 
-	const handleImageCapture = async () => {
+	const handleCapture = async () => {
 		if (!cameraIsReady) console.log("🧑🏻‍💻 Camera is not ready!");
 		else {
-			console.log("🧑🏻‍💻 camera", cameraRef);
-			const photo = await cameraRef.current.takePictureAsync();
-			console.log("🧑🏻‍💻 photo", photo);
+			const imageData = await cameraRef.current.takePictureAsync({
+				base64: true,
+			});
+			console.log("🧑🏻‍💻 image", imageData);
+			// await MediaLibrary.saveToLibraryAsync(imageData.uri);
 		}
 	};
 
@@ -39,7 +44,7 @@ export default () => {
 				}}
 			></Camera>
 			<Pressable
-				onPress={() => handleImageCapture()}
+				onPress={() => handleCapture()}
 				style={({ pressed }) => [
 					{
 						backgroundColor: pressed ? "gray" : "white",
