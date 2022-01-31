@@ -27,7 +27,9 @@
 		"react-native-web": "0.17.1"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.12.9"
+		"@babel/core": "^7.12.9",
+		"prettier": "^1.19.1",
+		"prettier-airbnb-config": "^1.0.0"
 	},
 	"private": true
 }
