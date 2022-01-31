@@ -12,7 +12,7 @@ const HomeScreen = () => {
   const navigation = useNavigation();
 
   function handlePlay() {
-    navigation.replace("DisplayPose");
+    navigation.replace("Warning");
   }
 
   const handleLogout = () => {

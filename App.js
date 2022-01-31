@@ -6,6 +6,7 @@ import MyTabs from "./screens/MyTabs";
 import DisplayPose from "./screens/DisplayPose";
 import CapturePose from "./screens/CapturePose";
 import Login from "./screens/Login";
+import Warning from "./screens/Warning";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,11 @@ export default function App() {
           name="DisplayPose"
           options={{ headerShown: false }}
           component={DisplayPose}
+        />
+        <Stack.Screen
+          name="Warning"
+          options={{ headerShown: false }}
+          component={Warning}
         />
         <Stack.Screen
           name="CapturePose"
