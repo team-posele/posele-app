@@ -1,6 +1,7 @@
 import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import colors from '../colorConstants';
 
 export default function Pose() {
   const navigation = useNavigation();
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingTop: 20,
     width: '90%',
-    backgroundColor: '#414BB2CC',
+    backgroundColor: colors.secondary,
     justifyContent: 'center',
   },
   image: {
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#414BB2',
+    backgroundColor: colors.primary,
     width: '85%',
     padding: 15,
     borderRadius: 10,
