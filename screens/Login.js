@@ -5,21 +5,21 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 
-import { auth } from "../firebase";
-import { useNavigation } from "@react-navigation/native";
+import {auth} from '../firebase';
+import {useNavigation} from '@react-navigation/native';
 
 const Login = () => {
   const navigate = useNavigation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        navigate.replace("MyTabs");
+        navigate.replace('MyTabs');
       }
     });
 
@@ -30,11 +30,11 @@ const Login = () => {
     console.log(`you signed up`);
     auth
       .createUserWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
+      .then(userCredentials => {
         const user = userCredentials.user;
         console.log(`Signing up with user email: ${user.email}`);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(`error! ${error}`);
       });
   };
@@ -42,11 +42,11 @@ const Login = () => {
   const handleLogin = () => {
     auth
       .signInWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
+      .then(userCredentials => {
         const user = userCredentials.user;
         console.log(`Logging in with user email: ${user.email}`);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(`error! ${error}`);
       });
   };
@@ -63,14 +63,14 @@ const Login = () => {
           style={styles.input}
           placeholder="Email"
           value={email}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={text => setEmail(text)}
         />
         <TextInput
           style={styles.input}
           placeholder="Password"
           secureTextEntry
           value={password}
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={text => setPassword(text)}
         />
       </View>
       <View style={styles.buttonContainer}>
@@ -97,61 +97,61 @@ export default Login;
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerContainer: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-end",
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
-  headerText: { fontSize: 24, textAlign: "center" },
+  headerText: {fontSize: 24, textAlign: 'center'},
   buttonContainer: {
-    width: "100%",
+    width: '100%',
     flex: 2,
-    alignItems: "center",
-    justifyContent: "flex-start",
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   primaryButton: {
-    backgroundColor: "#414BB2",
-    width: "85%",
+    backgroundColor: '#414BB2',
+    width: '85%',
     padding: 10,
     borderRadius: 10,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 20,
   },
   primaryButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   secondaryButton: {
-    backgroundColor: "white",
-    borderColor: "#414BB2",
+    backgroundColor: 'white',
+    borderColor: '#414BB2',
     borderWidth: 3,
-    width: "85%",
+    width: '85%',
     padding: 5,
     borderRadius: 10,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 20,
   },
   secondaryButtonText: {
-    color: "#414BB2",
+    color: '#414BB2',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   inputContainer: {
     flex: 2,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   input: {
-    width: "85%",
-    backgroundColor: "#414BB222",
+    width: '85%',
+    backgroundColor: '#414BB222',
     borderWidth: 1,
-    borderColor: "#414BB2",
+    borderColor: '#414BB2',
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 5,
