@@ -10,6 +10,8 @@ export default () => {
   const [type, setType] = useState(Camera.Constants.Type.front);
   const [cameraReady, setCameraReady] = useState(false);
   const [mediaPermission, setMediaPermission] = useState(null);
+  const [intervalId, setIntervalId] = useState(null);
+  const [time, setTime] = useState(5);
 
   useEffect(() => {
     (async () => {
@@ -20,14 +22,28 @@ export default () => {
     })();
   }, []);
 
+  useEffect(() => {
+    console.log('🧑🏻‍💻 time', time);
+    if (time <= 0) {
+      console.log("🧑🏻‍💻 time's up!");
+      clearInterval(intervalId);
+    }
+  }, [time]);
+
   const handleCapture = async () => {
     if (!cameraReady) console.log('🧑🏻‍💻 Camera is not ready!');
     else {
-      const imageData = await cameraRef.current.takePictureAsync({
-        base64: true,
-      });
-      if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
-      else console.log('🧑🏻‍💻 Media permission not granted!');
+      console.log('🧑🏻‍💻 start timer');
+      const currIntervalId = setInterval(() => {
+        setTime(time => time - 1);
+      }, 1000);
+      setIntervalId(currIntervalId);
+
+      // const imageData = await cameraRef.current.takePictureAsync({
+      //   base64: true,
+      // });
+      // if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
+      // else console.log('🧑🏻‍💻 Media permission not granted!');
     }
   };
 

@@ -14,10 +14,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Login" options={{headerShown: false}} component={Login} />
+        {/* <Stack.Screen name="Login" options={{headerShown: false}} component={Login} />
         <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
         <Stack.Screen name="DisplayPose" options={{headerShown: false}} component={DisplayPose} />
-        <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
+        <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} /> */}
         <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} />
       </Stack.Navigator>
     </NavigationContainer>
