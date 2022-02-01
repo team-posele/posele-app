@@ -7,6 +7,7 @@ import DisplayPose from './screens/DisplayPose';
 import CapturePose from './screens/CapturePose';
 import Login from './screens/Login';
 import Warning from './screens/Warning';
+import SinglePoseResults from './screens/SinglePoseResults';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="Results" options={{headerShown: false}} component={SinglePoseResults} />
         <Stack.Screen name="Login" options={{headerShown: false}} component={Login} />
         <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
         <Stack.Screen name="DisplayPose" options={{headerShown: false}} component={DisplayPose} />
