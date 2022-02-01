@@ -22,7 +22,9 @@ export default function Pose() {
       <View style={styles.container}>
         <Text style={styles.warning}>Remember to Pose Responsibly!</Text>
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Pose Now!</Text>
+          <Text style={styles.buttonText} onPress={handleReady}>
+            Pose Now!
+          </Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
       </View>
