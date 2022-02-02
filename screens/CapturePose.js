@@ -2,8 +2,11 @@ import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View, Dimensions, Pressable} from 'react-native';
 import {Camera} from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
+import {useNavigation} from '@react-navigation/native';
 
 export default () => {
+  const navigation = useNavigation();
+
   const cameraRef = useRef();
 
   const [cameraPermission, setCameraPermission] = useState(null);
@@ -23,27 +26,42 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    console.log('🧑🏻‍💻 time', time);
-    if (time <= 0) {
-      console.log("🧑🏻‍💻 time's up!");
-      clearInterval(intervalId);
+    // prevents timer from starting while camera is still loading
+    if (cameraReady) {
+      const currIntervalId = setInterval(() => {
+        setTime(time => time - 1);
+      }, 1000);
+      setIntervalId(currIntervalId);
     }
+  }, [cameraReady]);
+
+  useEffect(() => {
+    if (time <= 0) {
+      (async () => {
+        console.log("🧑🏻‍💻 time's up!");
+        clearInterval(intervalId);
+        const imageData = await cameraRef.current.takePictureAsync({
+          base64: true,
+        });
+        if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
+        else console.log('🧑🏻‍💻 Media permission not granted!');
+        navigation.navigate('Results', {imageData});
+      })();
+    }
+    // (async () => {
+    //   if (time <= 0) {
+    //   }
+    // })();
   }, [time]);
 
   const handleCapture = async () => {
     if (!cameraReady) console.log('🧑🏻‍💻 Camera is not ready!');
     else {
-      console.log('🧑🏻‍💻 start timer');
-      const currIntervalId = setInterval(() => {
-        setTime(time => time - 1);
-      }, 1000);
-      setIntervalId(currIntervalId);
-
-      // const imageData = await cameraRef.current.takePictureAsync({
-      //   base64: true,
-      // });
-      // if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
-      // else console.log('🧑🏻‍💻 Media permission not granted!');
+      const imageData = await cameraRef.current.takePictureAsync({
+        base64: true,
+      });
+      if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
+      else console.log('🧑🏻‍💻 Media permission not granted!');
     }
   };
 
@@ -60,7 +78,7 @@ export default () => {
           setCameraReady(true);
         }}
       ></Camera>
-      <Pressable
+      {/* <Pressable
         onPress={() => handleCapture()}
         style={({pressed}) => [
           {
@@ -68,7 +86,8 @@ export default () => {
           },
           styles.captureButton,
         ]}
-      ></Pressable>
+      ></Pressable> */}
+      <Text style={styles.timer}>{time > 0 ? `${time}` : '📸'}</Text>
     </View>
   );
 };
@@ -76,18 +95,25 @@ export default () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   camera: {
     width: '100%',
     height: '100%',
   },
-  captureButton: {
+  timer: {
     position: 'absolute',
-    left: Dimensions.get('screen').width / 2 - 50,
-    bottom: 40,
-    width: 100,
-    zIndex: 100,
-    height: 100,
-    borderRadius: 50,
+    fontSize: 200,
+    color: 'white',
   },
+  // captureButton: {
+  //   position: 'absolute',
+  //   left: Dimensions.get('screen').width / 2 - 50,
+  //   bottom: 40,
+  //   width: 100,
+  //   zIndex: 100,
+  //   height: 100,
+  //   borderRadius: 50,
+  // },
 });
