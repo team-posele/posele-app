@@ -1,9 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, View, Dimensions, Pressable} from 'react-native';
+import {useEffect, useRef, useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
 import {manipulateAsync, FlipType} from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
+
+const TIME_LIMIT = 5;
+const TIME_ZERO_ICON = '📸';
 
 export default () => {
   const navigation = useNavigation();
@@ -11,11 +14,11 @@ export default () => {
   const cameraRef = useRef();
 
   const [cameraPermission, setCameraPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.front);
   const [cameraReady, setCameraReady] = useState(false);
-  const [mediaPermission, setMediaPermission] = useState(null);
   const [intervalId, setIntervalId] = useState(null);
-  const [time, setTime] = useState(5);
+  const [mediaPermission, setMediaPermission] = useState(null);
+  const [time, setTime] = useState(TIME_LIMIT);
+  const [type, setType] = useState(Camera.Constants.Type.front);
 
   useEffect(() => {
     (async () => {
@@ -27,19 +30,23 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    // prevents timer from starting while camera is still loading
+    // waits until camera has loaded
     if (cameraReady) {
       const currIntervalId = setInterval(() => {
-        setTime(time => time - 1);
+        // need to reference time as function parameter for proper update
+        setTime(time => {
+          if (time > 1) return time - 1;
+          return TIME_ZERO_ICON;
+        });
       }, 1000);
       setIntervalId(currIntervalId);
     }
   }, [cameraReady]);
 
   useEffect(() => {
-    if (time <= 0) {
+    // time over
+    if (time === TIME_ZERO_ICON) {
       (async () => {
-        console.log("🧑🏻‍💻 time's up!");
         clearInterval(intervalId);
         savePose();
       })();
@@ -50,6 +57,7 @@ export default () => {
     const image = await cameraRef.current.takePictureAsync({
       base64: true,
     });
+    // mirrors image horizontally
     const mirrorImage = await manipulateAsync(image.uri, [{flip: FlipType.Horizontal}]);
     if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
     else console.log('🧑🏻‍💻 Media permission not granted!');
@@ -69,7 +77,7 @@ export default () => {
           setCameraReady(true);
         }}
       ></Camera>
-      <Text style={styles.timer}>{time > 0 ? `${time}` : '📸'}</Text>
+      <Text style={styles.timer}>{time}</Text>
     </View>
   );
 };
