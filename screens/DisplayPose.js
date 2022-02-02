@@ -57,11 +57,6 @@ export default function Pose() {
       <View style={styles.container}>
         <Text style={styles.warning}>Remember to Pose Responsibly!</Text>
         <Text style={styles.timer}>{time}</Text>
-        {/* <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText} onPress={handleReady}>
-            Pose Now!
-          </Text>
-        </TouchableOpacity> */}
         <StatusBar style="auto" />
       </View>
     </View>
@@ -100,19 +95,6 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginVertical: 10,
-  },
-  button: {
-    backgroundColor: '#414BB2',
-    width: '85%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   timer: {
     fontSize: 100,

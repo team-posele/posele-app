@@ -77,7 +77,7 @@ export default () => {
           setCameraReady(true);
         }}
       ></Camera>
-      <Text style={styles.timer}>{time}</Text>
+      <Text style={styles.timer}>{cameraReady ? time : ''}</Text>
     </View>
   );
 };
