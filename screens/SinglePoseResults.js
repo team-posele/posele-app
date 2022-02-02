@@ -76,7 +76,7 @@ export default function SinglePoseResults({route}) {
         >
           <Image
             style={styles.userImage}
-            fadeDuration={2000}
+            fadeDuration={3000}
             source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
           ></Image>
         </ImageBackground>
@@ -112,15 +112,14 @@ export default function SinglePoseResults({route}) {
         </View>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText} onPress={handleDone}>
-            Back Home
-          </Text>
+        <TouchableOpacity style={styles.button} onPress={handleDone}>
+          <Text style={styles.buttonText}>Back Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, {borderColor: colors.accent, borderWidth: 5}]}>
-          <Text style={styles.buttonText} onPress={handleDone}>
-            Share
-          </Text>
+        <TouchableOpacity
+          style={[styles.button, {borderColor: colors.accent, borderWidth: 5}]}
+          onPress={handleDone}
+        >
+          <Text style={styles.buttonText}>Share</Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
       </View>
@@ -135,9 +134,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   header: {
-    // flex: 1,
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -178,14 +175,10 @@ const styles = StyleSheet.create({
   },
   statusItem: {
     flex: 1,
-    // alignContent: 'center',
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   statusText: {color: colors.primary, fontSize: 20, fontWeight: 'bold', textAlign: 'center'},
   stepText: {
     color: 'black',
-    // height: '30%',
     textAlign: 'center',
     marginVertical: 10,
     fontSize: 16,
@@ -199,9 +192,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   statusIcon: {
-    // flex: 1,
     alignSelf: 'center',
-    // height: '50%',
   },
   buttonContainer: {
     flex: 1,
