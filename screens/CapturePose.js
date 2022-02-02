@@ -1,15 +1,24 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, View, Dimensions, Pressable} from 'react-native';
+import {useEffect, useRef, useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
+import {manipulateAsync, FlipType} from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
 
+const TIME_LIMIT = 5;
+const TIME_ZERO_ICON = '📸';
+
 export default () => {
+  const navigation = useNavigation();
+
   const cameraRef = useRef();
 
   const [cameraPermission, setCameraPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.front);
   const [cameraReady, setCameraReady] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
   const [mediaPermission, setMediaPermission] = useState(null);
+  const [time, setTime] = useState(TIME_LIMIT);
+  const [type, setType] = useState(Camera.Constants.Type.front);
 
   useEffect(() => {
     (async () => {
@@ -20,14 +29,42 @@ export default () => {
     })();
   }, []);
 
-  const handleCapture = async () => {
-    if (!cameraReady) console.log('🧑🏻‍💻 Camera is not ready!');
-    else {
-      const imageData = await cameraRef.current.takePictureAsync({
+  useEffect(() => {
+    // waits until camera has loaded
+    if (cameraReady) {
+      const currIntervalId = setInterval(() => {
+        // need to reference time as function parameter for proper update
+        setTime(time => {
+          if (time > 1) return time - 1;
+          return TIME_ZERO_ICON;
+        });
+      }, 1000);
+      setIntervalId(currIntervalId);
+    }
+  }, [cameraReady]);
+
+  useEffect(() => {
+    // time over
+    if (time === TIME_ZERO_ICON) {
+      (async () => {
+        clearInterval(intervalId);
+        savePose();
+      })();
+    }
+  }, [time]);
+
+  const savePose = async () => {
+    try {
+      const image = await cameraRef.current.takePictureAsync({
         base64: true,
       });
-      if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
+      // mirrors image horizontally
+      const mirrorImage = await manipulateAsync(image.uri, [{flip: FlipType.Horizontal}]);
+      if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
       else console.log('🧑🏻‍💻 Media permission not granted!');
+      navigation.navigate('Results', {image: mirrorImage});
+    } catch (error) {
+      navigation.navigate('NoPose');
     }
   };
 
@@ -44,15 +81,7 @@ export default () => {
           setCameraReady(true);
         }}
       ></Camera>
-      <Pressable
-        onPress={() => handleCapture()}
-        style={({pressed}) => [
-          {
-            backgroundColor: pressed ? 'gray' : 'white',
-          },
-          styles.captureButton,
-        ]}
-      ></Pressable>
+      <Text style={styles.timer}>{cameraReady ? time : ''}</Text>
     </View>
   );
 };
@@ -60,18 +89,16 @@ export default () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   camera: {
     width: '100%',
     height: '100%',
   },
-  captureButton: {
+  timer: {
     position: 'absolute',
-    left: Dimensions.get('screen').width / 2 - 50,
-    bottom: 40,
-    width: 100,
-    zIndex: 100,
-    height: 100,
-    borderRadius: 50,
+    fontSize: 200,
+    color: 'white',
   },
 });
