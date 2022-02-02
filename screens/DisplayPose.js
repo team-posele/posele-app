@@ -1,28 +1,58 @@
+import {useEffect, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+
+const TIME_LIMIT = 3;
+const TIME_ZERO_ICON = '🕺';
 
 export default function Pose() {
   const navigation = useNavigation();
 
-  const handleReady = () => {
-    navigation.replace('CapturePose');
-  };
+  const [intervalId, setIntervalId] = useState(null);
+  const [imageReady, setImageReady] = useState(false);
+  const [time, setTime] = useState(TIME_LIMIT);
+
+  useEffect(() => {
+    // waits until image has loaded
+    if (imageReady) {
+      const currIntervalId = setInterval(() => {
+        // need to reference time as function parameter for proper update
+        setTime(time => {
+          if (time > 1) return time - 1;
+          return TIME_ZERO_ICON;
+        });
+      }, 1000);
+      setIntervalId(currIntervalId);
+    }
+  }, [imageReady]);
+
+  useEffect(() => {
+    // time over
+    if (time === TIME_ZERO_ICON) {
+      (async () => {
+        clearInterval(intervalId);
+        navigation.navigate('CapturePose');
+      })();
+    }
+  }, [time]);
 
   return (
     <View style={styles.container}>
       <View style={(styles.container, {height: 100})}></View>
       <View style={styles.imageContainer}>
         <Text style={styles.header}>Match the Pose:</Text>
-        <Image style={styles.image} source={require('../assets/jordan-pose.jpg')}></Image>
+        <Image
+          style={styles.image}
+          source={require('../assets/jordan-pose.jpg')}
+          onLoad={() => {
+            setImageReady(true);
+          }}
+        ></Image>
       </View>
       <View style={styles.container}>
         <Text style={styles.warning}>Remember to Pose Responsibly!</Text>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText} onPress={handleReady}>
-            Pose Now!
-          </Text>
-        </TouchableOpacity>
+        <Text style={styles.timer}>{time}</Text>
         <StatusBar style="auto" />
       </View>
     </View>
@@ -62,17 +92,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
   },
-  button: {
-    backgroundColor: '#414BB2',
-    width: '85%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+  timer: {
+    fontSize: 100,
   },
 });
