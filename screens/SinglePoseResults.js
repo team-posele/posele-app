@@ -1,5 +1,5 @@
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Image, ImageBackground, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../colorConstants';
 
@@ -17,12 +17,17 @@ export default function SinglePoseResults() {
       <View style={(styles.container, {height: 100})}></View>
       <View style={styles.imageContainer}>
         <Text style={styles.header}>Your Results:</Text>
-        <Image
+        <ImageBackground
           style={styles.sourceImage}
-          fadeDuration={3000}
+          fadeDuration={0}
           source={require('../assets/jordan-pose.jpg')}
-        ></Image>
-        <Image style={styles.userImage} source={require('../assets/photo.jpg')}></Image>
+        >
+          <Image
+            style={styles.userImage}
+            fadeDuration={3000}
+            source={require('../assets/photo.jpg')}
+          ></Image>
+        </ImageBackground>
       </View>
       <View style={styles.container}>
         {coinFlip === 0 ? (
@@ -72,7 +77,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '90%',
     resizeMode: 'contain',
-    zIndex: -2,
   },
   noMatchText: {
     color: 'red',
