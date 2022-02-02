@@ -5,6 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
 import {auth} from '../firebase';
+import colors from '../colorConstants';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,7 +30,8 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Hello, {auth.currentUser.email}</Text>
+      <Text style={styles.h1}>Hello, {auth.currentUser.email}</Text>
+      <Text style={styles.h2}>Welcome back to Posele!</Text>
       <TouchableOpacity onPress={handlePlay} style={styles.primaryButton}>
         <Text style={styles.primaryButtonText}>Play</Text>
       </TouchableOpacity>
@@ -76,7 +78,7 @@ const MyTabs = () => {
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#414BB2',
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: 'gray',
       })}
     >
@@ -95,17 +97,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  h1: {
+    fontSize: 20,
+  },
+  h2: {
+    fontSize: 20,
+  },
   primaryButton: {
-    backgroundColor: '#414BB2',
+    backgroundColor: colors.primary,
     width: '60%',
     padding: 10,
+    borderWidth: 2,
+    borderColor: colors.accent,
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 20,
   },
   secondaryButton: {
     backgroundColor: 'white',
-    borderColor: '#414BB2',
+    borderColor: colors.secondary,
     borderWidth: 3,
     width: '60%',
     padding: 5,
@@ -119,7 +129,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   secondaryButtonText: {
-    color: '#414BB2',
+    color: colors.secondary,
     fontSize: 16,
     fontWeight: 'bold',
   },

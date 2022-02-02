@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StatusBar} from 'expo-status-bar';
+import colors from '../colorConstants';
 
 export default function Warning() {
   const navigation = useNavigation();
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
     alignContent: 'flex-end',
     justifyContent: 'flex-end',
     marginHorizontal: 10,
-    backgroundColor: '#414BB2CC',
+    backgroundColor: colors.secondary,
     borderRadius: 5,
     paddingHorizontal: 5,
   },
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   button: {
-    backgroundColor: '#414BB2',
+    backgroundColor: colors.primary,
     width: '60%',
     padding: 15,
     borderRadius: 10,
@@ -130,8 +131,8 @@ const styles = StyleSheet.create({
   smallButton: {
     width: '25%',
     backgroundColor: 'white',
-    borderColor: '#414BB2',
+    borderColor: colors.primary,
     borderWidth: 1,
   },
-  smallButtonText: {color: '#414BB2'},
+  smallButtonText: {color: colors.primary},
 });

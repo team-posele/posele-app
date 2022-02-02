@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import colors from '../colorConstants';
 
 const TIME_LIMIT = 3;
 const TIME_ZERO_ICON = '🕺';
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingTop: 20,
     width: '90%',
-    backgroundColor: '#414BB2CC',
+    backgroundColor: colors.secondary,
     justifyContent: 'center',
   },
   image: {
@@ -91,6 +92,19 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginVertical: 10,
+  },
+  button: {
+    backgroundColor: colors.primary,
+    width: '85%',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   timer: {
     fontSize: 100,

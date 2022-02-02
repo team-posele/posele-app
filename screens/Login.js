@@ -10,6 +10,7 @@ import React, {useEffect, useState} from 'react';
 
 import {auth} from '../firebase';
 import {useNavigation} from '@react-navigation/native';
+import colors from '../colorConstants';
 
 const Login = () => {
   const navigate = useNavigation();
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   primaryButton: {
-    backgroundColor: '#414BB2',
+    backgroundColor: colors.primary,
     width: '85%',
     padding: 10,
     borderRadius: 10,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     backgroundColor: 'white',
-    borderColor: '#414BB2',
+    borderColor: colors.primary,
     borderWidth: 3,
     width: '85%',
     padding: 5,
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   secondaryButtonText: {
-    color: '#414BB2',
+    color: colors.secondary,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -149,9 +150,9 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '85%',
-    backgroundColor: '#414BB222',
+    backgroundColor: colors.secondary,
     borderWidth: 1,
-    borderColor: '#414BB2',
+    borderColor: colors.primary,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 5,
