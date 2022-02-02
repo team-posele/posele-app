@@ -54,14 +54,18 @@ export default () => {
   }, [time]);
 
   const savePose = async () => {
-    const image = await cameraRef.current.takePictureAsync({
-      base64: true,
-    });
-    // mirrors image horizontally
-    const mirrorImage = await manipulateAsync(image.uri, [{flip: FlipType.Horizontal}]);
-    if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
-    else console.log('🧑🏻‍💻 Media permission not granted!');
-    navigation.navigate('Results', {image: mirrorImage});
+    try {
+      const image = await cameraRef.current.takePictureAsync({
+        base64: true,
+      });
+      // mirrors image horizontally
+      const mirrorImage = await manipulateAsync(image.uri, [{flip: FlipType.Horizontal}]);
+      if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
+      else console.log('🧑🏻‍💻 Media permission not granted!');
+      navigation.navigate('Results', {image: mirrorImage});
+    } catch (error) {
+      navigation.navigate('NoPose');
+    }
   };
 
   if (cameraPermission === null) return <View />;

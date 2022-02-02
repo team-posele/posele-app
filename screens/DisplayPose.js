@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 const TIME_LIMIT = 3;
@@ -36,10 +36,6 @@ export default function Pose() {
       })();
     }
   }, [time]);
-
-  // const handleReady = () => {
-  //   navigation.navigate('CapturePose');
-  // };
 
   return (
     <View style={styles.container}>

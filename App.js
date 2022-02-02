@@ -6,6 +6,7 @@ import CapturePose from './screens/CapturePose';
 import Login from './screens/Login';
 import Warning from './screens/Warning';
 import Results from './screens/Results';
+import NoPose from './screens/NoPose';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
         <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} />
         <Stack.Screen name="Results" options={{headerShown: false}} component={Results} />
+        <Stack.Screen name="NoPose" options={{headerShown: false}} component={NoPose} />
       </Stack.Navigator>
     </NavigationContainer>
   );
