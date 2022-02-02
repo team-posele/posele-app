@@ -5,18 +5,18 @@ import {useNavigation} from '@react-navigation/native';
 export default ({route}) => {
   const navigation = useNavigation();
 
+  const imageUri = route.params.image.uri;
+
   const handleReady = () => {
     navigation.replace('CapturePose');
   };
-
-  console.log('🧑🏻‍💻 uri', route.params.imageData.uri);
 
   return (
     <View style={styles.container}>
       <View style={(styles.container, {height: 100})}></View>
       <View style={styles.imageContainer}>
         <Text style={styles.header}>Match the Pose:</Text>
-        <Image style={styles.image} source={{uri: route.params.imageData.uri}}></Image>
+        <Image style={styles.image} source={{uri: imageUri}}></Image>
       </View>
       <View style={styles.container}>
         <Text style={styles.warning}>Remember to Pose Responsibly!</Text>

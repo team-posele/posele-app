@@ -1,8 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View, Dimensions, Pressable} from 'react-native';
-import {Camera} from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
 import {useNavigation} from '@react-navigation/native';
+import {Camera} from 'expo-camera';
+import {manipulateAsync, FlipType} from 'expo-image-manipulator';
+import * as MediaLibrary from 'expo-media-library';
 
 export default () => {
   const navigation = useNavigation();
@@ -40,29 +41,19 @@ export default () => {
       (async () => {
         console.log("🧑🏻‍💻 time's up!");
         clearInterval(intervalId);
-        const imageData = await cameraRef.current.takePictureAsync({
-          base64: true,
-        });
-        if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
-        else console.log('🧑🏻‍💻 Media permission not granted!');
-        navigation.navigate('Results', {imageData});
+        savePose();
       })();
     }
-    // (async () => {
-    //   if (time <= 0) {
-    //   }
-    // })();
   }, [time]);
 
-  const handleCapture = async () => {
-    if (!cameraReady) console.log('🧑🏻‍💻 Camera is not ready!');
-    else {
-      const imageData = await cameraRef.current.takePictureAsync({
-        base64: true,
-      });
-      if (mediaPermission) await MediaLibrary.saveToLibraryAsync(imageData.uri);
-      else console.log('🧑🏻‍💻 Media permission not granted!');
-    }
+  const savePose = async () => {
+    const image = await cameraRef.current.takePictureAsync({
+      base64: true,
+    });
+    const mirrorImage = await manipulateAsync(image.uri, [{flip: FlipType.Horizontal}]);
+    if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
+    else console.log('🧑🏻‍💻 Media permission not granted!');
+    navigation.navigate('Results', {image: mirrorImage});
   };
 
   if (cameraPermission === null) return <View />;
@@ -78,15 +69,6 @@ export default () => {
           setCameraReady(true);
         }}
       ></Camera>
-      {/* <Pressable
-        onPress={() => handleCapture()}
-        style={({pressed}) => [
-          {
-            backgroundColor: pressed ? 'gray' : 'white',
-          },
-          styles.captureButton,
-        ]}
-      ></Pressable> */}
       <Text style={styles.timer}>{time > 0 ? `${time}` : '📸'}</Text>
     </View>
   );
@@ -107,13 +89,4 @@ const styles = StyleSheet.create({
     fontSize: 200,
     color: 'white',
   },
-  // captureButton: {
-  //   position: 'absolute',
-  //   left: Dimensions.get('screen').width / 2 - 50,
-  //   bottom: 40,
-  //   width: 100,
-  //   zIndex: 100,
-  //   height: 100,
-  //   borderRadius: 50,
-  // },
 });
