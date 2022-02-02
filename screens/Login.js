@@ -76,18 +76,18 @@ const Login = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
+          onPress={handleLogin}
         >
-          <Text style={appStyles.primaryButtonText} onPress={handleLogin}>
-            Login
-          </Text>
+          <Text style={appStyles.primaryButtonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[appStyles.secondaryButton, styles.secondaryButton]}
+          onPress={handleSignup}
+        >
+          <Text style={appStyles.secondaryButtonText}>Sign Up</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[appStyles.secondaryButton, styles.secondaryButton]}>
-          <Text style={appStyles.secondaryButtonText} onPress={handleSignup}>
-            Sign Up
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[appStyles.secondaryButton, styles.secondaryButton]}>
-          <Text style={appStyles.secondaryButtonText}>Play as Guest</Text>
+          <Text style={appStyles.secondaryButtonText}>Play as Guest (coming soon)</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

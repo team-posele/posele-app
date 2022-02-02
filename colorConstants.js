@@ -1,6 +1,7 @@
 export const colors = {
   primary: '#414BB2',
   secondary: '#414BB2CC',
+  input: '#414BB222',
   accent: '#ffffb2',
 };
 
@@ -76,10 +77,10 @@ export const appStyles = {
     color: 'red',
   },
   textInputBox: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.input,
     borderWidth: 1,
     borderColor: colors.primary,
-    color: 'white',
+    color: 'black',
     borderRadius: 5,
   },
   image: {

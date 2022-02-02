@@ -47,10 +47,11 @@ const HomeScreen = () => {
         >
           <Text style={appStyles.primaryButtonText}>Play</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[appStyles.secondaryButton, styles.secondaryButton]}>
-          <Text style={appStyles.secondaryButtonText} onPress={handleLogout}>
-            Logout
-          </Text>
+        <TouchableOpacity
+          style={[appStyles.secondaryButton, styles.secondaryButton]}
+          onPress={handleLogout}
+        >
+          <Text style={appStyles.secondaryButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </View>

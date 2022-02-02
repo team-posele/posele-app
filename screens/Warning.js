@@ -38,21 +38,17 @@ export default function Warning() {
         pictures. Be aware of other people, pets, and objects.
       </Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[appStyles.secondaryButton, styles.button, styles.smallButton]}>
-          <Text
-            style={[appStyles.secondaryButtonText, styles.buttonText]}
-            onPress={() => navigation.replace('MyTabs')}
-          >
-            Back
-          </Text>
+        <TouchableOpacity
+          style={[appStyles.secondaryButton, styles.button, styles.smallButton]}
+          onPress={() => navigation.replace('MyTabs')}
+        >
+          <Text style={[appStyles.secondaryButtonText, styles.buttonText]}>Back</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[appStyles.primaryButton, styles.button]}>
-          <Text
-            style={[appStyles.primaryButtonText, styles.buttonText]}
-            onPress={() => navigation.replace('DisplayPose')}
-          >
-            Pose Now!
-          </Text>
+        <TouchableOpacity
+          style={[appStyles.primaryButton, styles.bigButton]}
+          onPress={() => navigation.replace('DisplayPose')}
+        >
+          <Text style={[appStyles.primaryButtonText, styles.buttonText]}>Pose Now!</Text>
         </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
