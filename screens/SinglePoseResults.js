@@ -34,6 +34,7 @@ export default function SinglePoseResults({route}) {
   const [statusText, setStatusText] = useState('Please Wait...');
   const [time, setTime] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
+  const [presentedPose, setPresentedPose] = useState('');
 
   let coinFlip = Math.round(Math.random()); //random win/lose for now
   // console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
@@ -49,11 +50,11 @@ export default function SinglePoseResults({route}) {
     // const model = await tmPose.load(modelURL, metadataURL);
     const croppedData = await cropPicture(imageData, 300);
     const model = await getModel();
-    console.log('CROPPED DATA: ', croppedData);
+    // console.log('CROPPED DATA: ', croppedData);
 
-    console.log('MODEL: ', model);
+    // console.log('MODEL: ', model);
     const maxPredictions = model.getTotalClasses();
-    console.log('CLASSES ', maxPredictions);
+    // console.log('CLASSES ', maxPredictions);
 
     let newData = croppedData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
     // console.log(newData);
@@ -61,15 +62,20 @@ export default function SinglePoseResults({route}) {
     // console.log(croppedData.uri);
 
     const tensor = await convertBase64ToTensor(newData);
-    console.log(tensor);
+    // console.log(tensor);
 
     const {pose, posenetOutput} = await model.estimatePose(tensor);
 
-    console.log(pose);
-    console.log(posenetOutput);
+    // console.log(pose);
+    // console.log(posenetOutput);
 
     const prediction = await model.predict(posenetOutput);
-    console.log(prediction);
+    // console.log(prediction);
+    let predictedPose = prediction.filter(pose => {
+      return pose.probability > 0.5;
+    });
+    // console.log(predictedPose[0].className);
+    setPresentedPose(predictedPose[0].className);
   }
 
   useEffect(() => {
@@ -128,6 +134,7 @@ export default function SinglePoseResults({route}) {
       </View>
       <View style={styles.statusBox}>
         <Text style={styles.statusText}>{statusText}</Text>
+        <Text style={styles.statusText}>{presentedPose}</Text>
         <View style={styles.statusContainer}>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Processing Image</Text>

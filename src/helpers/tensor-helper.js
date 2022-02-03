@@ -35,7 +35,6 @@ export const convertBase64ToTensor = async base64 => {
     const uIntArray = Base64Binary.decode(base64);
     // decode a JPEG-encoded image to a 3D Tensor of dtype
     const decodedImage = decodeJpeg(uIntArray, 3);
-    console.log(decodedImage);
     // reshape Tensor into a 4D array
     return decodedImage;
   } catch (error) {
