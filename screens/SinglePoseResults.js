@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../colorConstants';
+import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
 
 export default function SinglePoseResults({route}) {
@@ -65,17 +65,17 @@ export default function SinglePoseResults({route}) {
   }, [time]);
 
   return (
-    <View style={styles.container}>
+    <View style={appStyles.mainView}>
       {/* <View style={(styles.container, {height: 100})}></View> */}
-      <View style={styles.imageContainer}>
-        <Text style={styles.header}>Your Results:</Text>
+      <View style={[appStyles.insetBox, styles.imageContainer]}>
+        <Text style={appStyles.insetHeader}>Your Results:</Text>
         <ImageBackground
-          style={styles.sourceImage}
+          style={[appStyles.image, {width: '100%'}]}
           fadeDuration={0}
           source={require('../assets/jordan-pose.jpg')}
         >
           <Image
-            style={styles.userImage}
+            style={[appStyles.image, {width: '100%'}]}
             fadeDuration={3000}
             source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
           ></Image>
@@ -111,15 +111,15 @@ export default function SinglePoseResults({route}) {
           </View>
         </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleDone}>
-          <Text style={styles.buttonText}>Back Home</Text>
+      <View style={[appStyles.container, styles.buttonContainer]}>
+        <TouchableOpacity style={[appStyles.secondaryButton, styles.button]} onPress={handleDone}>
+          <Text style={appStyles.secondaryButtonText}>Back Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, {borderColor: colors.accent, borderWidth: 5}]}
+          style={[appStyles.primaryButton, styles.button, appStyles.highlight]}
           onPress={handleDone}
         >
-          <Text style={styles.buttonText}>Share</Text>
+          <Text style={[appStyles.primaryButtonText, styles.buttonText]}>Share</Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
       </View>
@@ -128,43 +128,17 @@ export default function SinglePoseResults({route}) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: 'white',
-    justifyContent: 'flex-end',
-  },
   imageContainer: {
-    marginTop: 100,
     flex: 3,
-    alignItems: 'center',
     paddingVertical: 20,
     width: '90%',
-    backgroundColor: colors.secondary,
-    justifyContent: 'center',
-  },
-  sourceImage: {
-    flex: 1,
-    width: '100%',
-    resizeMode: 'contain',
-  },
-  userImage: {
-    flex: 1,
-    width: '100%',
-    resizeMode: 'contain',
   },
   statusBox: {
     flex: 1,
     marginVertical: 10,
     borderColor: colors.primary,
     borderWidth: 2,
+    padding: 5,
   },
   statusContainer: {
     flex: 1,
@@ -176,7 +150,12 @@ const styles = StyleSheet.create({
   statusItem: {
     flex: 1,
   },
-  statusText: {color: colors.primary, fontSize: 20, fontWeight: 'bold', textAlign: 'center'},
+  statusText: {
+    color: colors.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   stepText: {
     color: 'black',
     textAlign: 'center',
@@ -184,13 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  errorStatusText: {
-    color: 'red',
-    textAlign: 'center',
-    marginVertical: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+
   statusIcon: {
     alignSelf: 'center',
   },
@@ -202,16 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   button: {
-    backgroundColor: colors.primary,
     width: '45%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
     justifyContent: 'space-evenly',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
