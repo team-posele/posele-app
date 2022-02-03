@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
   StyleSheet,
@@ -12,11 +12,18 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import colors from '../colorConstants';
 import {Icon} from 'react-native-elements';
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-react-native';
+import * as tmPose from '@teachablemachine/pose';
+import {convertBase64ToTensor, getModel, startPrediction} from '../src/helpers/tensor-helper';
+import {cropPicture} from '../src/helpers/image-helper';
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
+  const imageRef = useRef(null);
 
   const imageUri = route.params?.image?.uri;
+  const imageData = route.params?.image;
   // grab the imageUri if passed in, avoid errors if it isn't
 
   const handleDone = () => {
@@ -29,9 +36,46 @@ export default function SinglePoseResults({route}) {
   const [intervalId, setIntervalId] = useState(null);
 
   let coinFlip = Math.round(Math.random()); //random win/lose for now
-  console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
+  // console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
+
+  async function init() {
+    // await tf.setBackend('cpu');
+
+    // await tf.ready();
+    // const URL = 'https://teachablemachine.withgoogle.com/models/u8KiGFbNq/';
+    // const modelURL = URL + 'model.json';
+    // const metadataURL = URL + 'metadata.json';
+
+    // const model = await tmPose.load(modelURL, metadataURL);
+    const croppedData = await cropPicture(imageData, 300);
+    const model = await getModel();
+    console.log('CROPPED DATA: ', croppedData);
+
+    console.log('MODEL: ', model);
+    const maxPredictions = model.getTotalClasses();
+    console.log('CLASSES ', maxPredictions);
+
+    let newData = croppedData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
+    // console.log(newData);
+
+    // console.log(croppedData.uri);
+
+    const tensor = await convertBase64ToTensor(newData);
+    console.log(tensor);
+
+    const {pose, posenetOutput} = await model.estimatePose(tensor);
+
+    console.log(pose);
+    console.log(posenetOutput);
+
+    const prediction = await model.predict(posenetOutput);
+    console.log(prediction);
+  }
 
   useEffect(() => {
+    (async () => {
+      init();
+    })();
     // waits until image has loaded
     const currIntervalId = setInterval(() => {
       // need to reference time as function parameter for proper update
@@ -75,6 +119,7 @@ export default function SinglePoseResults({route}) {
           source={require('../assets/jordan-pose.jpg')}
         >
           <Image
+            ref={imageRef}
             style={styles.userImage}
             fadeDuration={3000}
             source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
