@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {NavigationHelpersContext, useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
 
@@ -117,7 +117,7 @@ export default function SinglePoseResults({route}) {
         </TouchableOpacity>
         <TouchableOpacity
           style={[appStyles.primaryButton, styles.button, appStyles.highlight]}
-          onPress={handleDone}
+          onPress={() => navigation.replace('Share')}
         >
           <Text style={[appStyles.primaryButtonText, styles.buttonText]}>Share</Text>
         </TouchableOpacity>
