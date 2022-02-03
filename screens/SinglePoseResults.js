@@ -29,40 +29,42 @@ export default function SinglePoseResults({route}) {
   const [intervalId, setIntervalId] = useState(null);
 
   let coinFlip = Math.round(Math.random()); //random win/lose for now
-  console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
 
-  useEffect(() => {
-    // waits until image has loaded
-    const currIntervalId = setInterval(() => {
-      // need to reference time as function parameter for proper update
-      setTime(time => {
-        if (time < 5) return time + 1;
-        return 5;
-      });
-    }, 1000);
-    setIntervalId(currIntervalId);
-  }, []);
+  // useEffect(() => {
+  //   // waits until image has loaded
+  //   const currIntervalId = setInterval(() => {
+  //     // need to reference time as function parameter for proper update
+  //     setTime(time => {
+  //       if (time < 5) return time + 1;
+  //       return 5;
+  //     });
+  //   }, 1000);
+  //   setIntervalId(currIntervalId);
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, []);
 
-  useEffect(() => {}, [time]);
+  // useEffect(() => {}, [time]);
 
-  useEffect(() => {
-    // time over
-    if (time === 5) {
-      (async () => {
-        clearInterval(intervalId);
-        // stop updating timer once it reaches 5 seconds
-      })();
-    }
-  }, [time]);
-  useEffect(() => {
-    if (time >= 4) {
-      setStatusText(
-        coinFlip
-          ? 'You matched the pose! Congratulations!'
-          : 'You did not match the pose. Try again tomorrow!'
-      );
-    }
-  }, [time]);
+  // useEffect(() => {
+  //   // time over
+  //   if (time === 5) {
+  //     (async () => {
+  //       clearInterval(intervalId);
+  //       // stop updating timer once it reaches 5 seconds
+  //     })();
+  //   }
+  // }, [time]);
+  // useEffect(() => {
+  //   if (time >= 4) {
+  //     setStatusText(
+  //       coinFlip
+  //         ? 'You matched the pose! Congratulations!'
+  //         : 'You did not match the pose. Try again tomorrow!'
+  //     );
+  //   }
+  // }, [time]);
 
   return (
     <View style={appStyles.mainView}>

@@ -11,7 +11,7 @@ export default () => {
         <Text style={styles.header}>Got No Pose...</Text>
         <Image style={styles.image} source={require('../assets/no-pose.gif')}></Image>
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText} onPress={() => navigation.navigate('MyTabs')}>
+          <Text style={styles.buttonText} onPress={() => navigation.replace('MyTabs')}>
             Back to Home
           </Text>
         </TouchableOpacity>

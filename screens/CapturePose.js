@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
 import {manipulateAsync, FlipType} from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
@@ -10,6 +10,7 @@ const TIME_ZERO_ICON = '📸';
 
 export default () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const cameraRef = useRef();
 
@@ -21,12 +22,16 @@ export default () => {
   const [type, setType] = useState(Camera.Constants.Type.front);
 
   useEffect(() => {
+    let isMounted = true;
     (async () => {
       const cameraResponse = await Camera.requestCameraPermissionsAsync();
       setCameraPermission(cameraResponse.status === 'granted');
       const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
       setMediaPermission(mediaResponse.status === 'granted');
     })();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -62,9 +67,9 @@ export default () => {
       const mirrorImage = await manipulateAsync(image.uri, [{flip: FlipType.Horizontal}]);
       if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
       else console.log('🧑🏻‍💻 Media permission not granted!');
-      navigation.navigate('Results', {image: mirrorImage});
+      navigation.replace('Results', {image: mirrorImage});
     } catch (error) {
-      navigation.navigate('NoPose');
+      navigation.replace('NoPose');
     }
   };
 
@@ -72,15 +77,17 @@ export default () => {
   if (cameraPermission === false) return <Text>No access to camera</Text>;
   return (
     <View style={styles.container}>
-      <Camera
-        ref={cameraRef}
-        style={styles.camera}
-        type={type}
-        autoFocus={true}
-        onCameraReady={() => {
-          setCameraReady(true);
-        }}
-      ></Camera>
+      {isFocused && (
+        <Camera
+          ref={cameraRef}
+          style={styles.camera}
+          type={type}
+          autoFocus={true}
+          onCameraReady={() => {
+            setCameraReady(true);
+          }}
+        ></Camera>
+      )}
       <Text style={styles.timer}>{cameraReady ? time : ''}</Text>
     </View>
   );
