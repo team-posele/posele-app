@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
@@ -53,7 +54,10 @@ const Login = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={appStyles.mainView} behavior="padding">
+    <KeyboardAvoidingView
+      style={appStyles.mainView}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <View style={styles.headerContainer}>
         <Text style={appStyles.heading1}>Welcome to Posele!</Text>
         <Text style={appStyles.heading2}>Please log in or create an account to get posing.</Text>
@@ -105,9 +109,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
-    flex: 2,
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    marginBottom: Platform.OS === 'ios' ? 30 : 15,
   },
   primaryButton: {
     width: '85%',
@@ -120,7 +124,7 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    flex: 2,
+    flex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
