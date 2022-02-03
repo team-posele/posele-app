@@ -105,9 +105,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
-    flex: 2,
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    marginBottom: 15,
   },
   primaryButton: {
     width: '85%',
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    flex: 2,
+    flex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
