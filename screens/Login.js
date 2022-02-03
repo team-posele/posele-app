@@ -53,7 +53,7 @@ const Login = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={appStyles.mainView} behavior="padding">
+    <KeyboardAvoidingView style={appStyles.mainView} behavior="height">
       <View style={styles.headerContainer}>
         <Text style={appStyles.heading1}>Welcome to Posele!</Text>
         <Text style={appStyles.heading2}>Please log in or create an account to get posing.</Text>
