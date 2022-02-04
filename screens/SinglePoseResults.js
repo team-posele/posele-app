@@ -21,68 +21,38 @@ import {cropPicture} from '../src/helpers/image-helper';
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
-  const imageRef = useRef(null);
 
   const imageUri = route.params?.image?.uri;
   const imageData = route.params?.image;
-  // grab the imageUri if passed in, avoid errors if it isn't
-  console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
 
+  // "back home" button handler
   const handleDone = () => {
     navigation.replace('MyTabs');
   };
-  // "back home" button handler
 
   const [statusText, setStatusText] = useState('Please Wait...');
   const [time, setTime] = useState(0);
   const [presentedPose, setPresentedPose] = useState('');
 
-  // console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
-
   async function init() {
-    // await tf.setBackend('cpu');
-
-    // await tf.ready();
-    // const URL = 'https://teachablemachine.withgoogle.com/models/u8KiGFbNq/';
-    // const modelURL = URL + 'model.json';
-    // const metadataURL = URL + 'metadata.json';
-
-    // const model = await tmPose.load(modelURL, metadataURL);
+    await tf.ready();
     const croppedData = await cropPicture(imageData, 300);
-    const model = await getModel();
-    // console.log('CROPPED DATA: ', croppedData);
-
-    // console.log('MODEL: ', model);
-    const maxPredictions = model.getTotalClasses();
-    // console.log('CLASSES ', maxPredictions);
-
-    let newData = croppedData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
-    // console.log(newData);
-
-    // console.log(croppedData.uri);
+    const newData = croppedData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
 
     const tensor = await convertBase64ToTensor(newData);
-    // console.log(tensor);
-
+    const model = await getModel();
     const {pose, posenetOutput} = await model.estimatePose(tensor);
 
-    // console.log(pose);
-    // console.log(posenetOutput);
-
     const prediction = await model.predict(posenetOutput);
-    // console.log(prediction);
     let predictedPose = prediction.filter(pose => {
       return pose.probability > 0.5;
     });
-    // console.log(predictedPose[0].className);
     setPresentedPose(predictedPose[0].className);
   }
   const timerRef = useRef(null); // intervalId reference
 
   useEffect(() => {
-    (async () => {
-      init();
-    })();
+    init();
     // waits until image has loaded
     timerRef.current = setInterval(() => {
       // need to reference time as function parameter for proper update
@@ -137,7 +107,6 @@ export default function SinglePoseResults({route}) {
 
   return (
     <View style={appStyles.mainView}>
-      {/* <View style={(styles.container, {height: 100})}></View> */}
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <ImageBackground
