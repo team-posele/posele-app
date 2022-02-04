@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../colorConstants';
+import {colors, appStyles} from '../colorConstants';
 
 const TIME_LIMIT = 3;
 const TIME_ZERO_ICON = '🕺';
@@ -39,10 +39,9 @@ export default function Pose() {
   }, [time]);
 
   return (
-    <View style={styles.container}>
-      <View style={(styles.container, {height: 100})}></View>
-      <View style={styles.imageContainer}>
-        <Text style={styles.header}>Match the Pose:</Text>
+    <View style={appStyles.mainView}>
+      <View style={[appStyles.insetBox, styles.imageContainer]}>
+        <Text style={appStyles.insetHeader}>Match the Pose:</Text>
         <Image
           style={styles.image}
           source={require('../assets/jordan-pose.jpg')}
@@ -51,9 +50,9 @@ export default function Pose() {
           }}
         ></Image>
       </View>
-      <View style={styles.container}>
-        <Text style={styles.warning}>Remember to Pose Responsibly!</Text>
-        <Text style={styles.timer}>{time}</Text>
+      <View style={appStyles.container}>
+        <Text style={appStyles.warningText}>Remember to Pose Responsibly!</Text>
+        <Text style={appStyles.timer}>{time}</Text>
         <StatusBar style="auto" />
       </View>
     </View>
@@ -61,17 +60,8 @@ export default function Pose() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   header: {
-    fontSize: 24,
-    fontWeight: 'bold',
     textAlign: 'center',
-    color: 'white',
     justifyContent: 'flex-end',
   },
   imageContainer: {
@@ -80,7 +70,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingTop: 20,
     width: '90%',
-    backgroundColor: colors.secondary,
     justifyContent: 'center',
   },
   image: {
@@ -105,8 +94,5 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  timer: {
-    fontSize: 100,
   },
 });
