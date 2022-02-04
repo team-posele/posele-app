@@ -8,8 +8,9 @@ import {
   ImageBackground,
   TouchableOpacity,
   ActivityIndicator,
+  Share,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {NavigationHelpersContext, useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
 
@@ -18,6 +19,7 @@ export default function SinglePoseResults({route}) {
 
   const imageUri = route.params?.image?.uri;
   // grab the imageUri if passed in, avoid errors if it isn't
+  console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
 
   const handleDone = () => {
     navigation.replace('MyTabs');
@@ -59,6 +61,29 @@ export default function SinglePoseResults({route}) {
       // stop updating timer once it reaches 5 seconds
     }
   }, [time]);
+
+  async function handleShare() {
+    try {
+      const result = await Share.share({
+        message: coinFlip
+          ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
+          : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
+        url: 'https://www.posele.com',
+        title: "I'm a poser!",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
   return (
     <View style={appStyles.mainView}>
@@ -112,10 +137,24 @@ export default function SinglePoseResults({route}) {
           <Text style={appStyles.secondaryButtonText}>Back Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[appStyles.primaryButton, styles.button, appStyles.highlight]}
-          onPress={handleDone}
+          style={[
+            appStyles.primaryButton,
+            styles.button,
+            appStyles.highlight,
+            time < 5 && styles.disabledButton,
+          ]}
+          onPress={handleShare}
+          disabled={time < 5 ? true : false}
         >
-          <Text style={[appStyles.primaryButtonText, styles.buttonText]}>Share</Text>
+          <Text
+            style={[
+              appStyles.primaryButtonText,
+              styles.buttonText,
+              time < 5 && styles.disabledButtonText,
+            ]}
+          >
+            Share
+          </Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
       </View>
@@ -173,5 +212,12 @@ const styles = StyleSheet.create({
   button: {
     width: '45%',
     justifyContent: 'space-evenly',
+  },
+  disabledButton: {
+    backgroundColor: 'gray',
+    borderWidth: 0,
+  },
+  disabledButtonText: {
+    color: 'darkgray',
   },
 });

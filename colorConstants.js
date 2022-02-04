@@ -61,7 +61,14 @@ export const appStyles = {
     color: 'white',
     padding: 5,
   },
+  screenTitleContainer: {
+    flex: 1,
+    marginTop: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   heading1: {
+    textAlign: 'center',
     fontSize: 24,
     fontWeight: 'bold',
   },
@@ -72,6 +79,7 @@ export const appStyles = {
   },
   text: {
     fontSize: 16,
+    color: 'black',
   },
   warningText: {
     color: 'red',

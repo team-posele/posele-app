@@ -13,32 +13,32 @@ _'user' refers to a logged-in user unless otherwise specified_
 **user experience**
 
 - [ ] Users can open our app on up-to-date iPhone or Android device
-- [ ] Users can Sign Up for an account by providing an email address and password
-- [ ] Users can Log In to the app by providing their email address and/or username and password
-- [ ] Users can select a PLAY button to play a randomly selected posele
-- [ ] A **guest** can play a trial with a single posele
+- [x] Users can Sign Up for an account by providing an email address and password
+- [x] Users can Log In to the app by providing their email address and/or username and password
+- [x] Users can select a PLAY button to play a single posele
 - [ ] Users can see their "score"
-  - [ ] how many posele's they have successfully matched out of 5
+  - [ ] how many posele's they have successfully matched in total
   - [ ] users score persists and will display on log-in even if they leave or logout of the app
+- [x] Users can share a message to social media saying whether they matched and a link to posele
 
 **engineering requirements**
 
-- [ ] Five 'poseles' hosted through Firebase. Each posele consists of an image and a ML model that
-      is trained to recognize the posture/pose of the image subject.
+- [ ] At least one 'posele' hosted through Firebase. Each posele consists of an image and a ML model
+      that is trained to recognize the posture/pose of the image subject.
 - [ ] Create a machine learning model for each posele
 - [ ] Train the model with our own poses.
-- [ ] Users authenticate via Firebase
-- [ ] User database model is established in Firebase
+- [x] Users authenticate via Firebase
+- [x] User database model is established in Firebase
 
 **gameplay**
 
 _When a user presses play to begin a posele:_
 
-- [ ] User is provided instructions and prompted to be sure they are in a space where they can move
+- [x] User is provided instructions and prompted to be sure they are in a space where they can move
       and take photographs safely
-- [ ] User is presented with an image
-- [ ] User presses READY button
-- [ ] User device camera opens; photograph is captured after 5 second countdown
+- [x] User is presented with an image
+- [x] User presses READY button
+- [x] User device camera opens; photograph is captured after 5 second countdown
 - [ ] User is taken to a screen telling them whether they matched the posele (pass/fail)
 
 </details>
@@ -51,12 +51,15 @@ _When a user presses play to begin a posele:_
 
 - [ ] As a user,
 - [ ] A guest:
+- [ ] A **guest** can play a trial with a single posele
 - [ ] Can’t view global leader board, or anonymized
 - [ ] Global leader board: can view your score and others’ scores
-- [ ] Screenshot/share your score
+- [ ] Users can share a message with a screenshot to social media
 - [ ] User can select new gameplay option: multi-user party mode (local)
 
 **engineering requirements**
+
+- [ ] **Five 'poseles' hosted through Firebase (high priority)**
 
 **gameplay**
 
