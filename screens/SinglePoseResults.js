@@ -12,6 +12,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
+import {score} from '../firebase/firestore';
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
@@ -28,10 +29,9 @@ export default function SinglePoseResults({route}) {
   const [time, setTime] = useState(0);
   const timerRef = useRef(null); // intervalId reference
 
-  let coinFlip = Math.round(Math.random()); //random win/lose for now
-
   useEffect(() => {
     // waits until image has loaded
+
     timerRef.current = setInterval(() => {
       // need to reference time as function parameter for proper update
       setTime(time => {
@@ -46,13 +46,6 @@ export default function SinglePoseResults({route}) {
   }, []);
 
   useEffect(() => {
-    if (time >= 4) {
-      setStatusText(
-        coinFlip
-          ? 'You matched the pose! Congratulations!'
-          : 'You did not match the pose. Try again tomorrow!'
-      );
-    }
     // time over
     if (time === 5) {
       clearInterval(timerRef.current);

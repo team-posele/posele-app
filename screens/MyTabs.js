@@ -4,9 +4,10 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
-import {auth, db} from '../firebase';
+import {auth} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
 import * as firestore from 'firebase/firestore';
+import {getUser, score} from '../firebase/firestore';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,13 +15,8 @@ const HomeScreen = () => {
   const navigation = useNavigation();
 
   useEffect(async () => {
-    const users = db.collection('users').doc('hxTAarepPjgInAuZz5VD');
-    const doc = await users.get();
-    if (!doc.exists) {
-      console.log('No such document!');
-    } else {
-      console.log('Document data:', doc.data());
-    }
+    await getUser();
+    console.log(score);
   }, []);
 
   function handlePlay() {
