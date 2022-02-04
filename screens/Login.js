@@ -5,12 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
 import {auth} from '../firebase';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../colorConstants';
+import {colors, appStyles} from '../colorConstants';
 
 const Login = () => {
   const navigate = useNavigation();
@@ -53,21 +54,23 @@ const Login = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.main} behavior="padding">
+    <KeyboardAvoidingView
+      style={appStyles.mainView}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Log in to your posele account</Text>
+        <Text style={appStyles.heading1}>Welcome to Posele!</Text>
+        <Text style={appStyles.heading2}>Please log in or create an account to get posing.</Text>
       </View>
-
-      {/* behavior: padding makes the view get out of the way of the device keyboard*/}
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
+          style={[appStyles.textInputBox, styles.input]}
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
         />
         <TextInput
-          style={styles.input}
+          style={[appStyles.textInputBox, styles.input]}
           placeholder="Password"
           secureTextEntry
           value={password}
@@ -75,18 +78,20 @@ const Login = () => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.primaryButton}>
-          <Text style={styles.primaryButtonText} onPress={handleLogin}>
-            Login
-          </Text>
+        <TouchableOpacity
+          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
+          onPress={handleLogin}
+        >
+          <Text style={appStyles.primaryButtonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText} onPress={handleSignup}>
-            Sign Up
-          </Text>
+        <TouchableOpacity
+          style={[appStyles.secondaryButton, styles.secondaryButton]}
+          onPress={handleSignup}
+        >
+          <Text style={appStyles.secondaryButtonText}>Sign Up</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>Play as Guest</Text>
+        <TouchableOpacity style={[appStyles.secondaryButton, styles.secondaryButton]}>
+          <Text style={appStyles.secondaryButtonText}>Play as Guest (coming soon)</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -96,66 +101,38 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   headerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
+    width: '85%',
   },
-  headerText: {fontSize: 24, textAlign: 'center'},
   buttonContainer: {
     width: '100%',
-    flex: 2,
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    marginBottom: Platform.OS === 'ios' ? 30 : 15,
   },
   primaryButton: {
-    backgroundColor: colors.primary,
     width: '85%',
-    padding: 10,
-    borderRadius: 10,
-    alignItems: 'center',
     marginTop: 20,
-  },
-  primaryButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   secondaryButton: {
-    backgroundColor: 'white',
-    borderColor: colors.primary,
-    borderWidth: 3,
     width: '85%',
-    padding: 5,
-    borderRadius: 10,
     alignItems: 'center',
     marginTop: 20,
   },
-  secondaryButtonText: {
-    color: colors.secondary,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+
   inputContainer: {
-    flex: 2,
+    flex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   input: {
     width: '85%',
-    backgroundColor: colors.secondary,
-    borderWidth: 1,
-    borderColor: colors.primary,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 5,
     marginVertical: 10,
   },
 });

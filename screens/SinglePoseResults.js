@@ -8,9 +8,10 @@ import {
   ImageBackground,
   TouchableOpacity,
   ActivityIndicator,
+  Share,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import colors from '../colorConstants';
+import {NavigationHelpersContext, useNavigation} from '@react-navigation/native';
+import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
@@ -25,6 +26,7 @@ export default function SinglePoseResults({route}) {
   const imageUri = route.params?.image?.uri;
   const imageData = route.params?.image;
   // grab the imageUri if passed in, avoid errors if it isn't
+  console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
 
   const handleDone = () => {
     navigation.replace('MyTabs');
@@ -33,10 +35,8 @@ export default function SinglePoseResults({route}) {
 
   const [statusText, setStatusText] = useState('Please Wait...');
   const [time, setTime] = useState(0);
-  const [intervalId, setIntervalId] = useState(null);
   const [presentedPose, setPresentedPose] = useState('');
 
-  let coinFlip = Math.round(Math.random()); //random win/lose for now
   // console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
 
   async function init() {
@@ -77,33 +77,26 @@ export default function SinglePoseResults({route}) {
     // console.log(predictedPose[0].className);
     setPresentedPose(predictedPose[0].className);
   }
+  const timerRef = useRef(null); // intervalId reference
 
   useEffect(() => {
     (async () => {
       init();
     })();
     // waits until image has loaded
-    const currIntervalId = setInterval(() => {
+    timerRef.current = setInterval(() => {
       // need to reference time as function parameter for proper update
       setTime(time => {
         if (time < 5) return time + 1;
         return 5;
       });
     }, 1000);
-    setIntervalId(currIntervalId);
+    // clears timer on unmount to prevent memory leak
+    return () => {
+      clearInterval(timerRef.current);
+    };
   }, []);
 
-  useEffect(() => {}, [time]);
-
-  useEffect(() => {
-    // time over
-    if (time === 5) {
-      (async () => {
-        clearInterval(intervalId);
-        // stop updating timer once it reaches 5 seconds
-      })();
-    }
-  }, [time]);
   useEffect(() => {
     if (time >= 4) {
       setStatusText(
@@ -112,21 +105,48 @@ export default function SinglePoseResults({route}) {
           : 'You did not match the pose. Try again tomorrow!'
       );
     }
+    // time over
+    if (time === 5) {
+      clearInterval(timerRef.current);
+      // stop updating timer once it reaches 5 seconds
+    }
   }, [time]);
 
+  async function handleShare() {
+    try {
+      const result = await Share.share({
+        message: coinFlip
+          ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
+          : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
+        url: 'https://www.posele.com',
+        title: "I'm a poser!",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
   return (
-    <View style={styles.container}>
+    <View style={appStyles.mainView}>
       {/* <View style={(styles.container, {height: 100})}></View> */}
-      <View style={styles.imageContainer}>
-        <Text style={styles.header}>Your Results:</Text>
+      <View style={[appStyles.insetBox, styles.imageContainer]}>
+        <Text style={appStyles.insetHeader}>Your Results:</Text>
         <ImageBackground
-          style={styles.sourceImage}
+          style={[appStyles.image, {width: '100%'}]}
           fadeDuration={0}
           source={require('../assets/jordan-pose.jpg')}
         >
           <Image
-            ref={imageRef}
-            style={styles.userImage}
+            style={[appStyles.image, {width: '100%'}]}
             fadeDuration={3000}
             source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
           ></Image>
@@ -163,15 +183,29 @@ export default function SinglePoseResults({route}) {
           </View>
         </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleDone}>
-          <Text style={styles.buttonText}>Back Home</Text>
+      <View style={[appStyles.container, styles.buttonContainer]}>
+        <TouchableOpacity style={[appStyles.secondaryButton, styles.button]} onPress={handleDone}>
+          <Text style={appStyles.secondaryButtonText}>Back Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, {borderColor: colors.accent, borderWidth: 5}]}
-          onPress={handleDone}
+          style={[
+            appStyles.primaryButton,
+            styles.button,
+            appStyles.highlight,
+            time < 5 && styles.disabledButton,
+          ]}
+          onPress={handleShare}
+          disabled={time < 5 ? true : false}
         >
-          <Text style={styles.buttonText}>Share</Text>
+          <Text
+            style={[
+              appStyles.primaryButtonText,
+              styles.buttonText,
+              time < 5 && styles.disabledButtonText,
+            ]}
+          >
+            Share
+          </Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
       </View>
@@ -180,43 +214,17 @@ export default function SinglePoseResults({route}) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: 'white',
-    justifyContent: 'flex-end',
-  },
   imageContainer: {
-    marginTop: 100,
     flex: 3,
-    alignItems: 'center',
     paddingVertical: 20,
     width: '90%',
-    backgroundColor: colors.secondary,
-    justifyContent: 'center',
-  },
-  sourceImage: {
-    flex: 1,
-    width: '100%',
-    resizeMode: 'contain',
-  },
-  userImage: {
-    flex: 1,
-    width: '100%',
-    resizeMode: 'contain',
   },
   statusBox: {
     flex: 1,
     marginVertical: 10,
     borderColor: colors.primary,
     borderWidth: 2,
+    padding: 5,
   },
   statusContainer: {
     flex: 1,
@@ -228,7 +236,12 @@ const styles = StyleSheet.create({
   statusItem: {
     flex: 1,
   },
-  statusText: {color: colors.primary, fontSize: 20, fontWeight: 'bold', textAlign: 'center'},
+  statusText: {
+    color: colors.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   stepText: {
     color: 'black',
     textAlign: 'center',
@@ -236,13 +249,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  errorStatusText: {
-    color: 'red',
-    textAlign: 'center',
-    marginVertical: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+
   statusIcon: {
     alignSelf: 'center',
   },
@@ -254,16 +261,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   button: {
-    backgroundColor: colors.primary,
     width: '45%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
     justifyContent: 'space-evenly',
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+  disabledButton: {
+    backgroundColor: 'gray',
+    borderWidth: 0,
+  },
+  disabledButtonText: {
+    color: 'darkgray',
   },
 });
