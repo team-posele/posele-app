@@ -33,7 +33,7 @@ export default function Pose() {
     if (time === TIME_ZERO_ICON) {
       (async () => {
         clearInterval(intervalId);
-        navigation.navigate('CapturePose');
+        navigation.replace('CapturePose');
       })();
     }
   }, [time]);
