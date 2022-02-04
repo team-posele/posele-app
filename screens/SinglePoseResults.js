@@ -17,7 +17,8 @@ import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 import * as tmPose from '@teachablemachine/pose';
 import {convertBase64ToTensor, getModel, startPrediction} from '../src/helpers/tensor-helper';
-import {cropPicture} from '../src/helpers/image-helper';
+// import {cropPicture} from '../src/helpers/image-helper';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
@@ -33,15 +34,33 @@ export default function SinglePoseResults({route}) {
   const [statusText, setStatusText] = useState('Please Wait...');
   const [time, setTime] = useState(0);
   const [presentedPose, setPresentedPose] = useState('');
+  const [croppedImage, setCroppedImage] = useState();
+
+  const cropPicture = async imageData => {
+    try {
+      const {uri} = imageData;
+      const saveOptions = {
+        base64: true,
+      };
+      return await ImageManipulator.manipulateAsync(uri, [], saveOptions);
+    } catch (error) {
+      console.log('Could not crop & resize photo', error);
+    }
+  };
 
   async function init() {
     await tf.ready();
-    const croppedData = await cropPicture(imageData, 300);
-    const newData = croppedData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
+    // const croppedData = await cropPicture(imageData, 300);
+    // const croppedData = await cropPicture(imageData);
+    // setCroppedImage(croppedData);
+    // const newData = croppedData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
+    const newData = imageData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
 
     const tensor = await convertBase64ToTensor(newData);
     const model = await getModel();
     const {pose, posenetOutput} = await model.estimatePose(tensor);
+    console.log('🧑🏻‍💻 pose', pose);
+    console.log('🧑🏻‍💻 pose', posenetOutput);
 
     const prediction = await model.predict(posenetOutput);
     let predictedPose = prediction.filter(pose => {
@@ -117,7 +136,7 @@ export default function SinglePoseResults({route}) {
           <Image
             style={[appStyles.image, {width: '100%'}]}
             fadeDuration={3000}
-            source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
+            source={croppedImage ? {uri: croppedImage.uri} : require('../assets/photo.jpg')}
           ></Image>
         </ImageBackground>
       </View>

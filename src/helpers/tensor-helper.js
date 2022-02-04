@@ -6,7 +6,8 @@ import {bundleResourceIO, decodeJpeg, fetch} from '@tensorflow/tfjs-react-native
 import {Base64Binary} from '../utils/utils';
 const BITMAP_DIMENSION = 224;
 
-const URL = 'https://teachablemachine.withgoogle.com/models/u8KiGFbNq/';
+// const URL = 'https://teachablemachine.withgoogle.com/models/u8KiGFbNq/';
+const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/';
 const modelURL = URL + 'model.json';
 const metadataURL = URL + 'metadata.json';
 
