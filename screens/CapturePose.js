@@ -59,9 +59,10 @@ export default () => {
 
   const savePose = async () => {
     try {
-      const image = await cameraRef.current.takePictureAsync({
+      const options = {
         base64: true,
-      });
+      };
+      const image = await cameraRef.current.takePictureAsync(options);
       // mirrors image horizontally
       const actions = [{flip: FlipType.Horizontal}];
       const saveOptions = {
