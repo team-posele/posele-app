@@ -10,6 +10,8 @@ import {
 import React, {useEffect, useState} from 'react';
 
 import {auth} from '../firebase';
+import firestore from '@react-native-firebase/firestore';
+
 import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 
@@ -28,7 +30,7 @@ const Login = () => {
     return unsubscribe;
   }, []);
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     console.log(`you signed up`);
     auth
       .createUserWithEmailAndPassword(email, password)

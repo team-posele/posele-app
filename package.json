@@ -11,6 +11,8 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^14.3.0",
+    "@react-native-firebase/firestore": "^14.3.0",
     "@react-navigation/bottom-tabs": "^6.1.0",
     "@react-navigation/native": "^6.0.7",
     "@react-navigation/native-stack": "^6.3.0",
@@ -19,7 +21,7 @@
     "expo-image-manipulator": "~10.2.0",
     "expo-media-library": "~14.0.0",
     "expo-status-bar": "~1.2.0",
-    "firebase": "^8.10.1",
+    "firebase": "^8.2.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
