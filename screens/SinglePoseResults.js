@@ -8,6 +8,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   ActivityIndicator,
+  Share,
 } from 'react-native';
 import {NavigationHelpersContext, useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
@@ -63,6 +64,29 @@ export default function SinglePoseResults({route}) {
       );
     }
   }, [time]);
+
+  async function handleShare() {
+    try {
+      const result = await Share.share({
+        message: coinFlip
+          ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
+          : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
+        url: 'https://www.posele.com',
+        title: "I'm a poser!",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
   return (
     <View style={appStyles.mainView}>
