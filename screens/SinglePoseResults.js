@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
   StyleSheet,
@@ -26,45 +26,39 @@ export default function SinglePoseResults({route}) {
 
   const [statusText, setStatusText] = useState('Please Wait...');
   const [time, setTime] = useState(0);
-  const [intervalId, setIntervalId] = useState(null);
+  const timerRef = useRef(null); // intervalId reference
 
   let coinFlip = Math.round(Math.random()); //random win/lose for now
 
-  // useEffect(() => {
-  //   // waits until image has loaded
-  //   const currIntervalId = setInterval(() => {
-  //     // need to reference time as function parameter for proper update
-  //     setTime(time => {
-  //       if (time < 5) return time + 1;
-  //       return 5;
-  //     });
-  //   }, 1000);
-  //   setIntervalId(currIntervalId);
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, []);
+  useEffect(() => {
+    // waits until image has loaded
+    timerRef.current = setInterval(() => {
+      // need to reference time as function parameter for proper update
+      setTime(time => {
+        if (time < 5) return time + 1;
+        return 5;
+      });
+    }, 1000);
+    // clears timer on unmount to prevent memory leak
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, []);
 
-  // useEffect(() => {}, [time]);
-
-  // useEffect(() => {
-  //   // time over
-  //   if (time === 5) {
-  //     (async () => {
-  //       clearInterval(intervalId);
-  //       // stop updating timer once it reaches 5 seconds
-  //     })();
-  //   }
-  // }, [time]);
-  // useEffect(() => {
-  //   if (time >= 4) {
-  //     setStatusText(
-  //       coinFlip
-  //         ? 'You matched the pose! Congratulations!'
-  //         : 'You did not match the pose. Try again tomorrow!'
-  //     );
-  //   }
-  // }, [time]);
+  useEffect(() => {
+    if (time >= 4) {
+      setStatusText(
+        coinFlip
+          ? 'You matched the pose! Congratulations!'
+          : 'You did not match the pose. Try again tomorrow!'
+      );
+    }
+    // time over
+    if (time === 5) {
+      clearInterval(timerRef.current);
+      // stop updating timer once it reaches 5 seconds
+    }
+  }, [time]);
 
   return (
     <View style={appStyles.mainView}>
