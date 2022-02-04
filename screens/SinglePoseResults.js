@@ -116,10 +116,24 @@ export default function SinglePoseResults({route}) {
           <Text style={appStyles.secondaryButtonText}>Back Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[appStyles.primaryButton, styles.button, appStyles.highlight]}
-          onPress={() => navigation.replace('Share')}
+          style={[
+            appStyles.primaryButton,
+            styles.button,
+            appStyles.highlight,
+            time < 5 && styles.disabledButton,
+          ]}
+          onPress={handleShare}
+          disabled={time < 5 ? true : false}
         >
-          <Text style={[appStyles.primaryButtonText, styles.buttonText]}>Share</Text>
+          <Text
+            style={[
+              appStyles.primaryButtonText,
+              styles.buttonText,
+              time < 5 && styles.disabledButtonText,
+            ]}
+          >
+            Share
+          </Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
       </View>
@@ -177,5 +191,12 @@ const styles = StyleSheet.create({
   button: {
     width: '45%',
     justifyContent: 'space-evenly',
+  },
+  disabledButton: {
+    backgroundColor: 'gray',
+    borderWidth: 0,
+  },
+  disabledButtonText: {
+    color: 'darkgray',
   },
 });
