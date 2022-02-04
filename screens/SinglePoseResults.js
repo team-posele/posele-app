@@ -97,43 +97,43 @@ export default function SinglePoseResults({route}) {
     };
   }, []);
 
-  useEffect(() => {
-    if (time >= 4) {
-      setStatusText(
-        coinFlip
-          ? 'You matched the pose! Congratulations!'
-          : 'You did not match the pose. Try again tomorrow!'
-      );
-    }
-    // time over
-    if (time === 5) {
-      clearInterval(timerRef.current);
-      // stop updating timer once it reaches 5 seconds
-    }
-  }, [time]);
+  // useEffect(() => {
+  //   if (time >= 4) {
+  //     setStatusText(
+  //       coinFlip
+  //         ? 'You matched the pose! Congratulations!'
+  //         : 'You did not match the pose. Try again tomorrow!'
+  //     );
+  //   }
+  //   // time over
+  //   if (time === 5) {
+  //     clearInterval(timerRef.current);
+  //     // stop updating timer once it reaches 5 seconds
+  //   }
+  // }, [time]);
 
-  async function handleShare() {
-    try {
-      const result = await Share.share({
-        message: coinFlip
-          ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
-          : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
-        url: 'https://www.posele.com',
-        title: "I'm a poser!",
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error) {
-      alert(error.message);
-    }
-  }
+  // async function handleShare() {
+  //   try {
+  //     const result = await Share.share({
+  //       message: coinFlip
+  //         ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
+  //         : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
+  //       url: 'https://www.posele.com',
+  //       title: "I'm a poser!",
+  //     });
+  //     if (result.action === Share.sharedAction) {
+  //       if (result.activityType) {
+  //         // shared with activity type of result.activityType
+  //       } else {
+  //         // shared
+  //       }
+  //     } else if (result.action === Share.dismissedAction) {
+  //       // dismissed
+  //     }
+  //   } catch (error) {
+  //     alert(error.message);
+  //   }
+  // }
 
   return (
     <View style={appStyles.mainView}>
@@ -194,7 +194,7 @@ export default function SinglePoseResults({route}) {
             appStyles.highlight,
             time < 5 && styles.disabledButton,
           ]}
-          onPress={handleShare}
+          // onPress={handleShare}
           disabled={time < 5 ? true : false}
         >
           <Text
