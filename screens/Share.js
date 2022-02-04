@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
-import Axios from 'axios';
 
 export default function Share({route}) {
   const imageUri = route.params?.imageUri;
