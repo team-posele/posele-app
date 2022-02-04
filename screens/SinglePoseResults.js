@@ -19,6 +19,7 @@ export default function SinglePoseResults({route}) {
 
   const imageUri = route.params?.image?.uri;
   // grab the imageUri if passed in, avoid errors if it isn't
+  console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
 
   const handleDone = () => {
     navigation.replace('MyTabs');
@@ -28,9 +29,11 @@ export default function SinglePoseResults({route}) {
   const [statusText, setStatusText] = useState('Please Wait...');
   const [time, setTime] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
+  let coinFlip;
 
-  let coinFlip = Math.round(Math.random()); //random win/lose for now
-  console.log(`imageUri: ${imageUri}`); // to check whether prop is being picked up
+  useEffect(() => {
+    coinFlip = Math.round(Math.random()); //random win/lose for now
+  }, []);
 
   useEffect(() => {
     // waits until image has loaded
@@ -43,8 +46,6 @@ export default function SinglePoseResults({route}) {
     }, 1000);
     setIntervalId(currIntervalId);
   }, []);
-
-  useEffect(() => {}, [time]);
 
   useEffect(() => {
     // time over
