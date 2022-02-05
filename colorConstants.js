@@ -19,6 +19,12 @@ export const appStyles = {
     alignItems: 'center',
     justifyContent: 'center',
   },
+  rowContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    // alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
   primaryButton: {
     backgroundColor: colors.primary,
     padding: 10,
@@ -62,10 +68,10 @@ export const appStyles = {
     padding: 5,
   },
   screenTitleContainer: {
-    flex: 1,
+    flex: 0.2,
     marginTop: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   heading1: {
     textAlign: 'center',
