@@ -14,16 +14,19 @@ import {
   Modal,
   FlatList,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
+import {Picker} from 'react-native';
 
 export default function Share({route}) {
   const navigation = useNavigation();
   const imageUri = route.params?.imageUri;
   // console.log(imageUri);
   // grab the imageUri if passed in, avoid errors if it isn't
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   // set state for tweet content (text)
   const [tweetContent, setTweetContent] = useState(
@@ -33,9 +36,21 @@ export default function Share({route}) {
   // set state for switch to include photo or not
   const [includePhotoSwitch, toggleIncludePhotoSwitch] = useState(true);
 
+  // state for SNS picker
+  const [selectedService, setSelectedService] = useState('twitter');
+  const pickerRef = useRef();
+
+  function open() {
+    pickerRef.current.focus();
+  }
+
+  function close() {
+    pickerRef.current.blur();
+  }
+
   let url;
   const tweet = useCallback(async () => {
-    url = `https://twitter.com/share?ref_src=twsrc%5Etfw&text=I matched today's posele! Give it a try on your phone at www.posele.com!&url=www.posele.com`;
+    url = `https://twitter.com/share?ref_src=twsrc%5Etfw&text=${tweetContent}&url=www.posele.com`;
     // Checking if the link is supported for links with custom URL scheme.
     console.log(`hey what up, you tweetin: ${tweetContent}`);
     const supported = await Linking.canOpenURL(url);
@@ -47,16 +62,38 @@ export default function Share({route}) {
     } else {
       Alert.alert(`Don't know how to open this URL: ${url}`);
     }
-  }, [url]);
+  }, [tweetContent]);
+
+  useEffect(() => {
+    console.log(tweetContent);
+  }, [tweetContent]);
+
+  function refreshText() {
+    setTweetContent(
+      `I matched today's posele! Think you can, too? Check out the posele app now to find out! #posele`
+    );
+  }
 
   return (
-    <View style={appStyles.mainView}>
+    <KeyboardAvoidingView
+      style={appStyles.mainView}
+      // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      // this seemed to work for Login, but is causing issues now
+    >
       <View style={appStyles.screenTitleContainer}>
         <Text style={appStyles.heading1}>Share Your Pose!</Text>
       </View>
       <View style={[appStyles.container]}>
-        {/* <SNSPicker /> */}
-        <Text>SNS Picker Goes here</Text>
+        <Picker
+          ref={pickerRef}
+          // selectedValue={selectedService}
+          onValueChange={(itemValue, itemIndex) => setSelectedService(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Twitter" value="twitter" />
+          <Picker.Item label="Instagram" value="instagram" enabled={false} />
+          <Picker.Item label="facebook" value="facebook" enabled={false} />
+        </Picker>
       </View>
       <View style={styles.postWrapper}>
         <View style={appStyles.container}>
@@ -70,7 +107,13 @@ export default function Share({route}) {
               },
             ]}
           >
-            <Icon style={styles.icon} name={'autorenew'} size={26} color={'gray'} />
+            <Icon
+              style={styles.icon}
+              name={'autorenew'}
+              size={26}
+              color={'gray'}
+              onPress={refreshText}
+            />
             <Text style={appStyles.heading2}>Compose your Tweet:</Text>
           </View>
           <View style={[appStyles.container, styles.composeBox]}>
@@ -131,7 +174,7 @@ export default function Share({route}) {
           <Text style={appStyles.secondaryButtonText}>Posele home</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -143,6 +186,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontFamily: Platform.OS === 'ios' ? 'arial' : 'monospace',
   },
+  // picker: {
+  //   width: '50%',
+  // },
   primaryButton: {justifyContent: 'center'},
   secondaryButton: {
     justifyContent: 'center',
@@ -187,27 +233,27 @@ const styles = StyleSheet.create({
   },
 });
 
-function SNSPicker(props) {
-  return (
-    <Modal style={styles.pickerModal}>
-      <FlatList
-        data={[
-          {key: 1, title: 'twitter'},
-          {key: 2, title: 'instagram'},
-        ]}
-        renderItem={({item}) => {
-          return (
-            <Text
-            // item={item}
-            // onPress={() => setSelectedId(item.id)}
-            // backgroundColor={`#ffff${item.key * 3}${item.key * 3}`}
-            // textColor={{color}}
-            >
-              hey what up
-            </Text>
-          );
-        }}
-      />
-    </Modal>
-  );
-}
+// function SNSPicker(props) {
+//   return (
+//     <Modal style={styles.pickerModal} visible={props.pickerOpen}>
+//       <FlatList
+//         data={[
+//           {key: 1, title: 'twitter'},
+//           {key: 2, title: 'instagram'},
+//         ]}
+//         renderItem={({item}) => {
+//           return (
+//             <Text
+//             // item={item}
+//             // onPress={() => setSelectedId(item.id)}
+//             // backgroundColor={`#ffff${item.key * 3}${item.key * 3}`}
+//             // textColor={{color}}
+//             >
+//               hey what up
+//             </Text>
+//           );
+//         }}
+//       />
+//     </Modal>
+//   );
+// }

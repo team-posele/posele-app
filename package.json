@@ -11,6 +11,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-picker/picker": "^2.2.1",
     "@react-navigation/bottom-tabs": "^6.1.0",
     "@react-navigation/native": "^6.0.7",
     "@react-navigation/native-stack": "^6.3.0",
