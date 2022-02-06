@@ -8,23 +8,25 @@ import {
   ImageBackground,
   TouchableOpacity,
   ActivityIndicator,
-  Share,
 } from 'react-native';
-import {NavigationHelpersContext, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 import * as tmPose from '@teachablemachine/pose';
-import {convertBase64ToTensor, getModel, startPrediction} from '../src/helpers/tensor-helper';
-// import {cropPicture} from '../src/helpers/image-helper';
-import * as ImageManipulator from 'expo-image-manipulator';
+import {convertImageToTensor} from './helpers/tensor-helper';
+import {cropImageToPose} from './helpers/crop-helper';
+
+// model URL for letterP pose
+const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/';
+const modelURL = URL + 'model.json';
+const metadataURL = URL + 'metadata.json';
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
-  const imageUri = route.params?.image?.uri;
-  const imageData = route.params?.image;
+  const image = route.params?.image;
 
   // "back home" button handler
   const handleDone = () => {
@@ -34,36 +36,25 @@ export default function SinglePoseResults({route}) {
   const [statusText, setStatusText] = useState('Please Wait...');
   const [time, setTime] = useState(0);
   const [presentedPose, setPresentedPose] = useState('');
-  const [croppedImage, setCroppedImage] = useState();
-
-  const cropPicture = async imageData => {
-    try {
-      const {uri} = imageData;
-      const saveOptions = {
-        base64: true,
-      };
-      return await ImageManipulator.manipulateAsync(uri, [], saveOptions);
-    } catch (error) {
-      console.log('Could not crop & resize photo', error);
-    }
-  };
+  const [isModelReady, setIsModelReady] = useState(false);
+  const [hasPose, setHasPose] = useState(false);
+  const [hasPrediction, setHasPrediction] = useState(false);
+  const [poseImage, setPoseImage] = useState();
 
   async function init() {
-    await tf.ready();
-    // const croppedData = await cropPicture(imageData, 300);
-    // const croppedData = await cropPicture(imageData);
-    // setCroppedImage(croppedData);
-    // const newData = croppedData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
-    const newData = imageData.base64.replace(/^data:image\/(png|jpeg);base64,/, '');
-
-    const tensor = await convertBase64ToTensor(newData);
-    const model = await getModel();
-    const {pose, posenetOutput} = await model.estimatePose(tensor);
-    console.log('🧑🏻‍💻 pose', pose);
-    console.log('🧑🏻‍💻 pose', posenetOutput);
-
+    await tf.ready(); // wait until TensorFlow is ready
+    const tensor = convertImageToTensor(image);
+    const model = await tmPose.load(modelURL, metadataURL);
+    setIsModelReady(true);
+    const {pose} = await model.estimatePose(tensor);
+    const cropImage = await cropImageToPose(image, pose);
+    setPoseImage(cropImage);
+    const cropTensor = convertImageToTensor(cropImage);
+    const {posenetOutput} = await model.estimatePose(cropTensor);
+    setHasPose(true);
     const prediction = await model.predict(posenetOutput);
-    let predictedPose = prediction.filter(pose => {
+    setHasPrediction(true);
+    const predictedPose = prediction.filter(pose => {
       return pose.probability > 0.5;
     });
     setPresentedPose(predictedPose[0].className);
@@ -71,58 +62,18 @@ export default function SinglePoseResults({route}) {
   const timerRef = useRef(null); // intervalId reference
 
   useEffect(() => {
-    init();
-    // waits until image has loaded
     timerRef.current = setInterval(() => {
       // need to reference time as function parameter for proper update
       setTime(time => {
-        if (time < 5) return time + 1;
-        return 5;
+        return time + 1;
       });
     }, 1000);
+    init();
     // clears timer on unmount to prevent memory leak
     return () => {
       clearInterval(timerRef.current);
     };
   }, []);
-
-  // useEffect(() => {
-  //   if (time >= 4) {
-  //     setStatusText(
-  //       coinFlip
-  //         ? 'You matched the pose! Congratulations!'
-  //         : 'You did not match the pose. Try again tomorrow!'
-  //     );
-  //   }
-  //   // time over
-  //   if (time === 5) {
-  //     clearInterval(timerRef.current);
-  //     // stop updating timer once it reaches 5 seconds
-  //   }
-  // }, [time]);
-
-  // async function handleShare() {
-  //   try {
-  //     const result = await Share.share({
-  //       message: coinFlip
-  //         ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
-  //         : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
-  //       url: 'https://www.posele.com',
-  //       title: "I'm a poser!",
-  //     });
-  //     if (result.action === Share.sharedAction) {
-  //       if (result.activityType) {
-  //         // shared with activity type of result.activityType
-  //       } else {
-  //         // shared
-  //       }
-  //     } else if (result.action === Share.dismissedAction) {
-  //       // dismissed
-  //     }
-  //   } catch (error) {
-  //     alert(error.message);
-  //   }
-  // }
 
   return (
     <View style={appStyles.mainView}>
@@ -134,36 +85,35 @@ export default function SinglePoseResults({route}) {
           source={require('../assets/jordan-pose.jpg')}
         >
           <Image
-            style={[appStyles.image, {width: '100%'}]}
             fadeDuration={3000}
-            source={croppedImage ? {uri: croppedImage.uri} : require('../assets/photo.jpg')}
+            style={[appStyles.image, {width: '100%'}]}
+            source={poseImage ? {uri: poseImage.uri} : require('../assets/posele-logo.png')}
           ></Image>
         </ImageBackground>
       </View>
       <View style={styles.statusBox}>
-        <Text style={styles.statusText}>{statusText}</Text>
+        <Text style={styles.statusText}>{time}</Text>
         <Text style={styles.statusText}>{presentedPose}</Text>
         <View style={styles.statusContainer}>
           <View style={styles.statusItem}>
-            <Text style={styles.stepText}>Processing Image</Text>
-
-            {time < 1 ? (
+            <Text style={styles.stepText}>Loading Model</Text>
+            {!isModelReady ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
             )}
           </View>
           <View style={styles.statusItem}>
-            <Text style={styles.stepText}>Comparing to Source</Text>
-            {time < 2 ? (
+            <Text style={styles.stepText}>Detecting Pose</Text>
+            {!hasPose ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
             )}
           </View>
           <View style={styles.statusItem}>
-            <Text style={styles.stepText}>Rendering Verdict</Text>
-            {time < 4 ? (
+            <Text style={styles.stepText}>Predicting Match</Text>
+            {!hasPrediction ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
@@ -183,7 +133,7 @@ export default function SinglePoseResults({route}) {
             time < 5 && styles.disabledButton,
           ]}
           // onPress={handleShare}
-          disabled={time < 5 ? true : false}
+          disabled={hasPrediction ? true : false}
         >
           <Text
             style={[

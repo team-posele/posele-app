@@ -5,8 +5,7 @@ import {Camera} from 'expo-camera';
 import {manipulateAsync, FlipType} from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
 
-// const TIME_LIMIT = 5;
-const TIME_LIMIT = 1;
+const TIME_LIMIT = 5;
 const TIME_ZERO_ICON = '📸';
 
 export default () => {
@@ -64,7 +63,11 @@ export default () => {
       };
       const image = await cameraRef.current.takePictureAsync(options);
       // mirrors image horizontally
-      const actions = [{flip: FlipType.Horizontal}];
+      const actions = [
+        {
+          flip: FlipType.Horizontal,
+        },
+      ];
       const saveOptions = {
         base64: true,
       };
