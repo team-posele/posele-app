@@ -13,49 +13,77 @@ import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
 import {score} from '../firebase/firestore';
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-react-native';
+import * as tmPose from '@teachablemachine/pose';
+import {convertImageToTensor} from './helpers/tensor-helper';
+import {cropImageToPose} from './helpers/crop-helper';
+
+// model URL for letterP pose
+const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/';
+const modelURL = URL + 'model.json';
+const metadataURL = URL + 'metadata.json';
+
+// confidence score threshold for valid pose match
+const PREDICTION_THRESHOLD = 0.8;
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
-  const imageUri = route.params?.image?.uri;
-  // grab the imageUri if passed in, avoid errors if it isn't
+  const [time, setTime] = useState(0);
+  const [predictedPose, setPredictedPose] = useState('detecting...');
+  const [isModelReady, setIsModelReady] = useState(false);
+  const [hasPose, setHasPose] = useState(false);
+  const [hasPrediction, setHasPrediction] = useState(false);
+  const [poseImage, setPoseImage] = useState();
 
+  const image = route.params?.image;
+
+  // "back home" button handler
   const handleDone = () => {
     navigation.replace('MyTabs');
   };
-  // "back home" button handler
 
-  const [statusText, setStatusText] = useState('Please Wait...');
-  const [time, setTime] = useState(0);
+  async function init() {
+    await tf.ready(); // wait until TensorFlow is ready
+    const tensor = convertImageToTensor(image);
+    const model = await tmPose.load(modelURL, metadataURL);
+    setIsModelReady(true);
+    const {pose} = await model.estimatePose(tensor);
+    const cropImage = await cropImageToPose(image, pose);
+    setPoseImage(cropImage);
+    const cropTensor = convertImageToTensor(cropImage);
+    const {posenetOutput} = await model.estimatePose(cropTensor);
+    setHasPose(true);
+    const prediction = await model.predict(posenetOutput);
+    setHasPrediction(true);
+    console.log('🧑🏻‍💻 prediction', prediction);
+    const {className, probability} = prediction.reduce((prevPred, currPred) => {
+      if (currPred.probability > prevPred.probability) return currPred;
+      return prevPred;
+    });
+    if (className !== 'idle' && probability > PREDICTION_THRESHOLD)
+      setPredictedPose(modelPose.className);
+    else setPredictedPose('No Match!');
+  }
   const timerRef = useRef(null); // intervalId reference
 
   useEffect(() => {
-    // waits until image has loaded
-
     timerRef.current = setInterval(() => {
       // need to reference time as function parameter for proper update
       setTime(time => {
-        if (time < 5) return time + 1;
-        return 5;
+        return time + 1;
       });
     }, 1000);
+    init();
     // clears timer on unmount to prevent memory leak
     return () => {
       clearInterval(timerRef.current);
     };
   }, []);
 
-  useEffect(() => {
-    // time over
-    if (time === 5) {
-      clearInterval(timerRef.current);
-      // stop updating timer once it reaches 5 seconds
-    }
-  }, [time]);
-
   return (
     <View style={appStyles.mainView}>
-      {/* <View style={(styles.container, {height: 100})}></View> */}
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <ImageBackground
@@ -64,35 +92,35 @@ export default function SinglePoseResults({route}) {
           source={require('../assets/jordan-pose.jpg')}
         >
           <Image
-            style={[appStyles.image, {width: '100%'}]}
             fadeDuration={3000}
-            source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
+            style={[appStyles.image, {width: '100%'}]}
+            source={poseImage ? {uri: poseImage.uri} : require('../assets/posele-logo.png')}
           ></Image>
         </ImageBackground>
       </View>
       <View style={styles.statusBox}>
-        <Text style={styles.statusText}>{statusText}</Text>
+        <Text style={styles.statusText}>{time}</Text>
+        <Text style={styles.statusText}>{predictedPose}</Text>
         <View style={styles.statusContainer}>
           <View style={styles.statusItem}>
-            <Text style={styles.stepText}>Processing Image</Text>
-
-            {time < 1 ? (
+            <Text style={styles.stepText}>Loading Model</Text>
+            {!isModelReady ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
             )}
           </View>
           <View style={styles.statusItem}>
-            <Text style={styles.stepText}>Comparing to Source</Text>
-            {time < 2 ? (
+            <Text style={styles.stepText}>Detecting Pose</Text>
+            {!hasPose ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
             )}
           </View>
           <View style={styles.statusItem}>
-            <Text style={styles.stepText}>Rendering Verdict</Text>
-            {time < 4 ? (
+            <Text style={styles.stepText}>Predicting Match</Text>
+            {!hasPrediction ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
@@ -105,10 +133,24 @@ export default function SinglePoseResults({route}) {
           <Text style={appStyles.secondaryButtonText}>Back Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[appStyles.primaryButton, styles.button, appStyles.highlight]}
-          onPress={handleDone}
+          style={[
+            appStyles.primaryButton,
+            styles.button,
+            appStyles.highlight,
+            time < 5 && styles.disabledButton,
+          ]}
+          // onPress={handleShare}
+          disabled={hasPrediction ? true : false}
         >
-          <Text style={[appStyles.primaryButtonText, styles.buttonText]}>Share</Text>
+          <Text
+            style={[
+              appStyles.primaryButtonText,
+              styles.buttonText,
+              time < 5 && styles.disabledButtonText,
+            ]}
+          >
+            Share
+          </Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
       </View>
@@ -166,5 +208,12 @@ const styles = StyleSheet.create({
   button: {
     width: '45%',
     justifyContent: 'space-evenly',
+  },
+  disabledButton: {
+    backgroundColor: 'gray',
+    borderWidth: 0,
+  },
+  disabledButtonText: {
+    color: 'darkgray',
   },
 });
