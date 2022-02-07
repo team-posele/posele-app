@@ -1,4 +1,3 @@
-// import {Dimensions} from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const DIMENSION = 256;

@@ -44,6 +44,7 @@ export default function SinglePoseResults({route}) {
   };
 
   async function init() {
+    await tf.setBackend('cpu');
     await tf.ready(); // wait until TensorFlow is ready
     const tensor = convertImageToTensor(image);
     const model = await tmPose.load(modelURL, metadataURL);
@@ -56,13 +57,11 @@ export default function SinglePoseResults({route}) {
     setHasPose(true);
     const prediction = await model.predict(posenetOutput);
     setHasPrediction(true);
-    console.log('🧑🏻‍💻 prediction', prediction);
     const {className, probability} = prediction.reduce((prevPred, currPred) => {
       if (currPred.probability > prevPred.probability) return currPred;
       return prevPred;
     });
-    if (className !== 'idle' && probability > PREDICTION_THRESHOLD)
-      setPredictedPose(modelPose.className);
+    if (className !== 'idle' && probability > PREDICTION_THRESHOLD) setPredictedPose(className);
     else setPredictedPose('No Match!');
   }
   const timerRef = useRef(null); // intervalId reference
