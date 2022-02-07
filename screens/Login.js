@@ -14,6 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 
 import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
+import {updateUser} from '../firebase/firestore';
 
 const Login = () => {
   const navigate = useNavigation();
@@ -37,6 +38,7 @@ const Login = () => {
       .then(userCredentials => {
         const user = userCredentials.user;
         console.log(`Signing up with user email: ${user.email}`);
+        updateUser(auth.currentUser.email);
       })
       .catch(error => {
         console.log(`error! ${error}`);

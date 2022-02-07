@@ -17,10 +17,10 @@ export const getUser = async () => {
   }
 };
 
-export const updateUser = async () => {
+export const updateUser = async email => {
   try {
     db.collection('users')
-      .doc(auth.currentUser.email)
+      .doc(email)
       .set({
         name: 'Smit Patel',
         score: 3,
