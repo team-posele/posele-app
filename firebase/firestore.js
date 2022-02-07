@@ -29,3 +29,15 @@ export const updateUser = async email => {
     console.log('error occured while updating user. ', error);
   }
 };
+
+export const getAllUsers = async () => {
+  try {
+    const usersRef = db.collection('users');
+    const snapshot = await usersRef.get();
+    snapshot.forEach(user => {
+      console.log('users : ', user.data());
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
