@@ -15,11 +15,11 @@ import {
   FlatList,
   Platform,
   KeyboardAvoidingView,
+  Picker,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
-import {Picker} from 'react-native';
 
 export default function Share({route}) {
   const navigation = useNavigation();
@@ -78,7 +78,7 @@ export default function Share({route}) {
     <KeyboardAvoidingView
       style={appStyles.mainView}
       // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      // this seemed to work for Login, but is causing issues now
+      // this seemed to work for Login, but is causing issues here
     >
       <View style={appStyles.screenTitleContainer}>
         <Text style={appStyles.heading1}>Share Your Pose!</Text>
@@ -86,79 +86,20 @@ export default function Share({route}) {
       <View style={[appStyles.container]}>
         <Picker
           ref={pickerRef}
-          // selectedValue={selectedService}
+          selectedValue={selectedService}
           onValueChange={(itemValue, itemIndex) => setSelectedService(itemValue)}
+          mode={'dropdown'}
           style={styles.picker}
+          enabled
+          // prompt={'pick a platform'}
         >
-          <Picker.Item label="Twitter" value="twitter" />
-          <Picker.Item label="Instagram" value="instagram" enabled={false} />
-          <Picker.Item label="facebook" value="facebook" enabled={false} />
+          <Picker.Item styles={styles.pickerItem} label="Twitter" value="twitter" />
+          <Picker.Item styles={styles.pickerItem} label="Instagram" value="instagram" />
+          <Picker.Item styles={styles.pickerItem} label="Facebook" value="facebook" />
         </Picker>
       </View>
-      <View style={styles.postWrapper}>
-        <View style={appStyles.container}>
-          <View
-            style={[
-              appStyles.rowContainer,
-              {
-                flex: 0.2,
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-              },
-            ]}
-          >
-            <Icon
-              style={styles.icon}
-              name={'autorenew'}
-              size={26}
-              color={'gray'}
-              onPress={refreshText}
-            />
-            <Text style={appStyles.heading2}>Compose your Tweet:</Text>
-          </View>
-          <View style={[appStyles.container, styles.composeBox]}>
-            <TextInput
-              editable
-              multiline
-              numberOfLines={5}
-              maxLength={250}
-              value={tweetContent}
-              onChangeText={text => setTweetContent(text)}
-              style={[appStyles.textInputBox, styles.tweetContent]}
-            ></TextInput>
-          </View>
-        </View>
-        <View style={styles.photoIncludeBox}>
-          <View style={appStyles.container}>
-            <Image
-              style={[appStyles.image, {opacity: includePhotoSwitch ? 100 : 0}, styles.thumbnail]}
-              source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
-            />
-          </View>
-          <View style={appStyles.container}>
-            <View style={appStyles.container}>
-              <Switch
-                trackColor={{false: '#767577', true: colors.input}}
-                thumbColor={includePhotoSwitch ? colors.primary : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => toggleIncludePhotoSwitch(!includePhotoSwitch)}
-                value={includePhotoSwitch}
-                // style={{flex: 1}}
-              />
-              <Text style={appStyles.text}>include photo</Text>
-            </View>
-            <View style={appStyles.container}>
-              <TouchableOpacity
-                style={[appStyles.primaryButton, styles.primaryButton]}
-                onPress={tweet}
-              >
-                <Text style={appStyles.primaryButtonText}>Tweet This</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </View>
-      <View style={appStyles.container}>
+      <PostEditor />
+      <View style={[appStyles.rowContainer, styles.buttonContainer]}>
         <TouchableOpacity
           style={[appStyles.secondaryButton, styles.secondaryButton]}
           onPress={() => {
@@ -176,6 +117,157 @@ export default function Share({route}) {
       </View>
     </KeyboardAvoidingView>
   );
+
+  // POST EDITOR SUBCOMPONENT:
+  function PostEditor() {
+    return (
+      // IF selected Service is Twitter:
+      selectedService === 'twitter' ? (
+        <View style={styles.postWrapper}>
+          <View style={appStyles.container}>
+            <View
+              style={[
+                appStyles.rowContainer,
+                {
+                  flex: 0.2,
+                  justifyContent: 'flex-end',
+                  alignItems: 'flex-end',
+                },
+              ]}
+            >
+              <Icon
+                style={styles.icon}
+                name={'autorenew'}
+                size={26}
+                color={'gray'}
+                onPress={refreshText}
+              />
+              <Text style={appStyles.heading2}>Compose your Tweet:</Text>
+            </View>
+            <View style={[appStyles.container, styles.composeBox]}>
+              <TextInput
+                editable
+                multiline
+                numberOfLines={5}
+                maxLength={250}
+                value={tweetContent}
+                onChangeText={text => setTweetContent(text)}
+                style={[appStyles.textInputBox, styles.tweetContent]}
+              ></TextInput>
+            </View>
+          </View>
+          <View style={styles.photoIncludeBox}>
+            <View style={appStyles.container}>
+              <Image
+                style={[appStyles.image, {opacity: includePhotoSwitch ? 100 : 0}, styles.thumbnail]}
+                source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
+              />
+            </View>
+            <View style={appStyles.container}>
+              <View style={appStyles.container}>
+                <Switch
+                  trackColor={{false: '#767577', true: colors.input}}
+                  thumbColor={includePhotoSwitch ? colors.primary : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={() => toggleIncludePhotoSwitch(!includePhotoSwitch)}
+                  value={includePhotoSwitch}
+                />
+                <Text style={appStyles.text}>include photo</Text>
+              </View>
+              <View style={appStyles.container}>
+                <TouchableOpacity
+                  style={[appStyles.primaryButton, styles.primaryButton]}
+                  onPress={tweet}
+                >
+                  <Text style={appStyles.primaryButtonText}>Tweet This</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      ) : // IF selected Service is instagram:
+      selectedService === 'instagram' ? (
+        ((colors.snsPrimary = 'red'),
+        (colors.snsSecondary = 'orange'),
+        (
+          <View style={[styles.postWrapper, {borderColor: colors.snsPrimary}]}>
+            <View style={appStyles.container}>
+              <View
+                style={[
+                  appStyles.rowContainer,
+                  {
+                    flex: 0.2,
+                    justifyContent: 'flex-end',
+                    alignItems: 'flex-end',
+                  },
+                ]}
+              >
+                <Icon
+                  style={styles.icon}
+                  name={'autorenew'}
+                  size={26}
+                  color={'gray'}
+                  onPress={refreshText}
+                />
+                <Text style={appStyles.heading2}>Compose your IG Post:</Text>
+              </View>
+              <View style={[appStyles.container, styles.composeBox]}>
+                <TextInput
+                  editable
+                  multiline
+                  numberOfLines={5}
+                  maxLength={250}
+                  value={tweetContent}
+                  onChangeText={text => setTweetContent(text)}
+                  style={[
+                    appStyles.textInputBox,
+                    styles.tweetContent,
+                    {backgroundColor: '#dddd0033'},
+                  ]}
+                ></TextInput>
+              </View>
+            </View>
+            <View style={styles.photoIncludeBox}>
+              <View style={appStyles.container}>
+                <Image
+                  style={[
+                    appStyles.image,
+                    {opacity: includePhotoSwitch ? 100 : 0},
+                    styles.thumbnail,
+                  ]}
+                  source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
+                />
+              </View>
+              <View style={appStyles.container}>
+                <View style={appStyles.container}>
+                  <Switch
+                    trackColor={{false: '#767577', true: colors.input}}
+                    thumbColor={includePhotoSwitch ? colors.primary : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => toggleIncludePhotoSwitch(!includePhotoSwitch)}
+                    value={includePhotoSwitch}
+                  />
+                  <Text style={appStyles.text}>include photo</Text>
+                </View>
+                <View style={appStyles.container}>
+                  <TouchableOpacity
+                    style={[appStyles.primaryButton, styles.primaryButton]}
+                    onPress={tweet}
+                  >
+                    <Text style={appStyles.primaryButtonText}>Post This</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        ))
+      ) : (
+        <View>
+          <Text>You picked the default option</Text>
+        </View>
+      )
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -186,14 +278,24 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontFamily: Platform.OS === 'ios' ? 'arial' : 'monospace',
   },
-  // picker: {
-  //   width: '50%',
-  // },
+  picker: {
+    width: 200,
+    height: 50,
+    borderColor: colors.primary,
+    borderWidth: 2,
+    backgroundColor: 'red',
+    flex: 1,
+  },
+  pickerItem: {
+    borderColor: colors.primary,
+    borderWidth: 2,
+    backgroundColor: 'red',
+  },
   primaryButton: {justifyContent: 'center'},
   secondaryButton: {
     justifyContent: 'center',
     marginVertical: 10,
-    width: '100%',
+    width: '30%',
   },
   photoIncludeBox: {
     flex: 1,
@@ -213,12 +315,11 @@ const styles = StyleSheet.create({
   icon: {
     marginHorizontal: 20,
   },
-  // buttonContainer: {
-  //   flex: 1,
-  //   marginVertical: 20,
-  //   alignItems: 'center',
-  //   justifyContent: 'space-evenly',
-  // },
+  buttonContainer: {
+    flex: 0.5,
+    marginVertical: 20,
+    padding: 30,
+  },
   thumbnail: {
     maxWidth: 150,
     maxHeight: 150,
