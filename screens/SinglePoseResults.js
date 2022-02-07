@@ -23,8 +23,18 @@ const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/';
 const modelURL = URL + 'model.json';
 const metadataURL = URL + 'metadata.json';
 
+// confidence score threshold for valid pose match
+const PREDICTION_THRESHOLD = 0.8;
+
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
+
+  const [time, setTime] = useState(0);
+  const [predictedPose, setPredictedPose] = useState('detecting...');
+  const [isModelReady, setIsModelReady] = useState(false);
+  const [hasPose, setHasPose] = useState(false);
+  const [hasPrediction, setHasPrediction] = useState(false);
+  const [poseImage, setPoseImage] = useState();
 
   const image = route.params?.image;
 
@@ -32,14 +42,6 @@ export default function SinglePoseResults({route}) {
   const handleDone = () => {
     navigation.replace('MyTabs');
   };
-
-  const [statusText, setStatusText] = useState('Please Wait...');
-  const [time, setTime] = useState(0);
-  const [presentedPose, setPresentedPose] = useState('');
-  const [isModelReady, setIsModelReady] = useState(false);
-  const [hasPose, setHasPose] = useState(false);
-  const [hasPrediction, setHasPrediction] = useState(false);
-  const [poseImage, setPoseImage] = useState();
 
   async function init() {
     await tf.ready(); // wait until TensorFlow is ready
@@ -54,10 +56,14 @@ export default function SinglePoseResults({route}) {
     setHasPose(true);
     const prediction = await model.predict(posenetOutput);
     setHasPrediction(true);
-    const predictedPose = prediction.filter(pose => {
-      return pose.probability > 0.5;
+    console.log('🧑🏻‍💻 prediction', prediction);
+    const {className, probability} = prediction.reduce((prevPred, currPred) => {
+      if (currPred.probability > prevPred.probability) return currPred;
+      return prevPred;
     });
-    setPresentedPose(predictedPose[0].className);
+    if (className !== 'idle' && probability > PREDICTION_THRESHOLD)
+      setPredictedPose(modelPose.className);
+    else setPredictedPose('No Match!');
   }
   const timerRef = useRef(null); // intervalId reference
 
@@ -93,7 +99,7 @@ export default function SinglePoseResults({route}) {
       </View>
       <View style={styles.statusBox}>
         <Text style={styles.statusText}>{time}</Text>
-        <Text style={styles.statusText}>{presentedPose}</Text>
+        <Text style={styles.statusText}>{predictedPose}</Text>
         <View style={styles.statusContainer}>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Loading Model</Text>

@@ -2,11 +2,12 @@
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const DIMENSION = 256;
+const MARGIN_PERCENTAGE = 15;
 
 export const cropImageToPose = async (imageData, pose) => {
   const width = imageData.width;
   const height = imageData.height;
-  const {minY, maxY} = pose.keypoints.reduce(
+  let {minY, maxY} = pose.keypoints.reduce(
     (minMax, keyPoint) => {
       const y = keyPoint.position.y;
       if (y < minMax.minY) minMax.minY = y;
@@ -15,6 +16,10 @@ export const cropImageToPose = async (imageData, pose) => {
     },
     {minY: height, maxY: 0}
   );
+  // add upper and lower padding
+  const heightMargin = height / MARGIN_PERCENTAGE;
+  if (minY - heightMargin > 0) minY -= heightMargin;
+  if (maxY + heightMargin < height) maxY += heightMargin;
 
   const actions = [
     {
