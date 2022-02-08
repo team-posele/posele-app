@@ -4,7 +4,7 @@ export let score = 0;
 
 export const getUser = async () => {
   try {
-    const users = db.collection('users').doc('hxTAarepPjgInAuZz5VD');
+    const users = db.collection('users').doc(auth.currentUser.email);
     const doc = await users.get();
     if (!doc.exists) {
       console.log('No such document!');
