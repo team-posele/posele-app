@@ -77,10 +77,13 @@ const HomeScreen = () => {
 const LeaderBoard = () => {
   return (
     <View>
+      <View style={appStyles.container}>
+        <Text style={appStyles.heading1}>Leaderboard</Text>
+      </View>
       {/* <Text>Leader Board!</Text> */}
       <View style={styles.LeaderBoardHeader}>
-        <Text>Username</Text>
-        <Text>Score</Text>
+        <Text style={[styles.nameItem, styles.header]}>Username</Text>
+        <Text style={[styles.scoreItem, styles.header]}>Score</Text>
       </View>
 
       <View>
@@ -88,8 +91,8 @@ const LeaderBoard = () => {
           data={users}
           renderItem={({item}) => (
             <View style={styles.LeaderBoardItems}>
-              <Text>{item.name}</Text>
-              <Text>{item.score}</Text>
+              <Text style={styles.nameItem}>{item.name}</Text>
+              <Text style={styles.scoreItem}>{item.score}</Text>
             </View>
           )}
           keyExtractor={item => item.id}
@@ -164,9 +167,23 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   LeaderBoardItems: {
-    // flex: 1,
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: 20,
+  },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  nameItem: {
+    marginLeft: '25%',
+    flex: 1,
+    textAlign: 'left',
+  },
+  scoreItem: {
+    marginRight: '10%',
+    textAlign: 'center',
+    flex: 0.2,
   },
 });
