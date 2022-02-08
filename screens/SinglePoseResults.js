@@ -66,7 +66,7 @@ export default function SinglePoseResults({route}) {
     // const cropTensor = convertImageToTensor(cropImage);
     // const {posenetOutput} = await model.estimatePose(cropTensor);
     const {posenetOutput} = await model.estimatePose(tensor);
-    console.log('🧑🏻‍💻 pose', pose);
+    // console.log('🧑🏻‍💻 pose', pose);
     setHasPose(true);
     const prediction = await model.predict(posenetOutput);
     console.log('🧑🏻‍💻 prediction', prediction);
