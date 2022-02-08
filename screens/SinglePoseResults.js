@@ -12,6 +12,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
+import {score} from '../firebase/firestore';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 import * as tmPose from '@teachablemachine/pose';

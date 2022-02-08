@@ -14,6 +14,7 @@ import {colors, appStyles} from '../colorConstants';
 
 export default function Warning() {
   const navigation = useNavigation();
+
   return (
     <KeyboardAvoidingView style={[appStyles.mainView]}>
       <View style={[appStyles.insetBox]}>
