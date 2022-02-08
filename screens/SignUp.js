@@ -18,7 +18,7 @@ import {updateUser} from '../firebase/firestore';
 
 LogBox.ignoreLogs(['AsyncStorage', 'Platform browser']); // hide unnecessary warnings
 
-const Login = () => {
+const SignUp = () => {
   const navigate = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,20 +57,33 @@ const Login = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={appStyles.screenTitleContainer}>
-        <Text style={appStyles.heading1}>Welcome to Posele!</Text>
-        <Text style={appStyles.heading2}>Please log in to your account to get posing.</Text>
+        <Text style={appStyles.heading1}>Create Account</Text>
+        <Text style={appStyles.heading2}>This will just take a moment.</Text>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={[appStyles.warningText, {width: '85%'}]}>{errorText}</Text>
+        <Text style={appStyles.warningText}>{errorText}</Text>
+        <Text style={[appStyles.text, styles.inputLabel]}>Enter a valid email address:</Text>
+
         <TextInput
           style={[appStyles.textInputBox, styles.input]}
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
         />
+        <Text style={[appStyles.text, styles.inputLabel]}>Create a password:</Text>
         <TextInput
           style={[appStyles.textInputBox, styles.input]}
           placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={text => setPassword(text)}
+        />
+        <Text style={[appStyles.text, styles.inputLabel]}>
+          Your username will be visible to others:
+        </Text>
+        <TextInput
+          style={[appStyles.textInputBox, styles.input]}
+          placeholder="Username"
           secureTextEntry
           value={password}
           onChangeText={text => setPassword(text)}
@@ -79,27 +92,24 @@ const Login = () => {
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
           onPress={handleLogin}
         >
-          <Text style={appStyles.primaryButtonText}>Login</Text>
+          <Text style={appStyles.primaryButtonText}>Create Account</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
-        <Text style={appStyles.text}>Don't have an account? Sign up for free!</Text>
-
         <TouchableOpacity
           style={[appStyles.secondaryButton, styles.secondaryButton]}
-          onPress={handleSignup}
+          onPress={() => {
+            navigate.replace('Login');
+          }}
         >
-          <Text style={appStyles.secondaryButtonText}>Sign Up</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[appStyles.secondaryButton, styles.secondaryButton]}>
-          <Text style={appStyles.secondaryButtonText}>Play as Guest (coming soon)</Text>
+          <Text style={appStyles.secondaryButtonText}>Back to Login</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 };
 
-export default Login;
+export default SignUp;
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -108,11 +118,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: '85%',
   },
+  inputLabel: {
+    color: colors.primary,
+    textAlign: 'left',
+    alignSelf: 'flex-start',
+    marginTop: 10,
+  },
   buttonContainer: {
     width: '100%',
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     marginBottom: Platform.OS === 'ios' ? 30 : 15,
   },
   primaryButton: {
@@ -127,12 +143,12 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     flex: 1,
-    width: '100%',
+    width: '85%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   input: {
-    width: '85%',
+    width: '100%',
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginVertical: 10,
