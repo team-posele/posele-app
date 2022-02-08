@@ -46,13 +46,13 @@ export default function SinglePoseResults({route}) {
   };
 
   async function init() {
-    if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      try {
-        await tf.setBackend('rn-webgl');
-      } catch (error) {
-        console.log('🧑🏻‍💻 ');
-      }
-    }
+    // if (Platform.OS === 'ios' || Platform.OS === 'android') {
+    //   try {
+    //     await tf.setBackend('rn-webgl');
+    //   } catch (error) {
+    //     console.log('🧑🏻‍💻 ');
+    //   }
+    // }
 
     // try {
     //   // check if device supports webgl backend, otherwise use cpu backend instead
@@ -60,6 +60,8 @@ export default function SinglePoseResults({route}) {
     //   console.log('🧑🏻‍💻 error', error);
     //   await tf.setBackend('cpu');
     // }
+
+    // await tf.setBackend('cpu'); // UNCOMMENT FOR ANDROID
     await tf.ready(); // wait until TensorFlow is ready
     console.log('🧑🏻‍💻 backend', await tf.getBackend());
     const model = await tmPose.load(modelURL, metadataURL);
@@ -73,7 +75,9 @@ export default function SinglePoseResults({route}) {
     // const cropImage = await cropImageToPose(image, pose);
     // const cropTensor = convertImageToTensor(cropImage);
     // const {posenetOutput} = await model.estimatePose(cropTensor);
-    const {posenetOutput} = await model.estimatePose(tensor);
+    const {pose, posenetOutput} = await model.estimatePose(tensor);
+    console.log('🧑🏻‍💻 pose', pose);
+    console.log('🧑🏻‍💻 posenetOutput', posenetOutput);
     setHasPose(true);
     const prediction = await model.predict(posenetOutput);
     console.log('🧑🏻‍💻 prediction', prediction);
