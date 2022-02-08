@@ -8,13 +8,15 @@ import {
   ImageBackground,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
-import * as tf from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-react-native';
 import * as tmPose from '@teachablemachine/pose';
+
 import {convertImageToTensor} from './helpers/tensor-helper';
 import {cropImageToPose} from './helpers/crop-helper';
 
@@ -44,18 +46,30 @@ export default function SinglePoseResults({route}) {
   };
 
   async function init() {
-    await tf.setBackend('cpu');
+    try {
+      // check if device supports webgl backend, otherwise use cpu backend instead
+      await tf.setBackend('webgl');
+    } catch (error) {
+      console.log('🧑🏻‍💻 error', error);
+      await tf.setBackend('cpu');
+    }
     await tf.ready(); // wait until TensorFlow is ready
-    const tensor = convertImageToTensor(image);
     const model = await tmPose.load(modelURL, metadataURL);
     setIsModelReady(true);
-    const {pose} = await model.estimatePose(tensor);
-    const cropImage = await cropImageToPose(image, pose);
-    setPoseImage(cropImage);
-    const cropTensor = convertImageToTensor(cropImage);
-    const {posenetOutput} = await model.estimatePose(cropTensor);
+    const tensor = convertImageToTensor(image);
+    // const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
+    // const pose = (await detector.estimatePoses(tensor))[0]; // array of poses, but only holds 1 pose
+    // console.log('🧑🏻‍💻 pose', pose);
+    // // const {pose} = await model.estimatePose(tensor);
+    // const cropImage = await cropImageToPose(image, pose);
+    // setPoseImage(cropImage);
+    // const cropTensor = convertImageToTensor(cropImage);
+    // const {posenetOutput} = await model.estimatePose(cropTensor);
+    const {posenetOutput} = await model.estimatePose(tensor);
+    console.log('🧑🏻‍💻 pose', pose);
     setHasPose(true);
     const prediction = await model.predict(posenetOutput);
+    console.log('🧑🏻‍💻 prediction', prediction);
     setHasPrediction(true);
     const {className, probability} = prediction.reduce((prevPred, currPred) => {
       if (currPred.probability > prevPred.probability) return currPred;
@@ -64,6 +78,7 @@ export default function SinglePoseResults({route}) {
     if (className !== 'idle' && probability > PREDICTION_THRESHOLD) setPredictedPose(className);
     else setPredictedPose('No Match!');
   }
+
   const timerRef = useRef(null); // intervalId reference
 
   useEffect(() => {
