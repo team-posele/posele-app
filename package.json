@@ -33,8 +33,10 @@
     "react-native-elements": "^3.4.2",
     "react-native-fs": "^2.18.0",
     "react-native-ionicons": "^4.6.5",
+    "react-native-leaderboard": "^1.0.6",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
+    "react-native-unimodules": "^0.14.10",
     "react-native-web": "0.17.1"
   },
   "devDependencies": {

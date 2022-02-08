@@ -1,13 +1,29 @@
-import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Image, FlatList} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
-import {auth} from '../firebase';
+import {auth, db} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
 
 const Tab = createBottomTabNavigator();
+let users = [];
+
+// created function to add users to array
+const pushToArray = doc => {
+  users.push({...doc.data(), id: doc.id});
+  users.sort((a, b) => b.score - a.score);
+};
+
+// gets all the users from the database
+db.collection('users')
+  .get()
+  .then(snapshot => {
+    snapshot.docs.forEach(doc => {
+      pushToArray(doc);
+    });
+  });
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -60,8 +76,25 @@ const HomeScreen = () => {
 
 const LeaderBoard = () => {
   return (
-    <View style={styles.container}>
-      <Text>Leader Board!</Text>
+    <View>
+      {/* <Text>Leader Board!</Text> */}
+      <View style={styles.LeaderBoardHeader}>
+        <Text>Username</Text>
+        <Text>Score</Text>
+      </View>
+
+      <View>
+        <FlatList
+          data={users}
+          renderItem={({item}) => (
+            <View style={styles.LeaderBoardItems}>
+              <Text>{item.name}</Text>
+              <Text>{item.score}</Text>
+            </View>
+          )}
+          keyExtractor={item => item.id}
+        />
+      </View>
     </View>
   );
 };
@@ -123,5 +156,17 @@ const styles = StyleSheet.create({
   image: {
     width: '35%',
     height: '35%',
+  },
+  LeaderBoardHeader: {
+    // flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 10,
+  },
+  LeaderBoardItems: {
+    // flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 20,
   },
 });

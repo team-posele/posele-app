@@ -1,5 +1,7 @@
 import firebase from 'firebase/app';
+import 'firebase/firestore';
 require('firebase/auth');
+// Initialize firestore service on the front end
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -23,4 +25,10 @@ if (firebase.apps.length === 0) {
 }
 const auth = firebase.auth();
 
-export {auth};
+// Stored our database in db
+const db = firebase.firestore();
+console.log(db);
+
+// This gets everything stored inside the users collection from firebase
+
+export {auth, db};
