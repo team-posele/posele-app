@@ -16,7 +16,7 @@ import {auth} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
 import {updateUser} from '../firebase/firestore';
 
-LogBox.ignoreLogs(['AsyncStorage', 'Platform browser']); // hide unnecessary warnings
+LogBox.ignoreLogs(['AsyncStorage', 'Platform browser', 'Setting a timer']); // hide unnecessary warnings
 
 const Login = () => {
   const navigate = useNavigation();
