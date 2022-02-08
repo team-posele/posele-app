@@ -23,6 +23,7 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorText, setErrorText] = useState('');
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -41,9 +42,10 @@ const SignUp = () => {
       .then(userCredentials => {
         const user = userCredentials.user;
         console.log(`Signing up with user email: ${user.email}`);
-        updateUser(auth.currentUser.email);
+        updateUser(auth.currentUser.email, username);
       })
       .catch(error => {
+        setErrorText(`${error}`);
         console.log(`error! ${error}`);
       });
   };
@@ -51,14 +53,13 @@ const SignUp = () => {
   return (
     <KeyboardAvoidingView
       style={appStyles.mainView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={[appStyles.screenTitleContainer, {marginTop: 10}]}>
         <Text style={appStyles.heading1}>Create Account</Text>
         <Text style={appStyles.heading2}>This will just take a moment.</Text>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={appStyles.warningText}>{errorText}</Text>
         <Text style={[appStyles.text, styles.inputLabel]}>Enter a valid email address:</Text>
 
         <TextInput
@@ -81,12 +82,12 @@ const SignUp = () => {
         <TextInput
           style={[appStyles.textInputBox, styles.input]}
           placeholder="Username"
-          secureTextEntry
-          value={password}
-          onChangeText={text => setPassword(text)}
+          value={username}
+          onChangeText={text => setUsername(text)}
         />
       </View>
       <View style={[appStyles.container, {flexDirection: 'row'}]}>
+        <Text style={appStyles.warningText}>{errorText}</Text>
         <TouchableOpacity
           style={[appStyles.secondaryButton, styles.secondaryButton]}
           onPress={() => {

@@ -17,13 +17,13 @@ export const getUser = async () => {
   }
 };
 
-export const updateUser = async email => {
+export const updateUser = async (email, username) => {
   try {
     db.collection('users')
       .doc(email)
       .set({
-        name: 'Smit Patel',
-        score: 3,
+        username,
+        score: 0,
       });
   } catch (error) {
     console.log('error occured while updating user. ', error);
