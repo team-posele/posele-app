@@ -57,16 +57,15 @@ export default function SinglePoseResults({route}) {
     const model = await tmPose.load(modelURL, metadataURL);
     setIsModelReady(true);
     const tensor = convertImageToTensor(image);
+    setPoseImage(image);
     // const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
     // const pose = (await detector.estimatePoses(tensor))[0]; // array of poses, but only holds 1 pose
     // console.log('🧑🏻‍💻 pose', pose);
     // // const {pose} = await model.estimatePose(tensor);
     // const cropImage = await cropImageToPose(image, pose);
-    // setPoseImage(cropImage);
     // const cropTensor = convertImageToTensor(cropImage);
     // const {posenetOutput} = await model.estimatePose(cropTensor);
     const {posenetOutput} = await model.estimatePose(tensor);
-    // console.log('🧑🏻‍💻 pose', pose);
     setHasPose(true);
     const prediction = await model.predict(posenetOutput);
     console.log('🧑🏻‍💻 prediction', prediction);
