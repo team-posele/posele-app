@@ -34,19 +34,16 @@ const SignUp = () => {
     return unsubscribe;
   }, []);
 
-  const handleSignup = async () => {
-    navigate.replace('SignUp');
-  };
-
-  const handleLogin = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
+  const handleSignUp = async () => {
+    console.log(`Signup Initiated...`);
+    await auth
+      .createUserWithEmailAndPassword(email, password)
       .then(userCredentials => {
         const user = userCredentials.user;
-        console.log(`Logging in with user email: ${user.email}`);
+        console.log(`Signing up with user email: ${user.email}`);
+        updateUser(auth.currentUser.email);
       })
       .catch(error => {
-        setErrorText(`${error}`);
         console.log(`error! ${error}`);
       });
   };
@@ -56,7 +53,7 @@ const SignUp = () => {
       style={appStyles.mainView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={appStyles.screenTitleContainer}>
+      <View style={[appStyles.screenTitleContainer, {marginTop: 10}]}>
         <Text style={appStyles.heading1}>Create Account</Text>
         <Text style={appStyles.heading2}>This will just take a moment.</Text>
       </View>
@@ -88,21 +85,21 @@ const SignUp = () => {
           value={password}
           onChangeText={text => setPassword(text)}
         />
-        <TouchableOpacity
-          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
-          onPress={handleLogin}
-        >
-          <Text style={appStyles.primaryButtonText}>Create Account</Text>
-        </TouchableOpacity>
       </View>
-      <View style={styles.buttonContainer}>
+      <View style={[appStyles.container, {flexDirection: 'row'}]}>
         <TouchableOpacity
           style={[appStyles.secondaryButton, styles.secondaryButton]}
           onPress={() => {
             navigate.replace('Login');
           }}
         >
-          <Text style={appStyles.secondaryButtonText}>Back to Login</Text>
+          <Text style={appStyles.secondaryButtonText}>{`<< Back to Login`}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
+          onPress={handleSignUp}
+        >
+          <Text style={appStyles.primaryButtonText}>Create Account</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -112,12 +109,6 @@ const SignUp = () => {
 export default SignUp;
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    width: '85%',
-  },
   inputLabel: {
     color: colors.primary,
     textAlign: 'left',
@@ -126,17 +117,17 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
-    flex: 1,
+    flex: 0.5,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Platform.OS === 'ios' ? 30 : 15,
   },
   primaryButton: {
-    width: '85%',
+    width: '65%',
     marginTop: 20,
   },
   secondaryButton: {
-    width: '85%',
+    width: '20%',
     alignItems: 'center',
     marginTop: 20,
   },

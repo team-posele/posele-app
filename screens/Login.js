@@ -34,10 +34,6 @@ const Login = () => {
     return unsubscribe;
   }, []);
 
-  const handleSignup = async () => {
-    navigate.replace('SignUp');
-  };
-
   const handleLogin = () => {
     auth
       .signInWithEmailAndPassword(email, password)
@@ -87,7 +83,9 @@ const Login = () => {
 
         <TouchableOpacity
           style={[appStyles.secondaryButton, styles.secondaryButton]}
-          onPress={handleSignup}
+          onPress={() => {
+            navigate.replace('SignUp');
+          }}
         >
           <Text style={appStyles.secondaryButtonText}>Sign Up</Text>
         </TouchableOpacity>
