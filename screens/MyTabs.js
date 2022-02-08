@@ -1,16 +1,25 @@
 import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
 import {auth} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
+import * as firestore from 'firebase/firestore';
+import {getAllUsers, getUser, score} from '../firebase/firestore';
+import {render} from 'react-dom';
 
 const Tab = createBottomTabNavigator();
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+
+  useEffect(async () => {
+    await getUser();
+    console.log(score);
+    await getAllUsers();
+  }, []);
 
   function handlePlay() {
     navigation.replace('Warning');
