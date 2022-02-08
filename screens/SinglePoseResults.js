@@ -46,14 +46,22 @@ export default function SinglePoseResults({route}) {
   };
 
   async function init() {
-    try {
-      // check if device supports webgl backend, otherwise use cpu backend instead
-      await tf.setBackend('webgl');
-    } catch (error) {
-      console.log('🧑🏻‍💻 error', error);
-      await tf.setBackend('cpu');
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      try {
+        await tf.setBackend('rn-webgl');
+      } catch (error) {
+        console.log('🧑🏻‍💻 ');
+      }
     }
+
+    // try {
+    //   // check if device supports webgl backend, otherwise use cpu backend instead
+    // } catch (error) {
+    //   console.log('🧑🏻‍💻 error', error);
+    //   await tf.setBackend('cpu');
+    // }
     await tf.ready(); // wait until TensorFlow is ready
+    console.log('🧑🏻‍💻 backend', await tf.getBackend());
     const model = await tmPose.load(modelURL, metadataURL);
     setIsModelReady(true);
     const tensor = convertImageToTensor(image);
