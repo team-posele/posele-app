@@ -7,6 +7,7 @@ import * as MediaLibrary from 'expo-media-library';
 
 const TIME_LIMIT = 5;
 const TIME_ZERO_ICON = '📸';
+const DIMENSION = 256;
 
 export default () => {
   const navigation = useNavigation();
@@ -67,6 +68,11 @@ export default () => {
       const actions = [
         {
           flip: FlipType.Horizontal,
+        },
+        {
+          resize: {
+            width: DIMENSION,
+          },
         },
       ];
       const saveOptions = {
