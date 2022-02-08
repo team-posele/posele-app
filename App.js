@@ -1,3 +1,4 @@
+import {LogBox} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MyTabs from './screens/MyTabs';
@@ -8,6 +9,14 @@ import Warning from './screens/Warning';
 import SinglePoseResults from './screens/SinglePoseResults';
 import NoPose from './screens/NoPose';
 import Share from './screens/Share';
+
+LogBox.ignoreLogs([
+  'AsyncStorage has been extracted ',
+  'Platform browser has already been set',
+  'Setting a timer',
+  'Initialization of backend rn-webgl failed',
+  'Error: GL is currently not available',
+]); // hide unnecessary warnings
 
 const Stack = createNativeStackNavigator();
 

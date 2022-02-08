@@ -50,15 +50,22 @@ export default function SinglePoseResults({route}) {
   };
 
   async function init() {
-    // if (Platform.OS === 'ios' || Platform.OS === 'android') backend.current = 'rn-webgl';
-    // else backend.current = 'webgl';
-    // try {
-    //   await tf.setBackend(backend.current);
-    // } catch (error) {
-    //   console.log(`🧑🏻‍💻 '${backend.current}' backend not available! Using 'cpu' instead.`);
-    //   await tf.setBackend('cpu');
-    //   backend.current = 'cpu';
-    // }
+    if (Platform.OS === 'ios' || Platform.OS === 'android') backend.current = 'rn-webgl';
+    else backend.current = 'webgl';
+    let result = true;
+    try {
+      result = await tf.setBackend(backend.current);
+      console.log('🧑🏻‍💻 result', result);
+    } catch (error) {
+      console.log(`🧑🏻‍💻 '${backend.current}' backend not available! Using 'cpu' instead.`);
+      await tf.setBackend('cpu');
+      backend.current = 'cpu';
+    }
+    if (!result) {
+      console.log(`🧑🏻‍💻 '${backend.current}' backend not available! Using 'cpu' instead.`);
+      await tf.setBackend('cpu');
+      backend.current = 'cpu';
+    }
 
     console.log('🧑🏻‍💻 backend', await tf.getBackend());
     await tf.ready(); // wait until TensorFlow is ready
