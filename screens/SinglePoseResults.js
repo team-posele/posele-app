@@ -31,7 +31,8 @@ const PREDICTION_THRESHOLD = 0.8;
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
-  const [time, setTime] = useState(0);
+  const backend = useRef();
+
   const [predictedPose, setPredictedPose] = useState('detecting...');
   const [isModelReady, setIsModelReady] = useState(false);
   const [hasPose, setHasPose] = useState(false);
@@ -40,30 +41,27 @@ export default function SinglePoseResults({route}) {
 
   const image = route.params?.image;
 
-  // "back home" button handler
   const handleDone = () => {
     navigation.replace('MyTabs');
   };
 
+  const handleShare = () => {
+    navigation.replace('Share');
+  };
+
   async function init() {
-    // if (Platform.OS === 'ios' || Platform.OS === 'android') {
-    //   try {
-    //     await tf.setBackend('rn-webgl');
-    //   } catch (error) {
-    //     console.log('🧑🏻‍💻 ');
-    //   }
-    // }
-
+    // if (Platform.OS === 'ios' || Platform.OS === 'android') backend.current = 'rn-webgl';
+    // else backend.current = 'webgl';
     // try {
-    //   // check if device supports webgl backend, otherwise use cpu backend instead
+    //   await tf.setBackend(backend.current);
     // } catch (error) {
-    //   console.log('🧑🏻‍💻 error', error);
+    //   console.log(`🧑🏻‍💻 '${backend.current}' backend not available! Using 'cpu' instead.`);
     //   await tf.setBackend('cpu');
+    //   backend.current = 'cpu';
     // }
 
-    // await tf.setBackend('cpu'); // UNCOMMENT FOR ANDROID
-    await tf.ready(); // wait until TensorFlow is ready
     console.log('🧑🏻‍💻 backend', await tf.getBackend());
+    await tf.ready(); // wait until TensorFlow is ready
     const model = await tmPose.load(modelURL, metadataURL);
     setIsModelReady(true);
     const tensor = convertImageToTensor(image);
@@ -75,12 +73,9 @@ export default function SinglePoseResults({route}) {
     // const cropImage = await cropImageToPose(image, pose);
     // const cropTensor = convertImageToTensor(cropImage);
     // const {posenetOutput} = await model.estimatePose(cropTensor);
-    const {pose, posenetOutput} = await model.estimatePose(tensor);
-    console.log('🧑🏻‍💻 pose', pose);
-    console.log('🧑🏻‍💻 posenetOutput', posenetOutput);
+    const {posenetOutput} = await model.estimatePose(tensor);
     setHasPose(true);
     const prediction = await model.predict(posenetOutput);
-    console.log('🧑🏻‍💻 prediction', prediction);
     setHasPrediction(true);
     const {className, probability} = prediction.reduce((prevPred, currPred) => {
       if (currPred.probability > prevPred.probability) return currPred;
@@ -90,20 +85,8 @@ export default function SinglePoseResults({route}) {
     else setPredictedPose('No Match!');
   }
 
-  const timerRef = useRef(null); // intervalId reference
-
   useEffect(() => {
-    timerRef.current = setInterval(() => {
-      // need to reference time as function parameter for proper update
-      setTime(time => {
-        return time + 1;
-      });
-    }, 1000);
     init();
-    // clears timer on unmount to prevent memory leak
-    return () => {
-      clearInterval(timerRef.current);
-    };
   }, []);
 
   return (
@@ -123,7 +106,6 @@ export default function SinglePoseResults({route}) {
         </ImageBackground>
       </View>
       <View style={styles.statusBox}>
-        <Text style={styles.statusText}>{time}</Text>
         <Text style={styles.statusText}>{predictedPose}</Text>
         <View style={styles.statusContainer}>
           <View style={styles.statusItem}>
@@ -161,16 +143,16 @@ export default function SinglePoseResults({route}) {
             appStyles.primaryButton,
             styles.button,
             appStyles.highlight,
-            time < 5 && styles.disabledButton,
+            !hasPrediction && styles.disabledButton,
           ]}
-          // onPress={handleShare}
-          disabled={hasPrediction ? true : false}
+          onPress={handleShare}
+          disabled={!hasPrediction ? true : false}
         >
           <Text
             style={[
               appStyles.primaryButtonText,
               styles.buttonText,
-              time < 5 && styles.disabledButtonText,
+              !hasPrediction && styles.disabledButtonText,
             ]}
           >
             Share
