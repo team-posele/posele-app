@@ -22,6 +22,7 @@ const Login = () => {
   const navigate = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorText, setErrorText] = useState('');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -55,6 +56,7 @@ const Login = () => {
         console.log(`Logging in with user email: ${user.email}`);
       })
       .catch(error => {
+        setErrorText(`Error: ${error}`);
         console.log(`error! ${error}`);
       });
   };
@@ -64,11 +66,12 @@ const Login = () => {
       style={appStyles.mainView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.headerContainer}>
+      <View style={appStyles.screenTitleContainer}>
         <Text style={appStyles.heading1}>Welcome to Posele!</Text>
-        <Text style={appStyles.heading2}>Please log in or create an account to get posing.</Text>
+        <Text style={appStyles.heading2}>Please log in to your account to get posing.</Text>
       </View>
       <View style={styles.inputContainer}>
+        <Text style={appStyles.warningText}>{errorText}</Text>
         <TextInput
           style={[appStyles.textInputBox, styles.input]}
           placeholder="Email"
@@ -82,14 +85,16 @@ const Login = () => {
           value={password}
           onChangeText={text => setPassword(text)}
         />
-      </View>
-      <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
           onPress={handleLogin}
         >
           <Text style={appStyles.primaryButtonText}>Login</Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Text style={appStyles.text}>Don't have an account? Sign up for free!</Text>
+
         <TouchableOpacity
           style={[appStyles.secondaryButton, styles.secondaryButton]}
           onPress={handleSignup}
@@ -117,6 +122,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'flex-end',
     marginBottom: Platform.OS === 'ios' ? 30 : 15,
   },
   primaryButton: {
