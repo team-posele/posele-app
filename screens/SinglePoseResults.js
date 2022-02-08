@@ -17,9 +17,9 @@ import * as tmPose from '@teachablemachine/pose';
 
 import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
-import {score} from '../firebase/firestore';
+// import {score} from '../firebase/firestore';
 import {convertImageToTensor} from './helpers/tensor-helper';
-import {cropImageToPose} from './helpers/crop-helper';
+// import {cropImageToPose} from './helpers/crop-helper';
 
 // model URL for letterP pose
 const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/';
