@@ -32,6 +32,32 @@ export const updateUser = async (email, username) => {
   }
 };
 
+export const incrementUserScore = async matched => {
+  try {
+    // create user document reference
+    const userDocRef = db.collection('users').doc(auth.currentUser.email);
+
+    // get the user document drom the db and extract score, currentStreak, maxStreak
+    const userDoc = await userDocRef.get();
+    const userDocData = userDoc.data();
+    const {score, currentStreak, maxStreak} = userDocData;
+    console.log(`score: ${score}\ncurrentStreak: ${currentStreak}\nmaxStreak:${maxStreak}`);
+
+    if (matched) {
+      // if user matched the pose, increment score, currentStreak, and if it's greater than maxStreak, that too
+      const response = await userDocRef.update({
+        score: score + 1,
+        currentStreak: currentStreak + 1,
+      });
+    } else {
+      // if the user didn't match the pose, reset currentStreak to 0.
+      const response = await userDocRef.update({currentStreak: 0});
+    }
+  } catch (error) {
+    console.log(`error occured while updating user score: ${error}`);
+  }
+};
+
 export const getAllUsers = async () => {
   try {
     const usersRef = db.collection('users');

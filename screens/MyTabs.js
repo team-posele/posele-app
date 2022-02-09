@@ -14,7 +14,7 @@ import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
 import {auth, db} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
-import {getAllUsers, getUser, score} from '../firebase/firestore';
+import {getAllUsers, getUser, incrementUserScore, score} from '../firebase/firestore';
 
 const Tab = createBottomTabNavigator();
 let users = [];
@@ -87,6 +87,14 @@ const HomeScreen = () => {
         </Text>
       </View>
       <View style={styles.container}>
+        <TouchableOpacity
+          onPress={() => {
+            incrementUserScore(false);
+          }}
+          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
+        >
+          <Text style={appStyles.primaryButtonText}>Lose</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={handlePlay}
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}

@@ -20,6 +20,7 @@ import '@tensorflow/tfjs-react-native';
 import {convertImageToTensor} from './helpers/tensor-helper';
 import {cropImageToPose} from './helpers/crop-helper';
 import {colors, appStyles} from '../colorConstants';
+import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
 const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
@@ -31,7 +32,7 @@ const NON_MATCH_LABEL = 'idle';
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
-  const [predictedPose, setPredictedPose] = useState('detecting...');
+  const [predictedPose, setPredictedPose] = useState('detecting...'); // be sure to change the incrementUserScore useEffect if this default state changes
   const [isModelReady, setIsModelReady] = useState(false);
   const [hasPose, setHasPose] = useState(false);
   const [hasPrediction, setHasPrediction] = useState(false);
@@ -41,6 +42,14 @@ export default function SinglePoseResults({route}) {
     getPoseResults();
   }, []);
 
+  //useEffect to increment userScore once pose is detected
+  useEffect(() => {
+    if (hasPrediction) {
+      if (predictedPose === 'No Match!') incrementUserScore(false);
+      else incrementUserScore(true);
+    }
+  }, [hasPrediction]);
+
   const getPoseResults = async () => {
     await setupBackend();
     const model = await setupModel();
@@ -49,7 +58,7 @@ export default function SinglePoseResults({route}) {
     const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
     if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD)
       setPredictedPose(prediction);
-    else setPredictedPose('No Match!');
+    else setPredictedPose('No Match!'); // be sure to update the incrementUserScore useEffect if this text changes
   };
 
   const setupBackend = async () => {
