@@ -1,14 +1,12 @@
 import {StyleSheet, Text, TouchableOpacity, View, Image, FlatList} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
 import {auth, db} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
-// import * as firestore from 'firebase/firestore';
 import {getAllUsers, getUser, score} from '../firebase/firestore';
-// import {render} from 'react-dom';
 
 const Tab = createBottomTabNavigator();
 let users = [];
@@ -16,26 +14,10 @@ let users = [];
 // created function to add users to array
 const pushToArray = doc => {
   users.push({...doc.data(), id: doc.id});
-  users.sort((a, b) => b.score - a.score);
 };
-
-// gets all the users from the database
-db.collection('users')
-  .get()
-  .then(snapshot => {
-    snapshot.docs.forEach(doc => {
-      pushToArray(doc);
-    });
-  });
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-
-  // useEffect(async () => {
-  //   await getUser();
-  //   console.log(score);
-  //   await getAllUsers();
-  // }, []);
 
   function handlePlay() {
     navigation.replace('Warning');
@@ -96,22 +78,21 @@ const HomeScreen = () => {
 
 const LeaderBoard = () => {
   return (
-    <View>
-      <View style={appStyles.container}>
-        <Text style={appStyles.heading1}>Leaderboard</Text>
+    <View style={appStyles.mainView}>
+      <View style={[appStyles.screenTitleContainer, styles.title]}>
+        <Text style={appStyles.heading1}>Posele Leaderboard</Text>
       </View>
-      {/* <Text>Leader Board!</Text> */}
       <View style={styles.LeaderBoardHeader}>
         <Text style={[styles.nameItem, styles.header]}>Username</Text>
         <Text style={[styles.scoreItem, styles.header]}>Score</Text>
       </View>
 
-      <View>
+      <View style={styles.leaderboard}>
         <FlatList
           data={users}
           renderItem={({item}) => (
-            <View style={styles.LeaderBoardItems}>
-              <Text style={styles.nameItem}>{item.name}</Text>
+            <View style={styles.leaderBoardItems}>
+              <Text style={styles.nameItem}>{item.username}</Text>
               <Text style={styles.scoreItem}>{item.score}</Text>
             </View>
           )}
@@ -131,6 +112,19 @@ const Friends = () => {
 };
 
 const MyTabs = () => {
+  useEffect(async () => {
+    // gets all the users from the database
+    db.collection('users')
+      .orderBy('score', 'desc') // order by score
+      .limit(10) // limit to top 10 results
+      .get()
+      .then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          pushToArray(doc);
+        });
+      });
+  }, []);
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -168,6 +162,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  title: {
+    flex: 0.3,
+    justifyContent: 'flex-start',
+  },
   primaryButton: {
     width: '60%',
     marginTop: 20,
@@ -181,29 +179,37 @@ const styles = StyleSheet.create({
     height: '35%',
   },
   LeaderBoardHeader: {
-    // flex: 1,
+    flex: 0.2,
+    width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
     paddingTop: 10,
   },
-  LeaderBoardItems: {
+  leaderBoardItems: {
     flex: 1,
     flexDirection: 'row',
+    marginVertical: 10,
+  },
+  leaderboard: {
+    flex: 3,
     justifyContent: 'space-around',
     paddingTop: 20,
+    width: '100%',
   },
   header: {
     fontWeight: 'bold',
     fontSize: 20,
   },
   nameItem: {
-    marginLeft: '25%',
+    marginLeft: '20%',
     flex: 1,
     textAlign: 'left',
+    fontSize: 20,
   },
   scoreItem: {
     marginRight: '10%',
     textAlign: 'center',
-    flex: 0.2,
+    flex: 0.3,
+    fontSize: 20,
   },
 });
