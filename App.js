@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MyTabs from './screens/MyTabs';
 import DisplayPose from './screens/DisplayPose';
 import CapturePose from './screens/CapturePose';
-import Login from './screens/Login';
+import SignIn from './screens/Login';
 import Warning from './screens/Warning';
 import SinglePoseResults from './screens/SinglePoseResults';
 import NoPose from './screens/NoPose';
@@ -26,12 +26,12 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* <Stack.Screen
+        <Stack.Screen
           name="LandingScreen"
           options={{headerShown: false}}
           component={LandingScreen}
-        /> */}
-        <Stack.Screen name="Login" options={{headerShown: false}} component={Login} />
+        />
+        <Stack.Screen name="SignIn" options={{headerShown: false}} component={SignIn} />
         <Stack.Screen name="SignUp" options={{headerShown: false}} component={SignUp} />
         <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
         <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
