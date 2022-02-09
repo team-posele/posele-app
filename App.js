@@ -1,3 +1,4 @@
+import {LogBox} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MyTabs from './screens/MyTabs';
@@ -9,6 +10,15 @@ import SinglePoseResults from './screens/SinglePoseResults';
 import NoPose from './screens/NoPose';
 import Share from './screens/Share';
 import LandingScreen from './screens/LandingScreen';
+import SignUp from './screens/SignUp';
+
+LogBox.ignoreLogs([
+  'AsyncStorage has been extracted ',
+  'Platform browser has already been set',
+  'Setting a timer',
+  'Initialization of backend',
+  'Error: GL is currently',
+]); // hide unnecessary warnings
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +32,7 @@ export default function App() {
           component={LandingScreen}
         /> */}
         <Stack.Screen name="Login" options={{headerShown: false}} component={Login} />
+        <Stack.Screen name="SignUp" options={{headerShown: false}} component={SignUp} />
         <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
         <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
         <Stack.Screen name="DisplayPose" options={{headerShown: false}} component={DisplayPose} />
