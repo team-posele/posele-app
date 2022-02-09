@@ -21,7 +21,7 @@ let users = [];
 
 // created function to add users to array
 const pushToArray = doc => {
-  users.push({...doc.data(), id: doc.id});
+  if (users.length < 10) users.push({...doc.data(), id: doc.id});
 };
 
 const HomeScreen = () => {
