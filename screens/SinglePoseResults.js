@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  Share,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
@@ -19,6 +20,7 @@ import '@tensorflow/tfjs-react-native';
 import {convertImageToTensor} from './helpers/tensor-helper';
 import {cropImageToPose} from './helpers/crop-helper';
 import {colors, appStyles} from '../colorConstants';
+import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
 const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
@@ -46,9 +48,13 @@ export default function SinglePoseResults({route}) {
     const image = route.params?.image;
     const posenetOutput = await getPosenetOutput(model, image);
     const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-    if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD)
+    if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
       setPredictedPose(prediction);
-    else setPredictedPose('No Match!');
+      incrementUserScore(true);
+    } else {
+      setPredictedPose('No Match!');
+      incrementUserScore(false);
+    }
   };
 
   const setupBackend = async () => {
@@ -110,8 +116,28 @@ export default function SinglePoseResults({route}) {
     navigation.replace('MyTabs');
   };
 
-  const handleShare = () => {
-    navigation.replace('Share');
+  const handleShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          predictedPose === 'letterP'
+            ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
+            : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
+        url: 'https://www.posele.com',
+        title: "I'm a poser!",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (

@@ -1,14 +1,20 @@
-import {StyleSheet, Text, TouchableOpacity, View, Image, FlatList} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
 import {auth, db} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
-// import * as firestore from 'firebase/firestore';
-import {getAllUsers, getUser, score} from '../firebase/firestore';
-// import {render} from 'react-dom';
+import {getAllUsers, getUser, incrementUserScore, score} from '../firebase/firestore';
 
 const Tab = createBottomTabNavigator();
 let users = [];
@@ -16,26 +22,11 @@ let users = [];
 // created function to add users to array
 const pushToArray = doc => {
   users.push({...doc.data(), id: doc.id});
-  users.sort((a, b) => b.score - a.score);
 };
-
-// gets all the users from the database
-db.collection('users')
-  .get()
-  .then(snapshot => {
-    snapshot.docs.forEach(doc => {
-      pushToArray(doc);
-    });
-  });
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-
-  // useEffect(async () => {
-  //   await getUser();
-  //   console.log(score);
-  //   await getAllUsers();
-  // }, []);
+  const [currentUser, setCurrentUser] = useState({});
 
   function handlePlay() {
     navigation.replace('Warning');
@@ -53,30 +44,52 @@ const HomeScreen = () => {
       });
   };
 
-  const dbButton = () => {
-    console.log('you pressed the button');
-    getUser();
-  };
+  useEffect(async () => {
+    const currentUserDoc = await db
+      .collection('users')
+      .doc(auth.currentUser.email) // order by score
+      .get();
+    if (!currentUserDoc.exists) {
+      console.log(`get current user FAILED.`);
+    } else {
+      setCurrentUser(currentUserDoc.data());
+    }
+  }, []);
 
   return (
     <View style={appStyles.mainView}>
       <View style={styles.container}>
-        <Text style={appStyles.heading1}>Hello, {auth.currentUser.email}</Text>
+        <Text style={appStyles.heading1}>Hello, {currentUser ? currentUser.username : 'User'}</Text>
         <Text style={appStyles.heading2}>Welcome back to Posele!</Text>
       </View>
       <View style={[styles.container]}>
+        <Text style={appStyles.heading2}>
+          {currentUser ? (
+            `Posele Score: ${currentUser.score}`
+          ) : (
+            <ActivityIndicator size="small" color={colors.primary} />
+          )}
+        </Text>
         <Image
           source={require('../assets/posele-logo.png')}
           style={[appStyles.image, styles.image]}
         />
+        <Text style={appStyles.heading2}>
+          {currentUser ? (
+            `Current Daily Streak: ${currentUser.currentStreak}`
+          ) : (
+            <ActivityIndicator size="small" color={colors.primary} />
+          )}
+        </Text>
+        <Text style={appStyles.heading2}>
+          {currentUser ? (
+            `Best Streak: ${currentUser.maxStreak}`
+          ) : (
+            <ActivityIndicator size="small" color={colors.primary} />
+          )}
+        </Text>
       </View>
       <View style={styles.container}>
-        <TouchableOpacity
-          onPress={dbButton}
-          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
-        >
-          <Text style={appStyles.primaryButtonText}>database thing</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           onPress={handlePlay}
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
@@ -96,27 +109,30 @@ const HomeScreen = () => {
 
 const LeaderBoard = () => {
   return (
-    <View>
-      <View style={appStyles.container}>
-        <Text style={appStyles.heading1}>Leaderboard</Text>
+    <View style={appStyles.mainView}>
+      <View style={[appStyles.screenTitleContainer, styles.title]}>
+        <Text style={appStyles.heading1}>Posele Leaderboard</Text>
       </View>
-      {/* <Text>Leader Board!</Text> */}
       <View style={styles.LeaderBoardHeader}>
         <Text style={[styles.nameItem, styles.header]}>Username</Text>
         <Text style={[styles.scoreItem, styles.header]}>Score</Text>
       </View>
 
-      <View>
-        <FlatList
-          data={users}
-          renderItem={({item}) => (
-            <View style={styles.LeaderBoardItems}>
-              <Text style={styles.nameItem}>{item.name}</Text>
-              <Text style={styles.scoreItem}>{item.score}</Text>
-            </View>
-          )}
-          keyExtractor={item => item.id}
-        />
+      <View style={styles.leaderboard}>
+        {users[0] ? (
+          <FlatList
+            data={users}
+            renderItem={({item}) => (
+              <View style={styles.leaderBoardItems}>
+                <Text style={styles.nameItem}>{item.username}</Text>
+                <Text style={styles.scoreItem}>{item.score}</Text>
+              </View>
+            )}
+            keyExtractor={item => item.id}
+          />
+        ) : (
+          <ActivityIndicator size="large" style={styles.statusIcon} color={colors.primary} />
+        )}
       </View>
     </View>
   );
@@ -125,12 +141,25 @@ const LeaderBoard = () => {
 const Friends = () => {
   return (
     <View style={styles.container}>
-      <Text>Friends List!</Text>
+      <Text>This feature is coming soon!</Text>
     </View>
   );
 };
 
 const MyTabs = () => {
+  useEffect(async () => {
+    // gets all the users from the database
+    await db
+      .collection('users')
+      .orderBy('score', 'desc') // order by score
+      .limit(10) // limit to top 10 results
+      .get()
+      .then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          pushToArray(doc);
+        });
+      });
+  }, []);
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -168,6 +197,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  title: {
+    flex: 0.3,
+    justifyContent: 'flex-start',
+  },
   primaryButton: {
     width: '60%',
     marginTop: 20,
@@ -180,30 +213,39 @@ const styles = StyleSheet.create({
     width: '35%',
     height: '35%',
   },
+  statusIcon: {},
   LeaderBoardHeader: {
-    // flex: 1,
+    flex: 0.2,
+    width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
     paddingTop: 10,
   },
-  LeaderBoardItems: {
+  leaderBoardItems: {
     flex: 1,
     flexDirection: 'row',
+    marginVertical: 10,
+  },
+  leaderboard: {
+    flex: 3,
     justifyContent: 'space-around',
     paddingTop: 20,
+    width: '100%',
   },
   header: {
     fontWeight: 'bold',
     fontSize: 20,
   },
   nameItem: {
-    marginLeft: '25%',
+    marginLeft: '20%',
     flex: 1,
     textAlign: 'left',
+    fontSize: 20,
   },
   scoreItem: {
     marginRight: '10%',
     textAlign: 'center',
-    flex: 0.2,
+    flex: 0.3,
+    fontSize: 20,
   },
 });
