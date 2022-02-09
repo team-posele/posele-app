@@ -45,18 +45,14 @@ const HomeScreen = () => {
   };
 
   useEffect(async () => {
-    // console.log(auth.currentUser.email);
     const currentUserDoc = await db
       .collection('users')
       .doc(auth.currentUser.email) // order by score
-      // .limit(10) // limit to top 10 results
       .get();
     if (!currentUserDoc.exists) {
       console.log(`get current user FAILED.`);
     } else {
-      // console.log('currentUser data:', currentUserDoc.data());
       setCurrentUser(currentUserDoc.data());
-      // console.log(currentUser.username);
     }
   }, []);
 
