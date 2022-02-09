@@ -9,7 +9,7 @@ import {
   LogBox,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import firestore from '@react-native-firebase/firestore';
+// import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 
 import {auth} from '../firebase';
