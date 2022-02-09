@@ -37,7 +37,7 @@ const HomeScreen = () => {
       .signOut()
       .then(() => {
         console.log(`logged out!`);
-        navigation.replace('Login');
+        navigation.replace('LandingScreen');
       })
       .catch(error => {
         console.log(`error in handleLogout: ${error}`);

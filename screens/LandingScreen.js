@@ -1,9 +1,21 @@
+import {useEffect} from 'react';
+import {auth} from '../firebase';
+
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {appStyles} from '../colorConstants';
 
 const LandingScreen = () => {
   const navigate = useNavigation();
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        navigate.replace('MyTabs');
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <View style={styles.container}>
