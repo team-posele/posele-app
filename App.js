@@ -26,10 +26,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} />
-        <Stack.Screen name="Results" options={{headerShown: false}} component={SinglePoseResults} />
-        <Stack.Screen name="NoPose" options={{headerShown: false}} component={NoPose} />
-        <Stack.Screen name="Share" options={{headerShown: false}} component={Share} />
         <Stack.Screen
           name="LandingScreen"
           options={{headerShown: false}}
@@ -40,6 +36,10 @@ export default function App() {
         <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
         <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
         <Stack.Screen name="DisplayPose" options={{headerShown: false}} component={DisplayPose} />
+        <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} />
+        <Stack.Screen name="Results" options={{headerShown: false}} component={SinglePoseResults} />
+        <Stack.Screen name="NoPose" options={{headerShown: false}} component={NoPose} />
+        <Stack.Screen name="Share" options={{headerShown: false}} component={Share} />
       </Stack.Navigator>
     </NavigationContainer>
   );
