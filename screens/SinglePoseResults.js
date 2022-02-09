@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
   StyleSheet,
@@ -20,11 +20,11 @@ import '@tensorflow/tfjs-react-native';
 import {convertImageToTensor} from './helpers/tensor-helper';
 import {cropImageToPose} from './helpers/crop-helper';
 import {colors, appStyles} from '../colorConstants';
-import {storage} from '../firebase';
+// import {storage} from '../firebase';
 import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
-const CLOUD_STORAGE_MODEL_DIR = 'model-letterP-simple/';
+// const CLOUD_STORAGE_MODEL_DIR = 'model-letterP-simple/';
 const PREDICTION_THRESHOLD = 0.8;
 const NON_MATCH_LABEL = 'idle';
 
@@ -37,8 +37,8 @@ export default function SinglePoseResults({route}) {
   const [hasPrediction, setHasPrediction] = useState(false);
   const [poseImage, setPoseImage] = useState();
 
-  useEffect(() => {
-    getPoseResults();
+  useEffect(async () => {
+    await getPoseResults();
   }, []);
 
   const getPoseResults = async () => {
@@ -49,10 +49,10 @@ export default function SinglePoseResults({route}) {
     const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
     if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
       setPredictedPose(prediction);
-      incrementUserScore(true);
+      await incrementUserScore(true);
     } else {
       setPredictedPose('No Match!');
-      incrementUserScore(false);
+      await incrementUserScore(false);
     }
   };
 
@@ -101,7 +101,7 @@ export default function SinglePoseResults({route}) {
     return model;
   };
 
-  const getPosenetOutput = async (model, image, backend) => {
+  const getPosenetOutput = async (model, image) => {
     const imageTensor = convertImageToTensor(image);
     // running on webgl
     if (Platform.OS !== 'android') {
