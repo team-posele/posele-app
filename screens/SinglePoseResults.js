@@ -32,7 +32,7 @@ const NON_MATCH_LABEL = 'idle';
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
-  const [predictedPose, setPredictedPose] = useState('detecting...'); // be sure to change the incrementUserScore useEffect if this default state changes
+  const [predictedPose, setPredictedPose] = useState('detecting...');
   const [isModelReady, setIsModelReady] = useState(false);
   const [hasPose, setHasPose] = useState(false);
   const [hasPrediction, setHasPrediction] = useState(false);
