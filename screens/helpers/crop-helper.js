@@ -8,14 +8,14 @@ export const cropImageToPose = async (image, pose) => {
   const height = image.height;
   let {minY, maxY} = pose.keypoints.reduce(
     (minMax, keyPoint) => {
-      // const y = keyPoint.position.y;
-      const y = keyPoint.y; // for movenet
+      const y = keyPoint.position.y;
       if (y < minMax.minY && y > 0) minMax.minY = y;
       if (y > minMax.maxY && y < height) minMax.maxY = y;
       return minMax;
     },
     {minY: height, maxY: 0}
   );
+  console.log('🧑🏻‍💻 minY, maxY', minY, maxY);
   // add upper and lower padding
   const heightMargin = height / MARGIN_PERCENTAGE;
   if (minY - heightMargin > 0) minY -= heightMargin;

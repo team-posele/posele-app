@@ -20,18 +20,14 @@ import * as tmPose from '@teachablemachine/pose';
 import {convertImageToTensor} from './helpers/tensor-helper';
 import {cropImageToPose} from './helpers/crop-helper';
 
-// model URL for letterP pose
-const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/';
+const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
 const modelURL = URL + 'model.json';
 const metadataURL = URL + 'metadata.json';
-
-// confidence score threshold for valid pose match
 const PREDICTION_THRESHOLD = 0.8;
+const NON_MATCH_LABEL = 'idle';
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
-
-  const backend = useRef();
 
   const [predictedPose, setPredictedPose] = useState('detecting...');
   const [isModelReady, setIsModelReady] = useState(false);
@@ -39,7 +35,75 @@ export default function SinglePoseResults({route}) {
   const [hasPrediction, setHasPrediction] = useState(false);
   const [poseImage, setPoseImage] = useState();
 
-  const image = route.params?.image;
+  useEffect(() => {
+    getPoseResults();
+  }, []);
+
+  const getPoseResults = async () => {
+    const backend = await setupBackend();
+    const model = await setupModel();
+    const image = route.params?.image;
+    const posenetOutput = await getPosenetOutput(model, image, backend);
+    const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
+    if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD)
+      setPredictedPose(prediction);
+    else setPredictedPose('No Match!');
+  };
+
+  const setupBackend = async () => {
+    let backend = '';
+    // mobile backend
+    if (Platform.OS === 'ios' || Platform.OS === 'android') backend = 'rn-webgl';
+    // web backend
+    else backend = 'webgl';
+    const hasBackend = await tf.setBackend(backend);
+    // if no webgl backend, choose cpu backend
+    if (!hasBackend) {
+      console.log(`🧑🏻‍💻 '${backend}' not available! Using 'cpu' instead.`);
+      backend = 'cpu';
+      await tf.setBackend(backend);
+    }
+    return backend;
+  };
+
+  const setupModel = async () => {
+    // wait until TensorFlow is ready
+    await tf.ready();
+    const model = await tmPose.load(modelURL, metadataURL);
+    setIsModelReady(true);
+    return model;
+  };
+
+  const getPosenetOutput = async (model, image, backend) => {
+    const imageTensor = convertImageToTensor(image);
+    // running on webgl
+    if (backend !== 'cpu') {
+      const {pose} = await model.estimatePose(imageTensor);
+      const cropImage = await cropImageToPose(image, pose);
+      setPoseImage(cropImage);
+      const cropTensor = convertImageToTensor(cropImage);
+      const {posenetOutput} = await model.estimatePose(cropTensor);
+      setHasPose(true);
+      return posenetOutput;
+    }
+    // running on cpu
+    else {
+      setPoseImage(image);
+      const {posenetOutput} = await model.estimatePose(imageTensor);
+      setHasPose(true);
+      return posenetOutput;
+    }
+  };
+
+  const getHighestPredProb = async (model, posenetOutput) => {
+    const posePrediction = await model.predict(posenetOutput);
+    setHasPrediction(true);
+    const {className: prediction, probability} = posePrediction.reduce((prevPred, currPred) => {
+      if (currPred.probability > prevPred.probability) return currPred;
+      else return prevPred;
+    });
+    return {prediction, probability};
+  };
 
   const handleDone = () => {
     navigation.replace('MyTabs');
@@ -48,53 +112,6 @@ export default function SinglePoseResults({route}) {
   const handleShare = () => {
     navigation.replace('Share');
   };
-
-  async function init() {
-    if (Platform.OS === 'ios' || Platform.OS === 'android') backend.current = 'rn-webgl';
-    else backend.current = 'webgl';
-    let result = true;
-    try {
-      result = await tf.setBackend(backend.current);
-      console.log('🧑🏻‍💻 result', result);
-    } catch (error) {
-      console.log(`🧑🏻‍💻 '${backend.current}' backend not available! Using 'cpu' instead.`);
-      await tf.setBackend('cpu');
-      backend.current = 'cpu';
-    }
-    if (!result) {
-      console.log(`🧑🏻‍💻 '${backend.current}' backend not available! Using 'cpu' instead.`);
-      await tf.setBackend('cpu');
-      backend.current = 'cpu';
-    }
-
-    console.log('🧑🏻‍💻 backend', await tf.getBackend());
-    await tf.ready(); // wait until TensorFlow is ready
-    const model = await tmPose.load(modelURL, metadataURL);
-    setIsModelReady(true);
-    const tensor = convertImageToTensor(image);
-    setPoseImage(image);
-    // const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
-    // const pose = (await detector.estimatePoses(tensor))[0]; // array of poses, but only holds 1 pose
-    // console.log('🧑🏻‍💻 pose', pose);
-    // // const {pose} = await model.estimatePose(tensor);
-    // const cropImage = await cropImageToPose(image, pose);
-    // const cropTensor = convertImageToTensor(cropImage);
-    // const {posenetOutput} = await model.estimatePose(cropTensor);
-    const {posenetOutput} = await model.estimatePose(tensor);
-    setHasPose(true);
-    const prediction = await model.predict(posenetOutput);
-    setHasPrediction(true);
-    const {className, probability} = prediction.reduce((prevPred, currPred) => {
-      if (currPred.probability > prevPred.probability) return currPred;
-      return prevPred;
-    });
-    if (className !== 'idle' && probability > PREDICTION_THRESHOLD) setPredictedPose(className);
-    else setPredictedPose('No Match!');
-  }
-
-  useEffect(() => {
-    init();
-  }, []);
 
   return (
     <View style={appStyles.mainView}>
