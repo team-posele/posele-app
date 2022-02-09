@@ -12,7 +12,7 @@ export const appStyles = {
   // these styles should not set layout, e.g. do not set height here
   mainView: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -52,7 +52,7 @@ export const appStyles = {
   },
   insetBox: {
     flex: 1,
-    backgroundColor: colors.secondary,
+
     borderRadius: 5,
     paddingHorizontal: 5,
     marginVertical: 65,
