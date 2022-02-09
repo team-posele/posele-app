@@ -91,7 +91,7 @@ const SignUp = () => {
         <TouchableOpacity
           style={[appStyles.secondaryButton, styles.secondaryButton]}
           onPress={() => {
-            navigate.replace('Login');
+            navigate.replace('SignIn');
           }}
         >
           <Text style={appStyles.secondaryButtonText}>{`<< Back to Login`}</Text>
