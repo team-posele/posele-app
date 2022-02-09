@@ -17,8 +17,11 @@ import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 import * as tmPose from '@teachablemachine/pose';
 
+import {colors, appStyles} from '../colorConstants';
+import {Icon} from 'react-native-elements';
+// import {score} from '../firebase/firestore';
 import {convertImageToTensor} from './helpers/tensor-helper';
-import {cropImageToPose} from './helpers/crop-helper';
+// import {cropImageToPose} from './helpers/crop-helper';
 
 const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
 const modelURL = URL + 'model.json';

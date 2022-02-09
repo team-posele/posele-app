@@ -9,6 +9,7 @@ import Warning from './screens/Warning';
 import SinglePoseResults from './screens/SinglePoseResults';
 import NoPose from './screens/NoPose';
 import Share from './screens/Share';
+import SignUp from './screens/SignUp';
 
 LogBox.ignoreLogs([
   'AsyncStorage has been extracted ',
@@ -24,14 +25,15 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="Login" options={{headerShown: false}} component={Login} />
+        <Stack.Screen name="SignUp" options={{headerShown: false}} component={SignUp} />
+        <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
+        <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
+        <Stack.Screen name="DisplayPose" options={{headerShown: false}} component={DisplayPose} />
         <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} />
         <Stack.Screen name="Results" options={{headerShown: false}} component={SinglePoseResults} />
         <Stack.Screen name="NoPose" options={{headerShown: false}} component={NoPose} />
         <Stack.Screen name="Share" options={{headerShown: false}} component={Share} />
-        <Stack.Screen name="Login" options={{headerShown: false}} component={Login} />
-        <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
-        <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
-        <Stack.Screen name="DisplayPose" options={{headerShown: false}} component={DisplayPose} />
       </Stack.Navigator>
     </NavigationContainer>
   );

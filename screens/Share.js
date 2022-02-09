@@ -1,18 +1,18 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {StatusBar} from 'expo-status-bar';
+// import {StatusBar} from 'expo-status-bar';
 import {
   StyleSheet,
   Text,
   View,
   Image,
-  ImageBackground,
+  // ImageBackground,
   TouchableOpacity,
-  ActivityIndicator,
+  // ActivityIndicator,
   TextInput,
   Switch,
   Linking,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+// import {useNavigation} from '@react-navigation/native';
 import {colors, appStyles} from '../colorConstants';
 
 export default function Share({route}) {

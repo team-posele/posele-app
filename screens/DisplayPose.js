@@ -30,6 +30,7 @@ export default function Pose() {
 
   useEffect(() => {
     // time over
+
     if (time === TIME_ZERO_ICON) {
       (async () => {
         clearInterval(intervalId);
