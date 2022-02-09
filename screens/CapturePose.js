@@ -72,6 +72,7 @@ export default () => {
         {
           resize: {
             width: DIMENSION,
+            height: DIMENSION,
           },
         },
       ];
@@ -114,8 +115,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   camera: {
-    width: '100%',
-    height: '100%',
+    width: 360,
+    height: 360,
   },
   timer: {
     position: 'absolute',
