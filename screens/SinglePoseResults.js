@@ -178,7 +178,7 @@ export default function SinglePoseResults({route}) {
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Loading Model</Text>
             {!isModelReady ? (
-              <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
+              <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
             )}
@@ -186,7 +186,7 @@ export default function SinglePoseResults({route}) {
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Detecting Pose</Text>
             {!hasPose ? (
-              <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
+              <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
             )}
