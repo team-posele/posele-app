@@ -1,6 +1,8 @@
+import {color} from 'react-native-elements/dist/helpers';
+
 export const colors = {
-  primary: '#414BB2',
-  secondary: '#414BB2CC',
+  primary: '#FFAF4E',
+  secondary: '#fff',
   input: '#414BB222',
   accent: '#ffffb2',
 };
@@ -27,8 +29,8 @@ export const appStyles = {
   },
   primaryButton: {
     backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 10,
+    padding: 20,
+    borderRadius: 100,
     alignItems: 'center',
   },
   primaryButtonText: {
@@ -37,15 +39,14 @@ export const appStyles = {
     fontWeight: 'bold',
   },
   secondaryButton: {
-    backgroundColor: 'white',
-    borderColor: colors.secondary,
-    borderWidth: 3,
-    padding: 5,
-    borderRadius: 10,
+    backgroundColor: colors.secondary,
+    marginHorizontal: 15,
+    padding: 20,
+    borderRadius: 100,
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: colors.secondary,
+    color: colors.primary,
     fontSize: 16,
     fontWeight: 'bold',
   },
