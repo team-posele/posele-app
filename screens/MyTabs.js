@@ -1,4 +1,12 @@
-import {StyleSheet, Text, TouchableOpacity, View, Image, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -88,16 +96,20 @@ const LeaderBoard = () => {
       </View>
 
       <View style={styles.leaderboard}>
-        <FlatList
-          data={users}
-          renderItem={({item}) => (
-            <View style={styles.leaderBoardItems}>
-              <Text style={styles.nameItem}>{item.username}</Text>
-              <Text style={styles.scoreItem}>{item.score}</Text>
-            </View>
-          )}
-          keyExtractor={item => item.id}
-        />
+        {users[0] ? (
+          <FlatList
+            data={users}
+            renderItem={({item}) => (
+              <View style={styles.leaderBoardItems}>
+                <Text style={styles.nameItem}>{item.username}</Text>
+                <Text style={styles.scoreItem}>{item.score}</Text>
+              </View>
+            )}
+            keyExtractor={item => item.id}
+          />
+        ) : (
+          <ActivityIndicator size="large" style={styles.statusIcon} color={colors.primary} />
+        )}
       </View>
     </View>
   );
@@ -106,7 +118,7 @@ const LeaderBoard = () => {
 const Friends = () => {
   return (
     <View style={styles.container}>
-      <Text>Friends List!</Text>
+      <Text>This feature is coming soon!</Text>
     </View>
   );
 };
@@ -114,7 +126,8 @@ const Friends = () => {
 const MyTabs = () => {
   useEffect(async () => {
     // gets all the users from the database
-    db.collection('users')
+    await db
+      .collection('users')
       .orderBy('score', 'desc') // order by score
       .limit(10) // limit to top 10 results
       .get()
@@ -124,7 +137,6 @@ const MyTabs = () => {
         });
       });
   }, []);
-
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -178,6 +190,7 @@ const styles = StyleSheet.create({
     width: '35%',
     height: '35%',
   },
+  statusIcon: {},
   LeaderBoardHeader: {
     flex: 0.2,
     width: '100%',
