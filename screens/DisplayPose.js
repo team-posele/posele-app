@@ -45,7 +45,7 @@ export default function Pose() {
         <Text style={appStyles.insetHeader}>Match the Pose:</Text>
         <Image
           style={styles.image}
-          source={require('../assets/jordan-pose.jpg')}
+          source={require('../assets/nathan_chen.jpg')}
           onLoad={() => {
             setImageReady(true);
           }}
