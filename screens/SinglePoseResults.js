@@ -42,23 +42,19 @@ export default function SinglePoseResults({route}) {
     getPoseResults();
   }, []);
 
-  //useEffect to increment userScore once pose is detected
-  useEffect(() => {
-    if (hasPrediction) {
-      if (predictedPose === 'No Match!') incrementUserScore(false);
-      else incrementUserScore(true);
-    }
-  }, [hasPrediction]);
-
   const getPoseResults = async () => {
     await setupBackend();
     const model = await setupModel();
     const image = route.params?.image;
     const posenetOutput = await getPosenetOutput(model, image);
     const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-    if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD)
+    if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
       setPredictedPose(prediction);
-    else setPredictedPose('No Match!'); // be sure to update the incrementUserScore useEffect if this text changes
+      incrementUserScore(true);
+    } else {
+      setPredictedPose('No Match!');
+      incrementUserScore(false);
+    }
   };
 
   const setupBackend = async () => {

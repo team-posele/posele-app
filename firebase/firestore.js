@@ -32,7 +32,7 @@ export const updateUser = async (email, username) => {
   }
 };
 
-export const incrementUserScore = async matched => {
+export const incrementUserScore = async (matched = false) => {
   try {
     // create user document reference
     const userDocRef = db.collection('users').doc(auth.currentUser.email);
@@ -45,10 +45,20 @@ export const incrementUserScore = async matched => {
 
     if (matched) {
       // if user matched the pose, increment score, currentStreak, and if it's greater than maxStreak, that too
-      const response = await userDocRef.update({
-        score: score + 1,
-        currentStreak: currentStreak + 1,
-      });
+      // there should be a built-in increment method but i had trouble getting it to work:
+      // https://firebase.google.com/docs/firestore/manage-data/add-data#increment_a_numeric_value
+      if (currentStreak + 1 > maxStreak) {
+        const response = await userDocRef.update({
+          score: score + 1,
+          currentStreak: currentStreak + 1,
+          maxStreak: currentStreak + 1,
+        });
+      } else {
+        const response = await userDocRef.update({
+          score: score + 1,
+          currentStreak: currentStreak + 1,
+        });
+      }
     } else {
       // if the user didn't match the pose, reset currentStreak to 0.
       const response = await userDocRef.update({currentStreak: 0});

@@ -80,21 +80,20 @@ const HomeScreen = () => {
         />
         <Text style={appStyles.heading2}>
           {currentUser ? (
-            `Current Streak: ${currentUser.currentStreak}`
+            `Current Daily Streak: ${currentUser.currentStreak}`
+          ) : (
+            <ActivityIndicator size="small" color={colors.primary} />
+          )}
+        </Text>
+        <Text style={appStyles.heading2}>
+          {currentUser ? (
+            `Best Streak: ${currentUser.maxStreak}`
           ) : (
             <ActivityIndicator size="small" color={colors.primary} />
           )}
         </Text>
       </View>
       <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() => {
-            incrementUserScore(false);
-          }}
-          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
-        >
-          <Text style={appStyles.primaryButtonText}>Lose</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           onPress={handlePlay}
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
