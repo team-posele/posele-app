@@ -15,7 +15,6 @@ export const cropImageToPose = async (image, pose) => {
     },
     {minY: height, maxY: 0}
   );
-  console.log('🧑🏻‍💻 minY, maxY', minY, maxY);
   // add upper and lower padding
   const heightMargin = height / MARGIN_PERCENTAGE;
   if (minY - heightMargin > 0) minY -= heightMargin;
@@ -29,16 +28,16 @@ export const cropImageToPose = async (image, pose) => {
         height: maxY,
       },
     },
-    // { // might be helpful for model prediction
-    //   resize: {
-    //     width: DIMENSION,
-    //     height: DIMENSION,
-    //   },
-    // },
+    {
+      // accommodate different heights
+      resize: {
+        width: DIMENSION,
+        height: DIMENSION,
+      },
+    },
   ];
   const saveOptions = {
     base64: true,
-    // compress: 0.5,
   };
   return await ImageManipulator.manipulateAsync(image.uri, actions, saveOptions);
 };

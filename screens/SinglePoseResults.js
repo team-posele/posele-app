@@ -80,7 +80,8 @@ export default function SinglePoseResults({route}) {
     if (backend !== 'cpu') {
       const {pose} = await model.estimatePose(imageTensor);
       const cropImage = await cropImageToPose(image, pose);
-      setPoseImage(cropImage);
+      setPoseImage(image);
+      // setPoseImage(cropImage); // display cropped image sent to model
       const cropTensor = convertImageToTensor(cropImage);
       const {posenetOutput} = await model.estimatePose(cropTensor);
       setHasPose(true);
@@ -119,11 +120,9 @@ export default function SinglePoseResults({route}) {
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <ImageBackground
           style={[appStyles.image, {width: '100%'}]}
-          fadeDuration={0}
           source={require('../assets/jordan-pose.jpg')}
         >
           <Image
-            fadeDuration={3000}
             style={[appStyles.image, {width: '100%'}]}
             source={poseImage ? {uri: poseImage.uri} : require('../assets/posele-logo.png')}
           ></Image>
