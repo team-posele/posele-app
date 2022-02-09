@@ -10,18 +10,16 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
+import {useNavigation} from '@react-navigation/native';
+import * as tmPose from '@teachablemachine/pose';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
-import * as tmPose from '@teachablemachine/pose';
 
-import {colors, appStyles} from '../colorConstants';
-import {Icon} from 'react-native-elements';
-// import {score} from '../firebase/firestore';
 import {convertImageToTensor} from './helpers/tensor-helper';
-// import {cropImageToPose} from './helpers/crop-helper';
+import {cropImageToPose} from './helpers/crop-helper';
+import {colors, appStyles} from '../colorConstants';
+// import {score} from '../firebase/firestore';
 
 const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
 const modelURL = URL + 'model.json';
@@ -43,10 +41,10 @@ export default function SinglePoseResults({route}) {
   }, []);
 
   const getPoseResults = async () => {
-    const backend = await setupBackend();
+    await setupBackend();
     const model = await setupModel();
     const image = route.params?.image;
-    const posenetOutput = await getPosenetOutput(model, image, backend);
+    const posenetOutput = await getPosenetOutput(model, image);
     const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
     if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD)
       setPredictedPose(prediction);
@@ -54,24 +52,23 @@ export default function SinglePoseResults({route}) {
   };
 
   const setupBackend = async () => {
-    let backend = '';
-    // mobile backend
-    if (Platform.OS === 'ios' || Platform.OS === 'android') backend = 'rn-webgl';
-    // web backend
-    else backend = 'webgl';
-    const hasBackend = await tf.setBackend(backend);
-    // if no webgl backend, choose cpu backend
-    if (!hasBackend) {
-      console.log(`🧑🏻‍💻 '${backend}' not available! Using 'cpu' instead.`);
-      backend = 'cpu';
-      await tf.setBackend(backend);
+    switch (Platform.OS) {
+      case 'ios':
+        await tf.setBackend('rn-webgl');
+        break;
+      case 'android':
+        await tf.setBackend('cpu');
+        break;
+      default:
+        await tf.setBackend('webgl');
+        break;
     }
-    return backend;
   };
 
   const setupModel = async () => {
     // wait until TensorFlow is ready
     await tf.ready();
+    console.log('🧑🏻‍💻 backend', await tf.getBackend());
     const model = await tmPose.load(modelURL, metadataURL);
     setIsModelReady(true);
     return model;
@@ -80,7 +77,7 @@ export default function SinglePoseResults({route}) {
   const getPosenetOutput = async (model, image, backend) => {
     const imageTensor = convertImageToTensor(image);
     // running on webgl
-    if (backend !== 'cpu') {
+    if (Platform.OS !== 'android') {
       const {pose} = await model.estimatePose(imageTensor);
       const cropImage = await cropImageToPose(image, pose);
       setPoseImage(image);
@@ -90,7 +87,7 @@ export default function SinglePoseResults({route}) {
       setHasPose(true);
       return posenetOutput;
     }
-    // running on cpu
+    // running on cpu for Android devices
     else {
       setPoseImage(image);
       const {posenetOutput} = await model.estimatePose(imageTensor);

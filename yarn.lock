@@ -1964,13 +1964,6 @@
     autobind-decorator "^2.4.0"
     seedrandom "^3.0.1"
 
-"@tensorflow-models/pose-detection@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@tensorflow-models/pose-detection/-/pose-detection-1.0.1.tgz#7d536b62b0fa5878eda7f8c36b67bae7d111712d"
-  integrity sha512-BWVGUxfW+GcOGT1F+ReTYwsKYnKKN/4CduPq+oytC8dhxmt23qzTNozEnuwi7zphBMCc+8FZwF1J65jK/+d2AQ==
-  dependencies:
-    rimraf "^3.0.2"
-
 "@tensorflow-models/posenet@^2.2.0":
   version "2.2.2"
   resolved "https://registry.npmjs.org/@tensorflow-models/posenet/-/posenet-2.2.2.tgz"
@@ -2001,7 +1994,7 @@
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-converter/-/tfjs-converter-3.13.0.tgz#3affc86d94c3948b01673a91309a35feb10e5eac"
   integrity sha512-H2VpDTv9Ve0HBt7ttzz46DmnsPaiT0B+yJjVH3NebGZbgY9C8boBgJIsdyqfiqEWBS3WxF8h4rh58Hv5XXMgaQ==
 
-"@tensorflow/tfjs-core@3.13.0", "@tensorflow/tfjs-core@^3.13.0":
+"@tensorflow/tfjs-core@3.13.0":
   version "3.13.0"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-core/-/tfjs-core-3.13.0.tgz#0cfd707c668250969564991c5c101fb52e51e1aa"
   integrity sha512-18qBEVIB/4u2OUK9nA5P1XT3e3LyarElD1UKNSNDpnMLxhLTUVZaCR71eHJcpl9wP2Q0cciaTJCTpJdPv1tNDQ==

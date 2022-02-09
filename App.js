@@ -15,8 +15,8 @@ LogBox.ignoreLogs([
   'AsyncStorage has been extracted ',
   'Platform browser has already been set',
   'Setting a timer',
-  'Initialization of backend rn-webgl failed',
-  'Error: GL is currently not available',
+  'Initialization of backend',
+  'Error: GL is currently',
 ]); // hide unnecessary warnings
 
 const Stack = createNativeStackNavigator();
