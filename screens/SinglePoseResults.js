@@ -18,7 +18,7 @@ import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 
 import {convertImageToTensor} from './helpers/tensor-helper';
-import {cropImageToPose} from './helpers/crop-helper';
+import {cropImageToPose, getMinMaxXY} from './helpers/crop-helper';
 import {colors, appStyles} from '../colorConstants';
 import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
@@ -44,14 +44,44 @@ export default function SinglePoseResults({route}) {
     await setupBackend();
     const model = await setupModel();
     const image = route.params?.image;
-    const posenetOutput = await getPosenetOutput(model, image);
-    const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-    if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
-      setPredictedPose(prediction);
-      await incrementUserScore(true);
+
+    const imageTensor = convertImageToTensor(image);
+    const {pose, posenetOutput} = await model.estimatePose(imageTensor);
+
+    // running on webgl
+    if (Platform.OS !== 'android') {
+      const {minX, maxX, minY, maxY} = getMinMaxXY(image.width, image.height, pose);
+      if (minX < 0 || maxX > image.width || minY < 0 || maxY > image.height) {
+        setPoseImage(image);
+        setHasPose(true);
+        setPredictedPose('Out of bounds! Maybe next time.😉');
+      } else {
+        const cropImage = await cropImageToPose(image, minX, maxX, minY, maxY);
+        // setPoseImage(image);
+        setPoseImage(cropImage); // display cropped image sent to model
+        const cropTensor = convertImageToTensor(cropImage);
+        const {posenetOutput} = await model.estimatePose(cropTensor);
+        setHasPose(true);
+        const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
+        if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+          setPredictedPose(prediction);
+          await incrementUserScore(true);
+        } else {
+          setPredictedPose('No Match!');
+          await incrementUserScore(false);
+        }
+      }
     } else {
-      setPredictedPose('No Match!');
-      await incrementUserScore(false);
+      setPoseImage(image);
+      setHasPose(true);
+      const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
+      if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+        setPredictedPose(prediction);
+        await incrementUserScore(true);
+      } else {
+        setPredictedPose('No Match!');
+        await incrementUserScore(false);
+      }
     }
   };
 
@@ -83,7 +113,6 @@ export default function SinglePoseResults({route}) {
     const imageTensor = convertImageToTensor(image);
     // running on webgl
     if (Platform.OS !== 'android') {
-      const {pose} = await model.estimatePose(imageTensor);
       const cropImage = await cropImageToPose(image, pose);
       setPoseImage(image);
       // setPoseImage(cropImage); // display cropped image sent to model
