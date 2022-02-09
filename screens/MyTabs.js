@@ -1,16 +1,32 @@
-import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
-import React, {useEffect} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View, Image, FlatList} from 'react-native';
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
-import {auth} from '../firebase';
+import {auth, db} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
 // import * as firestore from 'firebase/firestore';
 import {getAllUsers, getUser, score} from '../firebase/firestore';
 // import {render} from 'react-dom';
 
 const Tab = createBottomTabNavigator();
+let users = [];
+
+// created function to add users to array
+const pushToArray = doc => {
+  users.push({...doc.data(), id: doc.id});
+  users.sort((a, b) => b.score - a.score);
+};
+
+// gets all the users from the database
+db.collection('users')
+  .get()
+  .then(snapshot => {
+    snapshot.docs.forEach(doc => {
+      pushToArray(doc);
+    });
+  });
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -80,8 +96,28 @@ const HomeScreen = () => {
 
 const LeaderBoard = () => {
   return (
-    <View style={styles.container}>
-      <Text>Leader Board!</Text>
+    <View>
+      <View style={appStyles.container}>
+        <Text style={appStyles.heading1}>Leaderboard</Text>
+      </View>
+      {/* <Text>Leader Board!</Text> */}
+      <View style={styles.LeaderBoardHeader}>
+        <Text style={[styles.nameItem, styles.header]}>Username</Text>
+        <Text style={[styles.scoreItem, styles.header]}>Score</Text>
+      </View>
+
+      <View>
+        <FlatList
+          data={users}
+          renderItem={({item}) => (
+            <View style={styles.LeaderBoardItems}>
+              <Text style={styles.nameItem}>{item.name}</Text>
+              <Text style={styles.scoreItem}>{item.score}</Text>
+            </View>
+          )}
+          keyExtractor={item => item.id}
+        />
+      </View>
     </View>
   );
 };
@@ -143,5 +179,31 @@ const styles = StyleSheet.create({
   image: {
     width: '35%',
     height: '35%',
+  },
+  LeaderBoardHeader: {
+    // flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 10,
+  },
+  LeaderBoardItems: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 20,
+  },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  nameItem: {
+    marginLeft: '25%',
+    flex: 1,
+    textAlign: 'left',
+  },
+  scoreItem: {
+    marginRight: '10%',
+    textAlign: 'center',
+    flex: 0.2,
   },
 });
