@@ -4335,7 +4335,6 @@ expo-camera@~12.1.2:
     "@expo/config-plugins" "^4.0.2"
     "@koale/useworker" "^4.0.2"
     invariant "^2.2.4"
-
 expo-constants@~13.0.0:
   version "13.0.1"
   resolved "https://registry.npmjs.org/expo-constants/-/expo-constants-13.0.1.tgz"
