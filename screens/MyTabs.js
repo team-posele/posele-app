@@ -6,6 +6,9 @@ import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
 import {auth, db} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
+// import * as firestore from 'firebase/firestore';
+import {getAllUsers, getUser, score} from '../firebase/firestore';
+// import {render} from 'react-dom';
 
 const Tab = createBottomTabNavigator();
 let users = [];
@@ -28,6 +31,12 @@ db.collection('users')
 const HomeScreen = () => {
   const navigation = useNavigation();
 
+  // useEffect(async () => {
+  //   await getUser();
+  //   console.log(score);
+  //   await getAllUsers();
+  // }, []);
+
   function handlePlay() {
     navigation.replace('Warning');
   }
@@ -44,6 +53,11 @@ const HomeScreen = () => {
       });
   };
 
+  const dbButton = () => {
+    console.log('you pressed the button');
+    getUser();
+  };
+
   return (
     <View style={appStyles.mainView}>
       <View style={styles.container}>
@@ -57,6 +71,12 @@ const HomeScreen = () => {
         />
       </View>
       <View style={styles.container}>
+        <TouchableOpacity
+          onPress={dbButton}
+          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
+        >
+          <Text style={appStyles.primaryButtonText}>database thing</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={handlePlay}
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}

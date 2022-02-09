@@ -1,12 +1,13 @@
 import {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {useNavigation, useIsFocused} from '@react-navigation/native';
+import {useNavigation, useIsFocused, TabRouter} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
 import {manipulateAsync, FlipType} from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
 
 const TIME_LIMIT = 5;
 const TIME_ZERO_ICON = '📸';
+const DIMENSION = 256;
 
 export default () => {
   const navigation = useNavigation();
@@ -36,6 +37,7 @@ export default () => {
 
   useEffect(() => {
     // waits until camera has loaded
+
     if (cameraReady) {
       const currIntervalId = setInterval(() => {
         // need to reference time as function parameter for proper update
@@ -66,6 +68,11 @@ export default () => {
       const actions = [
         {
           flip: FlipType.Horizontal,
+        },
+        {
+          resize: {
+            width: DIMENSION,
+          },
         },
       ];
       const saveOptions = {
