@@ -21,8 +21,6 @@
     "@teachablemachine/pose": "^0.8.6",
     "@tensorflow/tfjs": "^3.13.0",
     "@tensorflow/tfjs-react-native": "^0.8.0",
-    "@unimodules/core": "~7.2.0",
-    "@unimodules/react-native-adapter": "~6.5.0",
     "expo": "~44.0.0",
     "expo-camera": "~12.1.2",
     "expo-gl": "^11.1.2",
@@ -40,7 +38,6 @@
     "react-native-leaderboard": "^1.0.6",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
-    "react-native-unimodules": "~0.15.0",
     "react-native-web": "0.17.1"
   },
   "devDependencies": {
