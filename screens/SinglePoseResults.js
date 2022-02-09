@@ -102,6 +102,9 @@ export default function SinglePoseResults({route}) {
   const setupModel = async () => {
     // wait until TensorFlow is ready
     await tf.ready();
+
+    // const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
+    const URL = 'https://teachablemachine.withgoogle.com/models/A02NxPriM/'; // for Nathan Chen pose
     const modelURL = URL + 'model.json';
     const metadataURL = URL + 'metadata.json';
     const model = await tmPose.load(modelURL, metadataURL);
@@ -174,7 +177,7 @@ export default function SinglePoseResults({route}) {
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <ImageBackground
           style={[appStyles.image, {width: '100%'}]}
-          source={require('../assets/jordan-pose.jpg')}
+          source={require('../assets/nathan_chen.jpg')}
         >
           <Image
             style={[appStyles.image, {width: '100%'}]}
