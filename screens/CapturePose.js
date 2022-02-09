@@ -1,11 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View} from 'react-native';
 import {useNavigation, useIsFocused, TabRouter} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
 import {manipulateAsync, FlipType} from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
 
-const TIME_LIMIT = 5;
+const TIME_LIMIT = 1;
 const TIME_ZERO_ICON = '📸';
 const DIMENSION = 256;
 
@@ -65,17 +65,31 @@ export default () => {
       };
       const image = await cameraRef.current.takePictureAsync(options);
       // mirrors image horizontally
-      const actions = [
-        {
-          flip: FlipType.Horizontal,
-        },
-        {
-          resize: {
-            width: DIMENSION,
-            height: DIMENSION,
+      let actions;
+      if (Platform.OS !== 'android') {
+        actions = [
+          {
+            flip: FlipType.Horizontal,
           },
-        },
-      ];
+          {
+            resize: {
+              width: DIMENSION,
+            },
+          },
+        ];
+      } else {
+        actions = [
+          {
+            flip: FlipType.Horizontal,
+          },
+          {
+            resize: {
+              width: DIMENSION,
+              height: DIMENSION,
+            },
+          },
+        ];
+      }
       const saveOptions = {
         base64: true,
       };
@@ -95,7 +109,7 @@ export default () => {
       {isFocused && (
         <Camera
           ref={cameraRef}
-          style={styles.camera}
+          style={Platform.OS === 'android' ? styles.cameraAndroid : styles.cameraIos}
           type={type}
           autoFocus={true}
           onCameraReady={() => {
@@ -114,7 +128,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  camera: {
+  cameraIos: {
+    width: '100%',
+    height: ' 100%',
+  },
+  cameraAndroid: {
     width: 360,
     height: 360,
   },
