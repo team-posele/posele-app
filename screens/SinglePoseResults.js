@@ -74,29 +74,29 @@ export default function SinglePoseResults({route}) {
     // wait until TensorFlow is ready
     await tf.ready();
 
-    // const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
-    // const modelURL = URL + 'model.json';
-    // const metadataURL = URL + 'metadata.json';
-    // const model = await tmPose.load(modelURL, metadataURL);
+    const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
+    const modelURL = URL + 'model.json';
+    const metadataURL = URL + 'metadata.json';
+    const model = await tmPose.load(modelURL, metadataURL);
 
-    const modelURL = await storage.ref(CLOUD_STORAGE_MODEL_DIR + 'model.json').getDownloadURL();
-    const modelResult = await fetch(modelURL);
-    const modelBlob = await modelResult.blob();
-    const modelFile = new File([modelBlob], 'model.json');
+    // const modelURL = await storage.ref(CLOUD_STORAGE_MODEL_DIR + 'model.json').getDownloadURL();
+    // const modelResult = await fetch(modelURL);
+    // const modelBlob = await modelResult.blob();
+    // const modelFile = new File([modelBlob], 'model.json');
 
-    const weightsURL = await storage.ref(CLOUD_STORAGE_MODEL_DIR + 'weights.bin').getDownloadURL();
-    const weightsResult = await fetch(weightsURL);
-    const weightsBlob = await weightsResult.blob();
-    const weightsFile = new File([weightsBlob], 'weights.bin');
+    // const weightsURL = await storage.ref(CLOUD_STORAGE_MODEL_DIR + 'weights.bin').getDownloadURL();
+    // const weightsResult = await fetch(weightsURL);
+    // const weightsBlob = await weightsResult.blob();
+    // const weightsFile = new File([weightsBlob], 'weights.bin');
 
-    const metadataURL = await storage
-      .ref(CLOUD_STORAGE_MODEL_DIR + 'metadata.json')
-      .getDownloadURL();
-    const metadataResult = await fetch(metadataURL);
-    const metadataBlob = await metadataResult.blob();
-    const metadataFile = new File([metadataBlob], 'metadata.json');
+    // const metadataURL = await storage
+    //   .ref(CLOUD_STORAGE_MODEL_DIR + 'metadata.json')
+    //   .getDownloadURL();
+    // const metadataResult = await fetch(metadataURL);
+    // const metadataBlob = await metadataResult.blob();
+    // const metadataFile = new File([metadataBlob], 'metadata.json');
 
-    const model = await tmPose.loadFromFiles(modelFile, weightsFile, metadataFile);
+    // const model = await tmPose.loadFromFiles(modelFile, weightsFile, metadataFile);
     setIsModelReady(true);
     return model;
   };
