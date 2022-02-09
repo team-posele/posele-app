@@ -46,10 +46,10 @@ export default function Warning() {
           <Text style={[appStyles.secondaryButtonText, styles.buttonText]}>Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[appStyles.primaryButton, styles.bigButton]}
+          style={[appStyles.secondaryButton, styles.bigButton]}
           onPress={() => navigation.replace('DisplayPose')}
         >
-          <Text style={[appStyles.primaryButtonText, styles.buttonText]}>Pose Now!</Text>
+          <Text style={[appStyles.secondaryButtonText, styles.buttonText]}>Pose Now!</Text>
         </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
@@ -59,6 +59,7 @@ export default function Warning() {
 
 const styles = StyleSheet.create({
   imageContainer: {
+    backgroundColor: colors.primary,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',

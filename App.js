@@ -18,6 +18,7 @@ LogBox.ignoreLogs([
   'Setting a timer',
   'Initialization of backend',
   'Error: GL is currently',
+  'Remote debugger',
 ]); // hide unnecessary warnings
 
 const Stack = createNativeStackNavigator();

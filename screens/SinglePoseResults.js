@@ -165,15 +165,11 @@ export default function SinglePoseResults({route}) {
     <View style={appStyles.mainView}>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Your Results:</Text>
-        <ImageBackground
+
+        <Image
           style={[appStyles.image, {width: '100%'}]}
-          source={require('../assets/jordan-pose.jpg')}
-        >
-          <Image
-            style={[appStyles.image, {width: '100%'}]}
-            source={poseImage ? {uri: poseImage.uri} : require('../assets/posele-logo.png')}
-          ></Image>
-        </ImageBackground>
+          source={poseImage ? {uri: poseImage.uri} : require('../assets/refImg.jpg')}
+        ></Image>
       </View>
       <View style={styles.statusBox}>
         <Text style={styles.statusText}>{predictedPose}</Text>
@@ -197,7 +193,7 @@ export default function SinglePoseResults({route}) {
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Predicting Match</Text>
             {!hasPrediction ? (
-              <ActivityIndicator size="small" style={styles.statusIcon} color={colors.primary} />
+              <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
             )}
@@ -250,7 +246,7 @@ const styles = StyleSheet.create({
   statusContainer: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#fff',
+
     width: '85%',
     justifyContent: 'space-evenly',
   },
