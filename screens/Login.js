@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
   Platform,
-  LogBox,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 // import firestore from '@react-native-firebase/firestore';
@@ -15,8 +14,6 @@ import {useNavigation} from '@react-navigation/native';
 import {auth} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
 // import {updateUser} from '../firebase/firestore';
-
-LogBox.ignoreLogs(['AsyncStorage', 'Platform browser', 'Setting a timer']); // hide unnecessary warnings
 
 const Login = () => {
   const navigate = useNavigation();

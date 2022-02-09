@@ -8,8 +8,7 @@ export const cropImageToPose = async (image, pose) => {
   const height = image.height;
   let {minY, maxY} = pose.keypoints.reduce(
     (minMax, keyPoint) => {
-      // const y = keyPoint.position.y;
-      const y = keyPoint.y; // for movenet
+      const y = keyPoint.position.y;
       if (y < minMax.minY && y > 0) minMax.minY = y;
       if (y > minMax.maxY && y < height) minMax.maxY = y;
       return minMax;
@@ -29,16 +28,16 @@ export const cropImageToPose = async (image, pose) => {
         height: maxY,
       },
     },
-    // { // might be helpful for model prediction
-    //   resize: {
-    //     width: DIMENSION,
-    //     height: DIMENSION,
-    //   },
-    // },
+    {
+      // accommodate different heights
+      resize: {
+        width: DIMENSION,
+        height: DIMENSION,
+      },
+    },
   ];
   const saveOptions = {
     base64: true,
-    // compress: 0.5,
   };
   return await ImageManipulator.manipulateAsync(image.uri, actions, saveOptions);
 };
