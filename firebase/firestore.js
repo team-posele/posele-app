@@ -24,6 +24,8 @@ export const updateUser = async (email, username) => {
       .set({
         username,
         score: 0,
+        currentStreak: 0,
+        maxStreak: 0,
       });
   } catch (error) {
     console.log('error occured while updating user. ', error);

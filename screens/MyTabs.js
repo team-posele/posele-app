@@ -7,7 +7,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
@@ -26,6 +26,7 @@ const pushToArray = doc => {
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [currentUser, setCurrentUser] = useState({});
 
   function handlePlay() {
     navigation.replace('Warning');
@@ -43,8 +44,7 @@ const HomeScreen = () => {
       });
   };
 
-  let currentUser;
-  const dbButton = async () => {
+  useEffect(async () => {
     // console.log(auth.currentUser.email);
     const currentUserDoc = await db
       .collection('users')
@@ -55,30 +55,38 @@ const HomeScreen = () => {
       console.log(`get current user FAILED.`);
     } else {
       // console.log('currentUser data:', currentUserDoc.data());
-      currentUser = currentUserDoc.data();
-      console.log(currentUser.username);
+      setCurrentUser(currentUserDoc.data());
+      // console.log(currentUser.username);
     }
-  };
+  }, []);
 
   return (
     <View style={appStyles.mainView}>
       <View style={styles.container}>
-        <Text style={appStyles.heading1}>Hello, jerk</Text>
+        <Text style={appStyles.heading1}>Hello, {currentUser ? currentUser.username : 'User'}</Text>
         <Text style={appStyles.heading2}>Welcome back to Posele!</Text>
       </View>
       <View style={[styles.container]}>
+        <Text style={appStyles.heading2}>
+          {currentUser ? (
+            `Posele Score: ${currentUser.score}`
+          ) : (
+            <ActivityIndicator size="small" color={colors.primary} />
+          )}
+        </Text>
         <Image
           source={require('../assets/posele-logo.png')}
           style={[appStyles.image, styles.image]}
         />
+        <Text style={appStyles.heading2}>
+          {currentUser ? (
+            `Current Streak: ${currentUser.currentStreak}`
+          ) : (
+            <ActivityIndicator size="small" color={colors.primary} />
+          )}
+        </Text>
       </View>
       <View style={styles.container}>
-        <TouchableOpacity
-          onPress={dbButton}
-          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
-        >
-          <Text style={appStyles.primaryButtonText}>database thing</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           onPress={handlePlay}
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
