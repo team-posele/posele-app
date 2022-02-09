@@ -10,90 +10,109 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import * as tf from '@tensorflow/tfjs-core';
-import '@tensorflow/tfjs-react-native';
-import * as tmPose from '@teachablemachine/pose';
-
-import {colors, appStyles} from '../colorConstants';
 import {Icon} from 'react-native-elements';
-// import {score} from '../firebase/firestore';
-import {convertImageToTensor} from './helpers/tensor-helper';
-// import {cropImageToPose} from './helpers/crop-helper';
+import {useNavigation} from '@react-navigation/native';
+import * as tmPose from '@teachablemachine/pose';
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-react-native';
 
-// model URL for letterP pose
-const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/';
+import {convertImageToTensor} from './helpers/tensor-helper';
+import {cropImageToPose} from './helpers/crop-helper';
+import {colors, appStyles} from '../colorConstants';
+// import {score} from '../firebase/firestore';
+
+const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
 const modelURL = URL + 'model.json';
 const metadataURL = URL + 'metadata.json';
-
-// confidence score threshold for valid pose match
 const PREDICTION_THRESHOLD = 0.8;
+const NON_MATCH_LABEL = 'idle';
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
-  const [time, setTime] = useState(0);
   const [predictedPose, setPredictedPose] = useState('detecting...');
   const [isModelReady, setIsModelReady] = useState(false);
   const [hasPose, setHasPose] = useState(false);
   const [hasPrediction, setHasPrediction] = useState(false);
   const [poseImage, setPoseImage] = useState();
 
-  const image = route.params?.image;
+  useEffect(() => {
+    getPoseResults();
+  }, []);
 
-  // "back home" button handler
+  const getPoseResults = async () => {
+    await setupBackend();
+    const model = await setupModel();
+    const image = route.params?.image;
+    const posenetOutput = await getPosenetOutput(model, image);
+    const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
+    if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD)
+      setPredictedPose(prediction);
+    else setPredictedPose('No Match!');
+  };
+
+  const setupBackend = async () => {
+    switch (Platform.OS) {
+      case 'ios':
+        await tf.setBackend('rn-webgl');
+        break;
+      case 'android':
+        await tf.setBackend('cpu');
+        break;
+      default:
+        await tf.setBackend('webgl');
+        break;
+    }
+  };
+
+  const setupModel = async () => {
+    // wait until TensorFlow is ready
+    await tf.ready();
+    console.log('🧑🏻‍💻 backend', await tf.getBackend());
+    const model = await tmPose.load(modelURL, metadataURL);
+    setIsModelReady(true);
+    return model;
+  };
+
+  const getPosenetOutput = async (model, image, backend) => {
+    const imageTensor = convertImageToTensor(image);
+    // running on webgl
+    if (Platform.OS !== 'android') {
+      const {pose} = await model.estimatePose(imageTensor);
+      const cropImage = await cropImageToPose(image, pose);
+      setPoseImage(image);
+      // setPoseImage(cropImage); // display cropped image sent to model
+      const cropTensor = convertImageToTensor(cropImage);
+      const {posenetOutput} = await model.estimatePose(cropTensor);
+      setHasPose(true);
+      return posenetOutput;
+    }
+    // running on cpu for Android devices
+    else {
+      setPoseImage(image);
+      const {posenetOutput} = await model.estimatePose(imageTensor);
+      setHasPose(true);
+      return posenetOutput;
+    }
+  };
+
+  const getHighestPredProb = async (model, posenetOutput) => {
+    const posePrediction = await model.predict(posenetOutput);
+    setHasPrediction(true);
+    const {className: prediction, probability} = posePrediction.reduce((prevPred, currPred) => {
+      if (currPred.probability > prevPred.probability) return currPred;
+      else return prevPred;
+    });
+    return {prediction, probability};
+  };
+
   const handleDone = () => {
     navigation.replace('MyTabs');
   };
 
-  async function init() {
-    try {
-      // check if device supports webgl backend, otherwise use cpu backend instead
-      await tf.setBackend('webgl');
-    } catch (error) {
-      console.log('🧑🏻‍💻 error', error);
-      await tf.setBackend('cpu');
-    }
-    await tf.ready(); // wait until TensorFlow is ready
-    const model = await tmPose.load(modelURL, metadataURL);
-    setIsModelReady(true);
-    const tensor = convertImageToTensor(image);
-    setPoseImage(image);
-    // const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
-    // const pose = (await detector.estimatePoses(tensor))[0]; // array of poses, but only holds 1 pose
-    // console.log('🧑🏻‍💻 pose', pose);
-    // // const {pose} = await model.estimatePose(tensor);
-    // const cropImage = await cropImageToPose(image, pose);
-    // const cropTensor = convertImageToTensor(cropImage);
-    // const {posenetOutput} = await model.estimatePose(cropTensor);
-    const {posenetOutput} = await model.estimatePose(tensor);
-    setHasPose(true);
-    const prediction = await model.predict(posenetOutput);
-    console.log('🧑🏻‍💻 prediction', prediction);
-    setHasPrediction(true);
-    const {className, probability} = prediction.reduce((prevPred, currPred) => {
-      if (currPred.probability > prevPred.probability) return currPred;
-      return prevPred;
-    });
-    if (className !== 'idle' && probability > PREDICTION_THRESHOLD) setPredictedPose(className);
-    else setPredictedPose('No Match!');
-  }
-
-  const timerRef = useRef(null); // intervalId reference
-
-  useEffect(() => {
-    timerRef.current = setInterval(() => {
-      // need to reference time as function parameter for proper update
-      setTime(time => {
-        return time + 1;
-      });
-    }, 1000);
-    init();
-    // clears timer on unmount to prevent memory leak
-    return () => {
-      clearInterval(timerRef.current);
-    };
-  }, []);
+  const handleShare = () => {
+    navigation.replace('Share');
+  };
 
   return (
     <View style={appStyles.mainView}>
@@ -101,18 +120,15 @@ export default function SinglePoseResults({route}) {
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <ImageBackground
           style={[appStyles.image, {width: '100%'}]}
-          fadeDuration={0}
           source={require('../assets/jordan-pose.jpg')}
         >
           <Image
-            fadeDuration={3000}
             style={[appStyles.image, {width: '100%'}]}
             source={poseImage ? {uri: poseImage.uri} : require('../assets/posele-logo.png')}
           ></Image>
         </ImageBackground>
       </View>
       <View style={styles.statusBox}>
-        <Text style={styles.statusText}>{time}</Text>
         <Text style={styles.statusText}>{predictedPose}</Text>
         <View style={styles.statusContainer}>
           <View style={styles.statusItem}>
@@ -150,16 +166,16 @@ export default function SinglePoseResults({route}) {
             appStyles.primaryButton,
             styles.button,
             appStyles.highlight,
-            time < 5 && styles.disabledButton,
+            !hasPrediction && styles.disabledButton,
           ]}
-          // onPress={handleShare}
-          disabled={hasPrediction ? true : false}
+          onPress={handleShare}
+          disabled={!hasPrediction ? true : false}
         >
           <Text
             style={[
               appStyles.primaryButtonText,
               styles.buttonText,
-              time < 5 && styles.disabledButtonText,
+              !hasPrediction && styles.disabledButtonText,
             ]}
           >
             Share
