@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statusText: {
-    color: colors.primary,
+    color: colors.secondary,
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
