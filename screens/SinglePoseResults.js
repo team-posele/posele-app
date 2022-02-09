@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  Share,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
@@ -110,8 +111,28 @@ export default function SinglePoseResults({route}) {
     navigation.replace('MyTabs');
   };
 
-  const handleShare = () => {
-    navigation.replace('Share');
+  const handleShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          predictedPose === 'letterP'
+            ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
+            : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
+        url: 'https://www.posele.com',
+        title: "I'm a poser!",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
