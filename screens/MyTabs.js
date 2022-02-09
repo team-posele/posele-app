@@ -43,15 +43,27 @@ const HomeScreen = () => {
       });
   };
 
-  const dbButton = () => {
-    console.log('you pressed the button');
-    getUser();
+  let currentUser;
+  const dbButton = async () => {
+    // console.log(auth.currentUser.email);
+    const currentUserDoc = await db
+      .collection('users')
+      .doc(auth.currentUser.email) // order by score
+      // .limit(10) // limit to top 10 results
+      .get();
+    if (!currentUserDoc.exists) {
+      console.log(`get current user FAILED.`);
+    } else {
+      // console.log('currentUser data:', currentUserDoc.data());
+      currentUser = currentUserDoc.data();
+      console.log(currentUser.username);
+    }
   };
 
   return (
     <View style={appStyles.mainView}>
       <View style={styles.container}>
-        <Text style={appStyles.heading1}>Hello, {auth.currentUser.email}</Text>
+        <Text style={appStyles.heading1}>Hello, jerk</Text>
         <Text style={appStyles.heading2}>Welcome back to Posele!</Text>
       </View>
       <View style={[styles.container]}>
