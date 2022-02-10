@@ -1,5 +1,7 @@
+import React from 'react';
 import {LogBox} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
+import {useBackHandler} from '@react-native-community/hooks';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MyTabs from './screens/MyTabs';
 import DisplayPose from './screens/DisplayPose';
@@ -24,6 +26,10 @@ LogBox.ignoreLogs([
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  useBackHandler(() => {
+    return true;
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
