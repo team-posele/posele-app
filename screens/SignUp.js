@@ -53,7 +53,7 @@ const SignUp = () => {
   return (
     <KeyboardAvoidingView
       style={appStyles.mainView}
-      // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={[appStyles.screenTitleContainer, {marginTop: 10}]}>
         <Text style={appStyles.heading1}>Create Account</Text>
@@ -89,18 +89,20 @@ const SignUp = () => {
       <View style={[appStyles.container, {flexDirection: 'row'}]}>
         <Text style={appStyles.warningText}>{errorText}</Text>
         <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.secondaryButton]}
-          onPress={() => {
-            navigate.replace('SignIn');
-          }}
-        >
-          <Text style={appStyles.secondaryButtonText}>{`<< Back to Login`}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
           onPress={handleSignUp}
         >
           <Text style={appStyles.primaryButtonText}>Create Account</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[appStyles.secondaryButton, styles.secondaryButton]}
+          onPress={() => {
+            navigate.replace('LandingScreen');
+          }}
+        >
+          <Text style={appStyles.secondaryButtonText}>{`<< Back to Main Menu`}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -120,17 +122,16 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 0.5,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     marginBottom: Platform.OS === 'ios' ? 30 : 15,
   },
   primaryButton: {
     width: '65%',
-    marginTop: 20,
+    marginTop: 70,
   },
   secondaryButton: {
-    width: '20%',
+    width: '65%',
     alignItems: 'center',
-    marginTop: 20,
   },
 
   inputContainer: {
