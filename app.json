@@ -4,6 +4,7 @@
     "slug": "posele",
     "version": "1.0.0",
     "orientation": "portrait",
+    "owner": "posele-team",
 
     "icon": "./assets/posele-logo.png",
     "splash": {
