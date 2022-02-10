@@ -23,7 +23,6 @@ import {colors, appStyles} from '../colorConstants';
 import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
-const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP match
 const PREDICTION_THRESHOLD = 0.8;
 const NON_MATCH_LABEL = 'idle';
 
