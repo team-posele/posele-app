@@ -274,11 +274,11 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderWidth: 2,
     padding: 5,
+    alignItems: 'center',
   },
   statusContainer: {
     flex: 1,
     flexDirection: 'row',
-
     width: '85%',
     justifyContent: 'space-evenly',
   },
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   button: {
-    width: '45%',
+    width: '40%',
     justifyContent: 'space-evenly',
   },
   disabledButton: {
