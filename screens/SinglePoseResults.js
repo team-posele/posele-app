@@ -31,7 +31,7 @@ export default function SinglePoseResults({route}) {
 
   const [predictedPose, setPredictedPose] = useState('detecting...');
   const [isModelReady, setIsModelReady] = useState(false);
-  const [hasPose, setHasPose] = useState(false);
+  const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
   const [hasPrediction, setHasPrediction] = useState(false);
   const [poseImage, setPoseImage] = useState();
 
@@ -43,36 +43,44 @@ export default function SinglePoseResults({route}) {
     await setupBackend();
     const model = await setupModel();
     const image = route.params?.image;
-
     const imageTensor = convertImageToTensor(image);
     const {pose, posenetOutput} = await model.estimatePose(imageTensor);
 
-    // running on webgl
+    // web browser and iOS
     if (Platform.OS !== 'android') {
-      const {minX, maxX, minY, maxY} = getMinMaxXY(image.width, image.height, pose);
-      if (minX < 0 || maxX > image.width || minY < 0 || maxY > image.height) {
+      // if no pose detected
+      if (!pose) {
+        setPoseStatus('no');
         setPoseImage(image);
-        setHasPose(true);
-        setPredictedPose('Out of bounds! Maybe next time.😉');
+        setPredictedPose('Where are you? We got no pose!👀');
       } else {
-        const cropImage = await cropImageToPose(image, minX, maxX, minY, maxY);
-        // setPoseImage(image);
-        setPoseImage(cropImage); // display cropped image sent to model
-        const cropTensor = convertImageToTensor(cropImage);
-        const {posenetOutput} = await model.estimatePose(cropTensor);
-        setHasPose(true);
-        const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-        if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
-          setPredictedPose(prediction);
-          await incrementUserScore(true);
+        const {minX, maxX, minY, maxY} = getMinMaxXY(image.width, image.height, pose);
+        if (minX < 0 || maxX > image.width || minY < 0 || maxY > image.height) {
+          setPoseImage(image);
+          setPoseStatus('out');
+          setPredictedPose('Out of bounds! Maybe next time.😉');
         } else {
-          setPredictedPose('No Match!');
-          await incrementUserScore(false);
+          const cropImage = await cropImageToPose(image, minX, maxX, minY, maxY);
+          // setPoseImage(image);
+          setPoseImage(cropImage); // display cropped image sent to model
+          const cropTensor = convertImageToTensor(cropImage);
+          const {posenetOutput} = await model.estimatePose(cropTensor);
+          setPoseStatus('yes');
+          const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
+          if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+            setPredictedPose(prediction);
+            await incrementUserScore(true);
+          } else {
+            setPredictedPose('No Match!');
+            await incrementUserScore(false);
+          }
         }
       }
-    } else {
+    }
+    // Android
+    else {
       setPoseImage(image);
-      setHasPose(true);
+      setPoseStatus('yes');
       const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
       if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
         setPredictedPose(prediction);
@@ -109,27 +117,6 @@ export default function SinglePoseResults({route}) {
     const model = await tmPose.load(modelURL, metadataURL);
     setIsModelReady(true);
     return model;
-  };
-
-  const getPosenetOutput = async (model, image) => {
-    const imageTensor = convertImageToTensor(image);
-    // running on webgl
-    if (Platform.OS !== 'android') {
-      const cropImage = await cropImageToPose(image, pose);
-      setPoseImage(image);
-      // setPoseImage(cropImage); // display cropped image sent to model
-      const cropTensor = convertImageToTensor(cropImage);
-      const {posenetOutput} = await model.estimatePose(cropTensor);
-      setHasPose(true);
-      return posenetOutput;
-    }
-    // running on cpu for Android devices
-    else {
-      setPoseImage(image);
-      const {posenetOutput} = await model.estimatePose(imageTensor);
-      setHasPose(true);
-      return posenetOutput;
-    }
   };
 
   const getHighestPredProb = async (model, posenetOutput) => {
@@ -174,7 +161,6 @@ export default function SinglePoseResults({route}) {
     <View style={appStyles.mainView}>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Your Results:</Text>
-
         <Image
           style={[appStyles.image, {width: '100%'}]}
           source={poseImage ? {uri: poseImage.uri} : require('../assets/refImg.jpg')}
@@ -193,7 +179,7 @@ export default function SinglePoseResults({route}) {
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Detecting Pose</Text>
-            {!hasPose ? (
+            {poseStatus === 'yes' ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
             ) : (
               <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
