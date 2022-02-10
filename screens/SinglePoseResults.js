@@ -43,6 +43,8 @@ export default function SinglePoseResults({route}) {
     await setupBackend();
     const model = await setupModel();
     const image = route.params?.image;
+    setPoseImage(image);
+
     const imageTensor = convertImageToTensor(image);
     const {pose, posenetOutput} = await model.estimatePose(imageTensor);
 
@@ -51,18 +53,14 @@ export default function SinglePoseResults({route}) {
       // if no pose detected
       if (!pose) {
         setPoseStatus('no');
-        setPoseImage(image);
         setPredictedPose('Where are you? We got no pose!👀');
       } else {
         const {minX, maxX, minY, maxY} = getMinMaxXY(image.width, image.height, pose);
         if (minX < 0 || maxX > image.width || minY < 0 || maxY > image.height) {
-          setPoseImage(image);
           setPoseStatus('out');
           setPredictedPose('Out of bounds! Maybe next time.😉');
         } else {
-          const cropImage = await cropImageToPose(image, minX, maxX, minY, maxY);
-          // setPoseImage(image);
-          setPoseImage(cropImage); // display cropped image sent to model
+          const cropImage = await cropImageToPose(image, minY, maxY);
           const cropTensor = convertImageToTensor(cropImage);
           const {posenetOutput} = await model.estimatePose(cropTensor);
           setPoseStatus('yes');
@@ -79,7 +77,6 @@ export default function SinglePoseResults({route}) {
     }
     // Android
     else {
-      setPoseImage(image);
       setPoseStatus('yes');
       const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
       if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
