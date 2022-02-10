@@ -1,3 +1,4 @@
+import {MaterialCommunityIcons} from '@expo/vector-icons';
 import React, {useState, useEffect} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
@@ -29,11 +30,10 @@ const NON_MATCH_LABEL = 'idle';
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
-  const [predictedPose, setPredictedPose] = useState('detecting...');
   const [isModelReady, setIsModelReady] = useState(false);
-  const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
-  const [hasPrediction, setHasPrediction] = useState(false);
   const [poseImage, setPoseImage] = useState();
+  const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
+  const [predictedPose, setPredictedPose] = useState('detecting...');
 
   useEffect(async () => {
     await getPoseResults();
@@ -118,7 +118,6 @@ export default function SinglePoseResults({route}) {
 
   const getHighestPredProb = async (model, posenetOutput) => {
     const posePrediction = await model.predict(posenetOutput);
-    setHasPrediction(true);
     const {className: prediction, probability} = posePrediction.reduce((prevPred, currPred) => {
       if (currPred.probability > prevPred.probability) return currPred;
       else return prevPred;
@@ -171,23 +170,64 @@ export default function SinglePoseResults({route}) {
             {!isModelReady ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
             ) : (
-              <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="check-circle"
+                size={24}
+                color="green"
+              />
             )}
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Detecting Pose</Text>
-            {poseStatus === 'yes' ? (
+            {poseStatus === 'wait' && (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
-            ) : (
-              <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
+            )}
+            {(poseStatus === 'yes' || poseStatus === 'out') && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="check-circle"
+                size={24}
+                color="green"
+              />
+            )}
+            {poseStatus === 'no' && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="close-circle"
+                size={24}
+                color="red"
+              />
             )}
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Predicting Match</Text>
-            {!hasPrediction ? (
+            {poseStatus === 'wait' && (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
-            ) : (
-              <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
+            )}
+            {poseStatus === 'yes' && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="check-circle"
+                size={24}
+                color="green"
+              />
+            )}
+            {poseStatus === 'out' && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="alert-circle"
+                size={24}
+                color="gray"
+              />
+            )}
+            {poseStatus === 'no' && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="close-circle"
+                size={24}
+                color="red"
+              />
             )}
           </View>
         </View>
@@ -201,16 +241,16 @@ export default function SinglePoseResults({route}) {
             appStyles.primaryButton,
             styles.button,
             appStyles.highlight,
-            !hasPrediction && styles.disabledButton,
+            poseStatus === 'wait' && styles.disabledButton,
           ]}
           onPress={handleShare}
-          disabled={!hasPrediction ? true : false}
+          disabled={poseStatus === 'wait' ? true : false}
         >
           <Text
             style={[
               appStyles.primaryButtonText,
               styles.buttonText,
-              !hasPrediction && styles.disabledButtonText,
+              poseStatus === 'wait' && styles.disabledButtonText,
             ]}
           >
             Share
