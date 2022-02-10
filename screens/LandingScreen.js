@@ -40,7 +40,12 @@ const LandingScreen = () => {
       >
         <Text style={appStyles.primaryButtonText}>Log In</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.signinButton}>
+      <TouchableOpacity
+        style={styles.signinButton}
+        onPress={() => {
+          navigate.replace('MyTabsGuest');
+        }}
+      >
         <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
       </TouchableOpacity>
     </View>

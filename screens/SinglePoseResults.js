@@ -16,6 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import * as tmPose from '@teachablemachine/pose';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
+import {auth} from '../firebase';
 
 import {convertImageToTensor} from './helpers/tensor-helper';
 import {cropImageToPose} from './helpers/crop-helper';
@@ -135,7 +136,13 @@ export default function SinglePoseResults({route}) {
   };
 
   const handleDone = () => {
-    navigation.replace('MyTabs');
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        navigation.replace('MyTabs');
+      } else {
+        navigation.replace('MyTabsGuest');
+      }
+    });
   };
 
   const handleShare = async () => {
