@@ -12,21 +12,22 @@ _'user' refers to a logged-in user unless otherwise specified_
 
 **user experience**
 
-- [ ] Users can open our app on up-to-date iPhone or Android device
+- [ ] Users can open our app on up-to-date iPhone device
+- [x] Users can open our app on up-to-date Android device
 - [x] Users can Sign Up for an account by providing an email address and password
 - [x] Users can Log In to the app by providing their email address and/or username and password
 - [x] Users can select a PLAY button to play a single posele
-- [ ] Users can see their "score"
-  - [ ] how many posele's they have successfully matched in total
-  - [ ] users score persists and will display on log-in even if they leave or logout of the app
+- [x] Users can see their "score"
+  - [x] how many posele's they have successfully matched in total
+  - [x] users score persists and will display on log-in even if they leave or logout of the app
 - [x] Users can share a message to social media saying whether they matched and a link to posele
 
 **engineering requirements**
 
 - [ ] At least one 'posele' hosted through Firebase. Each posele consists of an image and a ML model
       that is trained to recognize the posture/pose of the image subject.
-- [ ] Create a machine learning model for each posele
-- [ ] Train the model with our own poses.
+- [x] Create a machine learning model for each posele
+- [x] Train the model with our own poses.
 - [x] Users authenticate via Firebase
 - [x] User database model is established in Firebase
 
@@ -39,7 +40,7 @@ _When a user presses play to begin a posele:_
 - [x] User is presented with an image
 - [x] User presses READY button
 - [x] User device camera opens; photograph is captured after 5 second countdown
-- [ ] User is taken to a screen telling them whether they matched the posele (pass/fail)
+- [x] User is taken to a screen telling them whether they matched the posele (pass/fail)
 
 </details>
 
