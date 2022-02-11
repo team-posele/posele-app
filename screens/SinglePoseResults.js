@@ -173,7 +173,6 @@ export default function SinglePoseResults({route}) {
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <Image
           style={[appStyles.image, {width: '100%'}]}
-          // source={userImage ? {uri: userImage.uri} : require('../assets/refImg.jpg')}
           source={userImage ? {uri: userImage.uri} : {uri: route.params.poseImage}}
         ></Image>
       </View>
