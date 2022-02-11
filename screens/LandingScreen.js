@@ -30,7 +30,7 @@ const LandingScreen = () => {
           navigate.replace('SignUp');
         }}
       >
-        <Text style={appStyles.secondaryButtonText}>I'm New here</Text>
+        <Text style={appStyles.secondaryButtonText}>I'm New Here</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.signinButton}
@@ -38,7 +38,15 @@ const LandingScreen = () => {
           navigate.replace('SignIn');
         }}
       >
-        <Text style={appStyles.primaryButtonText}>SignIn</Text>
+        <Text style={appStyles.primaryButtonText}>Log In</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.signinButton}
+        onPress={() => {
+          navigate.replace('MyTabsGuest');
+        }}
+      >
+        <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
       </TouchableOpacity>
     </View>
   );
@@ -68,11 +76,13 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   signupButton: {
-    marginTop: 90,
+    marginTop: 50,
     marginBottom: 15,
   },
   signinButton: {
-    margin: 5,
+    // margin: 5,
+    marginTop: 15,
+    marginBottom: 10,
     alignItems: 'center',
   },
 });

@@ -76,18 +76,23 @@ const Login = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
-        <Text style={appStyles.text}>Don't have an account? Sign up for free!</Text>
+        {/* <Text style={appStyles.text}>Don't have an account? Sign up for free!</Text> */}
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[appStyles.secondaryButton, styles.secondaryButton]}
           onPress={() => {
             navigate.replace('SignUp');
           }}
         >
           <Text style={appStyles.secondaryButtonText}>Sign Up</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[appStyles.secondaryButton, styles.secondaryButton]}>
-          <Text style={appStyles.secondaryButtonText}>Play as Guest (coming soon)</Text>
+        </TouchableOpacity> */}
+        <TouchableOpacity
+          style={[appStyles.secondaryButton, styles.secondaryButton]}
+          onPress={() => {
+            navigate.replace('LandingScreen');
+          }}
+        >
+          <Text style={appStyles.secondaryButtonText}>{`<< Back to Main Menu`}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
