@@ -6,6 +6,7 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
@@ -101,8 +102,16 @@ const HomeScreen = () => {
   );
 };
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
 const LeaderBoard = () => {
   const [users, setUsers] = useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   useEffect(async () => {
     const userz = []; // temporary holder
@@ -122,7 +131,7 @@ const LeaderBoard = () => {
       // cleanup: clear users on unmount
       setUsers([]);
     };
-  }, []);
+  }, [refreshing]);
 
   return (
     <View style={appStyles.mainView}>
@@ -138,6 +147,7 @@ const LeaderBoard = () => {
         {users[0] ? (
           <FlatList
             data={users}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             renderItem={({item}) => (
               <View style={styles.leaderBoardItems}>
                 <Text style={styles.nameItem}>{item.username}</Text>
