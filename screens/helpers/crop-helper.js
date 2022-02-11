@@ -1,14 +1,11 @@
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const DIMENSION = 256;
-const HEIGHT_MARGIN_PERCENTAGE = 0.1;
+const HEIGHT_MARGIN_PERCENTAGE = 0.05;
 
 export const getMinMaxXY = (width, height, pose) => {
   let {minX, maxX, minY, maxY} = pose.keypoints.reduce(
     (minMax, keyPoint) => {
-      // for checking above hips
-      // if (!['leftKnee', 'rightKnee', 'leftAnkle', 'rightAnkle'].includes(keyPoint.part)) {
-      // }
       const {x, y} = keyPoint.position;
       if (x < minMax.minX) minMax.minX = x;
       if (x > minMax.maxX) minMax.maxX = x;
@@ -27,8 +24,10 @@ export const cropImageToPose = async (image, minY, maxY) => {
 
   // adjust height to fit square
   const heightMargin = height * HEIGHT_MARGIN_PERCENTAGE;
-  minY = Math.min(minY - heightMargin, 0);
-  maxY = Math.max(maxY + heightMargin, DIMENSION);
+  minY -= heightMargin;
+  maxY += heightMargin;
+  if (minY < 0) minY = 0;
+  if (maxY > height) maxY = height;
 
   const actions = [
     {

@@ -59,6 +59,7 @@ export default function SinglePoseResults({route}) {
           setPredictedPose('Out of bounds! Maybe next time.😉');
         } else {
           const cropImage = await cropImageToPose(image, minY, maxY);
+          setPoseImage(cropImage);
           const cropTensor = convertImageToTensor(cropImage);
           const {posenetOutput} = await model.estimatePose(cropTensor);
           setPoseStatus('yes');
@@ -106,7 +107,8 @@ export default function SinglePoseResults({route}) {
     await tf.ready();
 
     // const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
-    const URL = 'https://teachablemachine.withgoogle.com/models/A02NxPriM/'; // for Nathan Chen pose
+    // const URL = 'https://teachablemachine.withgoogle.com/models/A02NxPriM/'; // for Nathan Chen pose
+    const URL = 'https://teachablemachine.withgoogle.com/models/UnCKhU13r/'; // for Nathan Chen pose
     const modelURL = URL + 'model.json';
     const metadataURL = URL + 'metadata.json';
     const model = await tmPose.load(modelURL, metadataURL);
