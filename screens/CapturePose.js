@@ -9,11 +9,11 @@ const TIME_LIMIT = 5;
 const TIME_ZERO_ICON = '📸';
 const DIMENSION = 256;
 
-export default () => {
+export default ({route}) => {
   const navigation = useNavigation();
 
   const cameraRef = useRef();
-  const deviceWidth = useWindowDimensions().width;
+  const modelRef = useRef();
 
   const [cameraPermission, setCameraPermission] = useState(null);
   const [cameraReady, setCameraReady] = useState(false);
@@ -21,13 +21,14 @@ export default () => {
   const [mediaPermission, setMediaPermission] = useState(null);
   const [time, setTime] = useState(TIME_LIMIT);
 
-  useEffect(() => {
-    (async () => {
-      const cameraResponse = await Camera.requestCameraPermissionsAsync();
-      setCameraPermission(cameraResponse.status === 'granted');
-      const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
-      setMediaPermission(mediaResponse.status === 'granted');
-    })();
+  const deviceWidth = useWindowDimensions().width;
+
+  useEffect(async () => {
+    modelRef.current = route.params.model;
+    const cameraResponse = await Camera.requestCameraPermissionsAsync();
+    setCameraPermission(cameraResponse.status === 'granted');
+    const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
+    setMediaPermission(mediaResponse.status === 'granted');
   }, []);
 
   useEffect(() => {
@@ -91,7 +92,7 @@ export default () => {
       const mirrorImage = await manipulateAsync(image.uri, actions, saveOptions);
       if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
       else console.log('🧑🏻‍💻 Media permission not granted!');
-      navigation.replace('Results', {image: mirrorImage});
+      navigation.replace('Results', {image: mirrorImage, model: modelRef.current});
     } catch (error) {
       navigation.replace('NoPose');
     }

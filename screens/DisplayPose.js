@@ -1,8 +1,10 @@
-import {useEffect, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
+import {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+
 import {colors, appStyles} from '../colorConstants';
+import {db} from '../firebase';
 
 const TIME_LIMIT = 3;
 const TIME_ZERO_ICON = '🕺';
@@ -10,9 +12,26 @@ const TIME_ZERO_ICON = '🕺';
 export default function Pose() {
   const navigation = useNavigation();
 
+  const modelRef = useRef();
+
   const [intervalId, setIntervalId] = useState(null);
   const [imageReady, setImageReady] = useState(false);
+  const [poseName, setPoseName] = useState('');
+  const [poseRefImage, setPoseRefImage] = useState('');
   const [time, setTime] = useState(TIME_LIMIT);
+
+  useEffect(async () => {
+    try {
+      const pose = db.collection('poses').doc('friday');
+      const poseDoc = await pose.get();
+      const {model, image, name} = poseDoc.data();
+      modelRef.current = model;
+      setPoseRefImage(image);
+      setPoseName(name);
+    } catch (error) {
+      console.error('🧑🏻‍💻 Error occurred while getting pose model', error);
+    }
+  }, []);
 
   useEffect(() => {
     // waits until image has loaded
@@ -34,7 +53,7 @@ export default function Pose() {
     if (time === TIME_ZERO_ICON) {
       (async () => {
         clearInterval(intervalId);
-        navigation.navigate('CapturePose');
+        navigation.navigate('CapturePose', {model: modelRef.current});
       })();
     }
   }, [time]);
@@ -45,11 +64,12 @@ export default function Pose() {
         <Text style={appStyles.insetHeader}>Match the Pose:</Text>
         <Image
           style={styles.image}
-          source={require('../assets/refImg.jpg')}
+          source={poseRefImage}
           onLoad={() => {
             setImageReady(true);
           }}
-        ></Image>
+        />
+        <Text style={appStyles.insetHeader}>{poseName}</Text>
       </View>
       <View style={appStyles.container}>
         <Text style={appStyles.warningText}>Remember to Pose Responsibly!</Text>

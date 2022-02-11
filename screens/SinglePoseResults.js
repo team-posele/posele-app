@@ -1,5 +1,5 @@
 import {MaterialCommunityIcons} from '@expo/vector-icons';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
   StyleSheet,
@@ -16,9 +16,9 @@ import * as tmPose from '@teachablemachine/pose';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 
+import {colors, appStyles} from '../colorConstants';
 import {convertImageToTensor} from './helpers/tensor-helper';
 import {cropImageToPose, getMinMaxXY} from './helpers/crop-helper';
-import {colors, appStyles} from '../colorConstants';
 import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
@@ -28,12 +28,15 @@ const NON_MATCH_LABEL = 'idle';
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
+  const modelRef = useRef();
+
   const [isModelReady, setIsModelReady] = useState(false);
   const [poseImage, setPoseImage] = useState();
   const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
   const [predictedPose, setPredictedPose] = useState('detecting...');
 
   useEffect(async () => {
+    modelRef.current = route.params?.model;
     await getPoseResults();
   }, []);
 
@@ -105,10 +108,7 @@ export default function SinglePoseResults({route}) {
   const setupModel = async () => {
     // wait until TensorFlow is ready
     await tf.ready();
-
-    // const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
-    // const URL = 'https://teachablemachine.withgoogle.com/models/A02NxPriM/'; // for Nathan Chen pose
-    const URL = 'https://teachablemachine.withgoogle.com/models/UnCKhU13r/'; // for Nathan Chen pose
+    const URL = modelRef.current;
     const modelURL = URL + 'model.json';
     const metadataURL = URL + 'metadata.json';
     const model = await tmPose.load(modelURL, metadataURL);
