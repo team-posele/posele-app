@@ -48,7 +48,6 @@ export default function App() {
         <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} />
         <Stack.Screen name="Results" options={{headerShown: false}} component={SinglePoseResults} />
         <Stack.Screen name="NoPose" options={{headerShown: false}} component={NoPose} />
-        <Stack.Screen name="Share" options={{headerShown: false}} component={Share} />
       </Stack.Navigator>
     </NavigationContainer>
   );
