@@ -17,19 +17,19 @@ export default function Warning() {
 
   return (
     <KeyboardAvoidingView style={[appStyles.mainView]}>
-      <View style={[appStyles.insetBox]}>
+      <View style={styles.instructionsContainer}>
         <Text style={[appStyles.insetHeader, styles.instructionsHeader]}>Playing Posele:</Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
           1. Tap 'Pose Now!' to play.
         </Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
-          2. You get 3 seconds to view today's pose.
+          2. You have 3 seconds to view today's pose.
         </Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
           3. Then you have 5 seconds to match the pose.
         </Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
-          4. Our ML model will provide your results.
+          4. Our ML model will predict your pose match.
         </Text>
         <Text style={[appStyles.text, appStyles.insetHeader]}>Good luck!</Text>
       </View>
@@ -79,7 +79,14 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'contain',
     width: '35%',
+    height: '100%',
     margin: 5,
+  },
+  instructionsContainer: {
+    flex: 1,
+    borderRadius: 5,
+    paddingHorizontal: 5,
+    marginTop: 65,
   },
   buttonContainer: {
     flex: 1,

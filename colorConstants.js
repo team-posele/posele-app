@@ -52,7 +52,6 @@ export const appStyles = {
   },
   insetBox: {
     flex: 1,
-
     borderRadius: 5,
     paddingHorizontal: 5,
     marginVertical: 65,
