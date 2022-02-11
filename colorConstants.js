@@ -53,7 +53,6 @@ export const appStyles = {
   insetBox: {
     flex: 1,
 
-    borderRadius: 5,
     paddingHorizontal: 5,
     marginVertical: 65,
   },
@@ -65,6 +64,7 @@ export const appStyles = {
     padding: 10,
   },
   insetText: {
+    flex: 1,
     color: 'white',
     padding: 5,
   },

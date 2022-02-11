@@ -164,13 +164,20 @@ export default function SinglePoseResults({route}) {
 
   return (
     <View style={appStyles.mainView}>
+      <Text style={appStyles.insetHeader}>Your Results:</Text>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
-        <Text style={appStyles.insetHeader}>Your Results:</Text>
-
         <Image
           style={[appStyles.image, {width: '100%'}]}
-          source={poseImage ? {uri: poseImage.uri} : require('../assets/refImg.jpg')}
+          source={require('../assets/refImg.jpg')}
         ></Image>
+        {poseImage ? (
+          <Image style={[appStyles.image, {width: '100%'}]} source={{uri: poseImage.uri}}></Image>
+        ) : (
+          <Image
+            style={[appStyles.image, {width: '100%'}]}
+            source={require('../assets/refImg.jpg')}
+          ></Image>
+        )}
       </View>
       <View style={styles.statusBox}>
         <Text style={styles.statusText}>{predictedPose}</Text>
@@ -233,9 +240,11 @@ export default function SinglePoseResults({route}) {
 
 const styles = StyleSheet.create({
   imageContainer: {
-    flex: 3,
+    flex: 2,
+    flexDirection: 'row',
     paddingVertical: 20,
-    width: '90%',
+    justifyContent: 'space-evenly',
+    width: '100%',
   },
   statusBox: {
     flex: 1,
