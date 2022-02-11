@@ -26,8 +26,7 @@ export default function Pose() {
       const numPoses = (await db.collection('pose-models').get()).size;
       const randPoseIndex = Math.floor(Math.random() * numPoses);
       console.log('🧑🏻‍💻 numPoses, randPoseIndex', numPoses, randPoseIndex);
-      // const pose = db.collection('pose-models').doc(`${randPoseIndex}`);
-      const pose = db.collection('pose-models').doc('1');
+      const pose = db.collection('pose-models').doc(`${randPoseIndex}`);
       const poseDoc = await pose.get();
       const {image, name, url} = poseDoc.data();
       modelRef.current = url;

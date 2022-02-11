@@ -34,7 +34,7 @@ export default function Warning() {
         <Text style={[appStyles.text, appStyles.insetHeader]}>Good luck!</Text>
       </View>
       <View style={styles.imageContainer}>
-        <Image style={styles.image} source={require('../assets/favicon.png')}></Image>
+        <Image style={styles.image} source={require('../assets/cameraWarning.jpg')}></Image>
         <Image style={styles.image} source={require('../assets/movement.png')}></Image>
       </View>
       <Text style={[appStyles.warningText, styles.warning]}>
