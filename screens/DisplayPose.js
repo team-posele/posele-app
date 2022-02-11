@@ -1,6 +1,7 @@
+import * as FileSystem from 'expo-file-system';
 import {StatusBar} from 'expo-status-bar';
 import {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View, Image, Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import {colors, appStyles} from '../colorConstants';
@@ -26,7 +27,20 @@ export default function Pose() {
       const poseDoc = await pose.get();
       const {model, image, name} = poseDoc.data();
       modelRef.current = model;
-      setPoseRefImage(image);
+
+      // use URL sources for web
+      if (Platform.OS === 'web') {
+        setPoseRefImage(image);
+      }
+      // use URI sources for devices
+      else {
+        const {uri} = await FileSystem.downloadAsync(
+          image,
+          FileSystem.cacheDirectory + 'image.jpg'
+        );
+        setPoseRefImage(uri);
+      }
+
       setPoseName(name);
     } catch (error) {
       console.error('🧑🏻‍💻 Error occurred while getting pose model', error);
@@ -62,13 +76,17 @@ export default function Pose() {
     <View style={appStyles.mainView}>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Match the Pose:</Text>
-        <Image
-          style={styles.image}
-          source={poseRefImage}
-          onLoad={() => {
-            setImageReady(true);
-          }}
-        />
+        {!poseRefImage ? (
+          <ActivityIndicator size="large" style={styles.image} color={colors.secondary} />
+        ) : (
+          <Image
+            style={styles.image}
+            source={{uri: poseRefImage}}
+            onLoad={() => {
+              setImageReady(true);
+            }}
+          />
+        )}
         <Text style={appStyles.insetHeader}>{poseName}</Text>
       </View>
       <View style={appStyles.container}>
@@ -115,5 +133,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  statusIcon: {
+    alignSelf: 'center',
   },
 });

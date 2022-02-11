@@ -57,7 +57,7 @@ export default function Share({route}) {
         <Image
           style={appStyles.image}
           // ref={thumbnailImage}
-          source={imageUri ? {uri: imageUri} : require('../assets/photo.jpg')}
+          source={imageUri ? {uri: imageUri} : require('../assets/posele-logo.png')}
         />
       </View>
       <View style={appStyles.container}>
