@@ -26,6 +26,10 @@ import {incrementUserScore} from '../firebase/firestore';
 const PREDICTION_THRESHOLD = 0.8;
 const NON_MATCH_LABEL = 'idle';
 
+const MESSAGES = {
+  MATCH: 'You Got It~!',
+};
+
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
@@ -69,7 +73,7 @@ export default function SinglePoseResults({route}) {
           setPoseStatus('yes');
           const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
           if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
-            setPredictedPose(prediction);
+            setPredictedPose('You Got It~!');
             await incrementUserScore(true);
           } else {
             setPredictedPose('No Match!');
