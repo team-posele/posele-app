@@ -5,7 +5,7 @@ import {ActivityIndicator, StyleSheet, Text, View, Image, Platform} from 'react-
 import {useNavigation} from '@react-navigation/native';
 
 import {colors, appStyles} from '../colorConstants';
-import {db} from '../firebase';
+import {db, storage} from '../firebase';
 
 const TIME_LIMIT = 3;
 const TIME_ZERO_ICON = '🕺';
@@ -18,27 +18,25 @@ export default function Pose() {
   const [intervalId, setIntervalId] = useState(null);
   const [imageReady, setImageReady] = useState(false);
   const [poseName, setPoseName] = useState('');
-  const [poseRefImage, setPoseRefImage] = useState('');
+  const [poseImage, setPoseImage] = useState('');
   const [time, setTime] = useState(TIME_LIMIT);
 
   useEffect(async () => {
     try {
-      const pose = db.collection('poses').doc('friday');
+      const pose = db.collection('pose-models').doc('0');
       const poseDoc = await pose.get();
-      const {model, image, name} = poseDoc.data();
-      modelRef.current = model;
+      const {image, name, url} = poseDoc.data();
+      modelRef.current = url;
+      const imageURL = await storage.ref('pose-images/' + image).getDownloadURL();
 
       // use URL sources for web
       if (Platform.OS === 'web') {
-        setPoseRefImage(image);
+        setPoseImage(imageURL);
       }
       // use URI sources for devices
       else {
-        const {uri} = await FileSystem.downloadAsync(
-          image,
-          FileSystem.cacheDirectory + 'image.jpg'
-        );
-        setPoseRefImage(uri);
+        const {uri} = await FileSystem.downloadAsync(imageURL, FileSystem.cacheDirectory + image);
+        setPoseImage(uri);
       }
 
       setPoseName(name);
@@ -67,7 +65,7 @@ export default function Pose() {
     if (time === TIME_ZERO_ICON) {
       (async () => {
         clearInterval(intervalId);
-        navigation.navigate('CapturePose', {model: modelRef.current});
+        navigation.navigate('CapturePose', {poseImage: poseImage, model: modelRef.current});
       })();
     }
   }, [time]);
@@ -76,12 +74,12 @@ export default function Pose() {
     <View style={appStyles.mainView}>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Match the Pose:</Text>
-        {!poseRefImage ? (
+        {!poseImage ? (
           <ActivityIndicator size="large" style={styles.image} color={colors.secondary} />
         ) : (
           <Image
             style={styles.image}
-            source={{uri: poseRefImage}}
+            source={{uri: poseImage}}
             onLoad={() => {
               setImageReady(true);
             }}

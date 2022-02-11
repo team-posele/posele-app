@@ -37,7 +37,7 @@ export default function SinglePoseResults({route}) {
   const modelRef = useRef();
 
   const [isModelReady, setIsModelReady] = useState(false);
-  const [poseImage, setPoseImage] = useState();
+  const [userImage, setUserImage] = useState();
   const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
   const [modelPrediction, setModelPrediction] = useState('');
   const [resultMessage, setResultMessage] = useState('');
@@ -51,7 +51,7 @@ export default function SinglePoseResults({route}) {
     await setupBackend();
     const model = await setupModel();
     const image = route.params?.image;
-    setPoseImage(image);
+    setUserImage(image);
 
     const imageTensor = convertImageToTensor(image);
     const {pose, posenetOutput} = await model.estimatePose(imageTensor);
@@ -69,7 +69,7 @@ export default function SinglePoseResults({route}) {
           setResultMessage(OUT_MESSAGE);
         } else {
           const cropImage = await cropImageToPose(image, minY, maxY);
-          setPoseImage(cropImage);
+          setUserImage(cropImage);
           const cropTensor = convertImageToTensor(cropImage);
           const {posenetOutput} = await model.estimatePose(cropTensor);
           setPoseStatus('yes');
@@ -173,7 +173,8 @@ export default function SinglePoseResults({route}) {
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <Image
           style={[appStyles.image, {width: '100%'}]}
-          source={poseImage ? {uri: poseImage.uri} : require('../assets/refImg.jpg')}
+          // source={userImage ? {uri: userImage.uri} : require('../assets/refImg.jpg')}
+          source={userImage ? {uri: userImage.uri} : {uri: route.params.poseImage}}
         ></Image>
       </View>
       <View style={styles.statusBox}>

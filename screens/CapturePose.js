@@ -14,6 +14,7 @@ export default ({route}) => {
 
   const cameraRef = useRef();
   const modelRef = useRef();
+  const poseImageRef = useRef();
 
   const [cameraPermission, setCameraPermission] = useState(null);
   const [cameraReady, setCameraReady] = useState(false);
@@ -25,6 +26,7 @@ export default ({route}) => {
 
   useEffect(async () => {
     modelRef.current = route.params.model;
+    poseImageRef.current = route.params.poseImage;
     const cameraResponse = await Camera.requestCameraPermissionsAsync();
     setCameraPermission(cameraResponse.status === 'granted');
     const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
@@ -92,7 +94,11 @@ export default ({route}) => {
       const mirrorImage = await manipulateAsync(image.uri, actions, saveOptions);
       if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
       else console.log('🧑🏻‍💻 Media permission not granted!');
-      navigation.replace('Results', {image: mirrorImage, model: modelRef.current});
+      navigation.replace('Results', {
+        image: mirrorImage,
+        model: modelRef.current,
+        poseImage: poseImageRef.current,
+      });
     } catch (error) {
       navigation.replace('NoPose');
     }
