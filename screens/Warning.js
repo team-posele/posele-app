@@ -20,18 +20,21 @@ export default function Warning() {
       <View style={[appStyles.insetBox]}>
         <Text style={[appStyles.insetHeader, styles.instructionsHeader]}>Playing Posele:</Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
-          1. When you click Pose Now, you will see an image
+          1. Tap 'Pose Now!' to play.
         </Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
-          2. Your device camera will start
+          2. You get 3 seconds to view today's pose.
         </Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
-          3. You have five seconds to line up your shot and match the pose in the image.
+          3. Then you have 5 seconds to match the pose.
         </Text>
-        <Text style={[appStyles.text, appStyles.insetHeader]}>Good luck! </Text>
+        <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
+          4. Our ML model will provide your results.
+        </Text>
+        <Text style={[appStyles.text, appStyles.insetHeader]}>Good luck!</Text>
       </View>
       <View style={styles.imageContainer}>
-        <Image style={styles.image} source={require('../assets/cameraWarning.jpg')}></Image>
+        <Image style={styles.image} source={require('../assets/favicon.png')}></Image>
         <Image style={styles.image} source={require('../assets/movement.png')}></Image>
       </View>
       <Text style={[appStyles.warningText, styles.warning]}>
