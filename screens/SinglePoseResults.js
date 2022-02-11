@@ -26,9 +26,10 @@ import {incrementUserScore} from '../firebase/firestore';
 const PREDICTION_THRESHOLD = 0.8;
 const NON_MATCH_LABEL = 'idle';
 
-const MESSAGES = {
-  MATCH: 'You Got It~!',
-};
+const MATCH_MESSAGE = 'You Got It~!🥳';
+const NO_MATCH_MESSAGE = 'You Missed It...😢';
+const NO_POSE_MESSAGE = 'Where are you? We got no pose!👀';
+const OUT_MESSAGE = 'Out of bounds! Maybe next time.😉';
 
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
@@ -38,7 +39,8 @@ export default function SinglePoseResults({route}) {
   const [isModelReady, setIsModelReady] = useState(false);
   const [poseImage, setPoseImage] = useState();
   const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
-  const [predictedPose, setPredictedPose] = useState('detecting...');
+  const [modelPrediction, setModelPrediction] = useState('');
+  const [resultMessage, setResultMessage] = useState('');
 
   useEffect(async () => {
     modelRef.current = route.params?.model;
@@ -59,12 +61,12 @@ export default function SinglePoseResults({route}) {
       // if no pose detected
       if (!pose) {
         setPoseStatus('no');
-        setPredictedPose('Where are you? We got no pose!👀');
+        setResultMessage(NO_POSE_MESSAGE);
       } else {
         const {minX, maxX, minY, maxY} = getMinMaxXY(image.width, image.height, pose);
         if (minX < 0 || maxX > image.width || minY < 0 || maxY > image.height) {
           setPoseStatus('out');
-          setPredictedPose('Out of bounds! Maybe next time.😉');
+          setResultMessage(OUT_MESSAGE);
         } else {
           const cropImage = await cropImageToPose(image, minY, maxY);
           setPoseImage(cropImage);
@@ -72,11 +74,12 @@ export default function SinglePoseResults({route}) {
           const {posenetOutput} = await model.estimatePose(cropTensor);
           setPoseStatus('yes');
           const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
+          setModelPrediction(prediction);
           if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
-            setPredictedPose('You Got It~!');
+            setResultMessage(MATCH_MESSAGE);
             await incrementUserScore(true);
           } else {
-            setPredictedPose('No Match!');
+            setResultMessage(NO_MATCH_MESSAGE);
             await incrementUserScore(false);
           }
         }
@@ -87,10 +90,10 @@ export default function SinglePoseResults({route}) {
       setPoseStatus('yes');
       const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
       if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
-        setPredictedPose(prediction);
+        setResultMessage(MATCH_MESSAGE);
         await incrementUserScore(true);
       } else {
-        setPredictedPose('No Match!');
+        setResultMessage(NO_MATCH_MESSAGE);
         await incrementUserScore(false);
       }
     }
@@ -144,7 +147,7 @@ export default function SinglePoseResults({route}) {
     try {
       const result = await Share.share({
         message:
-          predictedPose === 'letterP'
+          modelPrediction === 'target'
             ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
             : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
         url: 'https://www.posele.com',
@@ -174,7 +177,7 @@ export default function SinglePoseResults({route}) {
         ></Image>
       </View>
       <View style={styles.statusBox}>
-        <Text style={styles.statusText}>{predictedPose}</Text>
+        <Text style={styles.statusText}>{resultMessage}</Text>
         <View style={styles.statusContainer}>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Loading Model</Text>
