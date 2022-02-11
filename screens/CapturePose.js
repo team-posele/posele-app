@@ -1,9 +1,9 @@
-import {useEffect, useRef, useState} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
-import {useNavigation, useIsFocused, TabRouter} from '@react-navigation/native';
 import {Camera} from 'expo-camera';
 import {manipulateAsync, FlipType} from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
+import {useEffect, useRef, useState} from 'react';
+import {Platform, StyleSheet, Text, useWindowDimensions, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 const TIME_LIMIT = 5;
 const TIME_ZERO_ICON = '📸';
@@ -11,28 +11,23 @@ const DIMENSION = 256;
 
 export default () => {
   const navigation = useNavigation();
-  const isFocused = useIsFocused();
 
   const cameraRef = useRef();
+  const deviceWidth = useWindowDimensions().width;
 
   const [cameraPermission, setCameraPermission] = useState(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [mediaPermission, setMediaPermission] = useState(null);
   const [time, setTime] = useState(TIME_LIMIT);
-  const [type, setType] = useState(Camera.Constants.Type.front);
 
   useEffect(() => {
-    let isMounted = true;
     (async () => {
       const cameraResponse = await Camera.requestCameraPermissionsAsync();
       setCameraPermission(cameraResponse.status === 'granted');
       const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
       setMediaPermission(mediaResponse.status === 'granted');
     })();
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
   useEffect(() => {
@@ -106,17 +101,22 @@ export default () => {
   if (cameraPermission === false) return <Text>No access to camera</Text>;
   return (
     <View style={styles.container}>
-      {isFocused && (
-        <Camera
-          ref={cameraRef}
-          style={Platform.OS === 'android' ? styles.cameraAndroid : styles.cameraIos}
-          type={type}
-          autoFocus={true}
-          onCameraReady={() => {
-            setCameraReady(true);
-          }}
-        ></Camera>
-      )}
+      <Camera
+        ref={cameraRef}
+        style={
+          Platform.OS !== 'android'
+            ? styles.cameraIos
+            : {
+                width: deviceWidth,
+                height: deviceWidth,
+              }
+        }
+        type={Camera.Constants.Type.front}
+        autoFocus={true}
+        onCameraReady={() => {
+          setCameraReady(true);
+        }}
+      ></Camera>
       <Text style={styles.timer}>{cameraReady ? time : ''}</Text>
     </View>
   );
@@ -131,10 +131,6 @@ const styles = StyleSheet.create({
   cameraIos: {
     width: '100%',
     height: ' 100%',
-  },
-  cameraAndroid: {
-    width: 360,
-    height: 360,
   },
   timer: {
     position: 'absolute',

@@ -6,13 +6,11 @@ import {
   Text,
   View,
   Image,
-  ImageBackground,
   TouchableOpacity,
   ActivityIndicator,
   Platform,
   Share,
 } from 'react-native';
-import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
 import * as tmPose from '@teachablemachine/pose';
 import * as tf from '@tensorflow/tfjs';
