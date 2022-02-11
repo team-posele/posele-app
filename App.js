@@ -10,7 +10,6 @@ import SignIn from './screens/Login';
 import Warning from './screens/Warning';
 import SinglePoseResults from './screens/SinglePoseResults';
 import NoPose from './screens/NoPose';
-import Share from './screens/Share';
 import LandingScreen from './screens/LandingScreen';
 import SignUp from './screens/SignUp';
 import MyTabsGuest from './screens/MyTabsGuest';
