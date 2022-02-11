@@ -17,12 +17,6 @@ import {colors, appStyles} from '../colorConstants';
 import {getAllUsers, getUser, incrementUserScore, score} from '../firebase/firestore';
 
 const Tab = createBottomTabNavigator();
-let users = [];
-
-// created function to add users to array
-const pushToArray = doc => {
-  users.push({...doc.data(), id: doc.id});
-};
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -108,6 +102,28 @@ const HomeScreen = () => {
 };
 
 const LeaderBoard = () => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(async () => {
+    const userz = []; // temporary holder
+    await db
+      .collection('users') // access users collection
+      .orderBy('score', 'desc') // order by score
+      .limit(10) // limit to top 10 results
+      .get()
+      .then(snapshot => {
+        // push each result to holder array
+        snapshot.docs.forEach(doc => {
+          userz.push({...doc.data(), id: doc.id});
+        });
+      });
+    setUsers(userz); // setUsers to the contents of the holder array
+    return function resetLeaderboard() {
+      // cleanup: clear users on unmount
+      setUsers([]);
+    };
+  }, []);
+
   return (
     <View style={appStyles.mainView}>
       <View style={[appStyles.screenTitleContainer, styles.title]}>
@@ -147,19 +163,6 @@ const Friends = () => {
 };
 
 const MyTabs = () => {
-  useEffect(async () => {
-    // gets all the users from the database
-    await db
-      .collection('users')
-      .orderBy('score', 'desc') // order by score
-      .limit(10) // limit to top 10 results
-      .get()
-      .then(snapshot => {
-        snapshot.docs.forEach(doc => {
-          pushToArray(doc);
-        });
-      });
-  }, []);
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
