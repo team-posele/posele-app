@@ -1,42 +1,49 @@
-import React, {useState, useEffect} from 'react';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
+import React, {useEffect, useRef, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
   StyleSheet,
   Text,
   View,
   Image,
-  ImageBackground,
   TouchableOpacity,
   ActivityIndicator,
   Platform,
   Share,
 } from 'react-native';
-import {Icon} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
 import * as tmPose from '@teachablemachine/pose';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 import {auth} from '../firebase';
 
+import {colors, appStyles} from '../colorConstants';
 import {convertImageToTensor} from './helpers/tensor-helper';
 import {cropImageToPose, getMinMaxXY} from './helpers/crop-helper';
-import {colors, appStyles} from '../colorConstants';
 import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
 const PREDICTION_THRESHOLD = 0.8;
 const NON_MATCH_LABEL = 'idle';
 
+const MATCH_MESSAGE = 'You Got It~!🥳';
+const NO_MATCH_MESSAGE = 'You Missed It...😢';
+const NO_POSE_MESSAGE = 'Where are you? We got no pose!👀';
+const OUT_MESSAGE = 'Out of bounds! Maybe next time.😉';
+
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
-  const [predictedPose, setPredictedPose] = useState('detecting...');
+  const modelRef = useRef();
+
   const [isModelReady, setIsModelReady] = useState(false);
-  const [hasPose, setHasPose] = useState(false);
-  const [hasPrediction, setHasPrediction] = useState(false);
-  const [poseImage, setPoseImage] = useState();
+  const [userImage, setUserImage] = useState();
+  const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
+  const [modelPrediction, setModelPrediction] = useState('');
+  const [resultMessage, setResultMessage] = useState('');
 
   useEffect(async () => {
+    modelRef.current = route.params?.model;
     await getPoseResults();
   }, []);
 
@@ -44,42 +51,49 @@ export default function SinglePoseResults({route}) {
     await setupBackend();
     const model = await setupModel();
     const image = route.params?.image;
+    setUserImage(image);
 
     const imageTensor = convertImageToTensor(image);
     const {pose, posenetOutput} = await model.estimatePose(imageTensor);
 
-    // running on webgl
+    // web browser and iOS
     if (Platform.OS !== 'android') {
-      const {minX, maxX, minY, maxY} = getMinMaxXY(image.width, image.height, pose);
-      if (minX < 0 || maxX > image.width || minY < 0 || maxY > image.height) {
-        setPoseImage(image);
-        setHasPose(true);
-        setPredictedPose('Out of bounds! Maybe next time.😉');
+      // if no pose detected
+      if (!pose) {
+        setPoseStatus('no');
+        setResultMessage(NO_POSE_MESSAGE);
       } else {
-        const cropImage = await cropImageToPose(image, minX, maxX, minY, maxY);
-        // setPoseImage(image);
-        setPoseImage(cropImage); // display cropped image sent to model
-        const cropTensor = convertImageToTensor(cropImage);
-        const {posenetOutput} = await model.estimatePose(cropTensor);
-        setHasPose(true);
-        const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-        if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
-          setPredictedPose(prediction);
-          await incrementUserScore(true);
+        const {minX, maxX, minY, maxY} = getMinMaxXY(image.width, image.height, pose);
+        if (minX < 0 || maxX > image.width || minY < 0 || maxY > image.height) {
+          setPoseStatus('out');
+          setResultMessage(OUT_MESSAGE);
         } else {
-          setPredictedPose('No Match!');
-          await incrementUserScore(false);
+          const cropImage = await cropImageToPose(image, minY, maxY);
+          setUserImage(cropImage);
+          const cropTensor = convertImageToTensor(cropImage);
+          const {posenetOutput} = await model.estimatePose(cropTensor);
+          setPoseStatus('yes');
+          const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
+          setModelPrediction(prediction);
+          if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+            setResultMessage(MATCH_MESSAGE);
+            await incrementUserScore(true);
+          } else {
+            setResultMessage(NO_MATCH_MESSAGE);
+            await incrementUserScore(false);
+          }
         }
       }
-    } else {
-      setPoseImage(image);
-      setHasPose(true);
+    }
+    // Android
+    else {
+      setPoseStatus('yes');
       const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
       if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
-        setPredictedPose(prediction);
+        setResultMessage(MATCH_MESSAGE);
         await incrementUserScore(true);
       } else {
-        setPredictedPose('No Match!');
+        setResultMessage(NO_MATCH_MESSAGE);
         await incrementUserScore(false);
       }
     }
@@ -102,9 +116,7 @@ export default function SinglePoseResults({route}) {
   const setupModel = async () => {
     // wait until TensorFlow is ready
     await tf.ready();
-
-    // const URL = 'https://teachablemachine.withgoogle.com/models/u12x4vla4/'; // for letterP
-    const URL = 'https://teachablemachine.withgoogle.com/models/A02NxPriM/'; // for Nathan Chen pose
+    const URL = modelRef.current;
     const modelURL = URL + 'model.json';
     const metadataURL = URL + 'metadata.json';
     const model = await tmPose.load(modelURL, metadataURL);
@@ -112,30 +124,8 @@ export default function SinglePoseResults({route}) {
     return model;
   };
 
-  const getPosenetOutput = async (model, image) => {
-    const imageTensor = convertImageToTensor(image);
-    // running on webgl
-    if (Platform.OS !== 'android') {
-      const cropImage = await cropImageToPose(image, pose);
-      setPoseImage(image);
-      // setPoseImage(cropImage); // display cropped image sent to model
-      const cropTensor = convertImageToTensor(cropImage);
-      const {posenetOutput} = await model.estimatePose(cropTensor);
-      setHasPose(true);
-      return posenetOutput;
-    }
-    // running on cpu for Android devices
-    else {
-      setPoseImage(image);
-      const {posenetOutput} = await model.estimatePose(imageTensor);
-      setHasPose(true);
-      return posenetOutput;
-    }
-  };
-
   const getHighestPredProb = async (model, posenetOutput) => {
     const posePrediction = await model.predict(posenetOutput);
-    setHasPrediction(true);
     const {className: prediction, probability} = posePrediction.reduce((prevPred, currPred) => {
       if (currPred.probability > prevPred.probability) return currPred;
       else return prevPred;
@@ -157,7 +147,7 @@ export default function SinglePoseResults({route}) {
     try {
       const result = await Share.share({
         message:
-          predictedPose === 'letterP'
+          modelPrediction === 'target'
             ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
             : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
         url: 'https://www.posele.com',
@@ -181,44 +171,83 @@ export default function SinglePoseResults({route}) {
     <View style={appStyles.mainView}>
       <Text style={appStyles.insetHeader}>Your Results:</Text>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
+        <Text style={appStyles.insetHeader}>Your Results:</Text>
         <Image
           style={[appStyles.image, {width: '100%'}]}
-          source={require('../assets/refImg.jpg')}
+          source={userImage ? {uri: userImage.uri} : {uri: route.params.poseImage}}
         ></Image>
         {poseImage ? (
           <Image style={[appStyles.image, {width: '100%'}]} source={{uri: poseImage.uri}}></Image>
         ) : (
-          <Image
-            style={[appStyles.image, {width: '100%'}]}
-            source={require('../assets/refImg.jpg')}
-          ></Image>
+          <></>
         )}
       </View>
       <View style={styles.statusBox}>
-        <Text style={styles.statusText}>{predictedPose}</Text>
+        <Text style={styles.statusText}>{resultMessage}</Text>
         <View style={styles.statusContainer}>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Loading Model</Text>
             {!isModelReady ? (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
             ) : (
-              <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="check-circle"
+                size={24}
+                color="green"
+              />
             )}
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Detecting Pose</Text>
-            {!hasPose ? (
+            {poseStatus === 'wait' && (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
-            ) : (
-              <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
+            )}
+            {(poseStatus === 'yes' || poseStatus === 'out') && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="check-circle"
+                size={24}
+                color="green"
+              />
+            )}
+            {poseStatus === 'no' && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="close-circle"
+                size={24}
+                color="red"
+              />
             )}
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.stepText}>Predicting Match</Text>
-            {!hasPrediction ? (
+            {poseStatus === 'wait' && (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
-            ) : (
-              <Icon style={styles.statusIcon} name={'check-circle'} size={24} color={'green'} />
+            )}
+            {poseStatus === 'yes' && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="check-circle"
+                size={24}
+                color="green"
+              />
+            )}
+            {poseStatus === 'out' && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="alert-circle"
+                size={24}
+                color="gray"
+              />
+            )}
+            {poseStatus === 'no' && (
+              <MaterialCommunityIcons
+                style={styles.statusIcon}
+                name="close-circle"
+                size={24}
+                color="red"
+              />
             )}
           </View>
         </View>
@@ -232,16 +261,16 @@ export default function SinglePoseResults({route}) {
             appStyles.primaryButton,
             styles.button,
             appStyles.highlight,
-            !hasPrediction && styles.disabledButton,
+            poseStatus === 'wait' && styles.disabledButton,
           ]}
           onPress={handleShare}
-          disabled={!hasPrediction ? true : false}
+          disabled={poseStatus === 'wait' ? true : false}
         >
           <Text
             style={[
               appStyles.primaryButtonText,
               styles.buttonText,
-              !hasPrediction && styles.disabledButtonText,
+              poseStatus === 'wait' && styles.disabledButtonText,
             ]}
           >
             Share
@@ -267,11 +296,11 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderWidth: 2,
     padding: 5,
+    alignItems: 'center',
   },
   statusContainer: {
     flex: 1,
     flexDirection: 'row',
-
     width: '85%',
     justifyContent: 'space-evenly',
   },
@@ -291,7 +320,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-
   statusIcon: {
     alignSelf: 'center',
   },
@@ -303,7 +331,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   button: {
-    width: '45%',
+    width: '40%',
     justifyContent: 'space-evenly',
   },
   disabledButton: {

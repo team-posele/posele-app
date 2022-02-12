@@ -1,5 +1,7 @@
+import React from 'react';
 import {LogBox} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
+import {useBackHandler} from '@react-native-community/hooks';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MyTabs from './screens/MyTabs';
 import DisplayPose from './screens/DisplayPose';
@@ -25,10 +27,14 @@ LogBox.ignoreLogs([
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  useBackHandler(() => {
+    return true;
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* <Stack.Screen
+        <Stack.Screen
           name="LandingScreen"
           options={{headerShown: false}}
           component={LandingScreen}
@@ -39,7 +45,7 @@ export default function App() {
         <Stack.Screen name="MyTabsGuest" options={{headerShown: false}} component={MyTabsGuest} />
         <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
         <Stack.Screen name="DisplayPose" options={{headerShown: false}} component={DisplayPose} />
-        <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} /> */}
+        <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} />
         <Stack.Screen name="Results" options={{headerShown: false}} component={SinglePoseResults} />
         <Stack.Screen name="NoPose" options={{headerShown: false}} component={NoPose} />
         <Stack.Screen name="Share" options={{headerShown: false}} component={Share} />

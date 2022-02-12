@@ -15,14 +15,9 @@ import {useNavigation} from '@react-navigation/native';
 import {auth, db} from '../firebase';
 import {colors, appStyles} from '../colorConstants';
 import {getAllUsers, getUser, incrementUserScore, score} from '../firebase/firestore';
+import {color} from 'react-native-elements/dist/helpers';
 
 const Tab = createBottomTabNavigator();
-let users = [];
-
-// created function to add users to array
-const pushToArray = doc => {
-  users.push({...doc.data(), id: doc.id});
-};
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -57,57 +52,92 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <View style={appStyles.mainView}>
-      <View style={styles.container}>
-        <Text style={appStyles.heading1}>Hello, {currentUser ? currentUser.username : 'User'}</Text>
-        <Text style={appStyles.heading2}>Welcome back to Posele!</Text>
-      </View>
-      <View style={[styles.container]}>
-        <Text style={appStyles.heading2}>
-          {currentUser ? (
-            `Posele Score: ${currentUser.score}`
-          ) : (
-            <ActivityIndicator size="small" color={colors.primary} />
-          )}
-        </Text>
-        <Image
-          source={require('../assets/posele-logo.png')}
-          style={[appStyles.image, styles.image]}
-        />
-        <Text style={appStyles.heading2}>
-          {currentUser ? (
-            `Current Daily Streak: ${currentUser.currentStreak}`
-          ) : (
-            <ActivityIndicator size="small" color={colors.primary} />
-          )}
-        </Text>
-        <Text style={appStyles.heading2}>
-          {currentUser ? (
-            `Best Streak: ${currentUser.maxStreak}`
-          ) : (
-            <ActivityIndicator size="small" color={colors.primary} />
-          )}
-        </Text>
-      </View>
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={handlePlay}
-          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
-        >
-          <Text style={appStyles.primaryButtonText}>Play</Text>
+    <View style={appStyles.mainViewScreen}>
+      <View style={styles.logOutButton}>
+        <TouchableOpacity style={styles.logOutText} onPress={handleLogout}>
+          <Text style={appStyles.primaryButtonText}>Logout</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.secondaryButton]}
-          onPress={handleLogout}
-        >
-          <Text style={appStyles.secondaryButtonText}>Logout</Text>
-        </TouchableOpacity>
+      </View>
+      <View style={appStyles.mainView}>
+        <View style={styles.container}>
+          <Image
+            source={require('../assets/posele-logo.png')}
+            style={[appStyles.image, styles.image]}
+          />
+        </View>
+
+        <View style={styles.container}>
+          <Text style={appStyles.heading1}>
+            Hello, {currentUser ? currentUser.username : 'User'}
+          </Text>
+          <Text style={appStyles.heading2}>Welcome back to Posele!</Text>
+        </View>
+        <View style={styles.container}>
+          <Image
+            source={require('../assets/sammy-man-and-girl-dancing-at-a-party.png')}
+            style={[appStyles.image, styles.image]}
+          />
+        </View>
+        <View style={[styles.container]}>
+          <Text style={appStyles.heading2}>
+            {currentUser ? (
+              `Posele Score: ${currentUser.score}`
+            ) : (
+              <ActivityIndicator size="small" color={colors.primary} />
+            )}
+          </Text>
+
+          <Text style={appStyles.heading2}>
+            {currentUser ? (
+              `Current Daily Streak: ${currentUser.currentStreak}`
+            ) : (
+              <ActivityIndicator size="small" color={colors.primary} />
+            )}
+          </Text>
+          <Text style={appStyles.heading2}>
+            {currentUser ? (
+              `Best Streak: ${currentUser.maxStreak}`
+            ) : (
+              <ActivityIndicator size="small" color={colors.primary} />
+            )}
+          </Text>
+        </View>
+        <View style={styles.container}>
+          <TouchableOpacity
+            onPress={handlePlay}
+            style={[appStyles.secondaryButton, styles.primaryButton]}
+          >
+            <Text style={appStyles.secondaryButtonText}>Let's Play</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 };
 
 const LeaderBoard = () => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(async () => {
+    const userz = []; // temporary holder
+    await db
+      .collection('users') // access users collection
+      .orderBy('score', 'desc') // order by score
+      .limit(10) // limit to top 10 results
+      .get()
+      .then(snapshot => {
+        // push each result to holder array
+        snapshot.docs.forEach(doc => {
+          userz.push({...doc.data(), id: doc.id});
+        });
+      });
+    setUsers(userz); // setUsers to the contents of the holder array
+    return function resetLeaderboard() {
+      // cleanup: clear users on unmount
+      setUsers([]);
+    };
+  }, []);
+
   return (
     <View style={appStyles.mainView}>
       <View style={[appStyles.screenTitleContainer, styles.title]}>
@@ -147,19 +177,6 @@ const Friends = () => {
 };
 
 const MyTabs = () => {
-  useEffect(async () => {
-    // gets all the users from the database
-    await db
-      .collection('users')
-      .orderBy('score', 'desc') // order by score
-      .limit(10) // limit to top 10 results
-      .get()
-      .then(snapshot => {
-        snapshot.docs.forEach(doc => {
-          pushToArray(doc);
-        });
-      });
-  }, []);
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -173,7 +190,6 @@ const MyTabs = () => {
           } else if (route.name === 'Friends') {
             iconName = 'people';
           }
-
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -210,8 +226,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   image: {
-    width: '35%',
-    height: '35%',
+    width: '100%',
+    height: '55%',
   },
   statusIcon: {},
   LeaderBoardHeader: {
@@ -247,5 +263,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 0.3,
     fontSize: 20,
+  },
+  logOutButton: {
+    marginLeft: 25,
+    marginTop: 54,
+    textAlign: 'left',
   },
 });
