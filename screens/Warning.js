@@ -16,7 +16,7 @@ export default function Warning() {
   const navigation = useNavigation();
 
   return (
-    <KeyboardAvoidingView style={[appStyles.mainView]}>
+    <View style={[appStyles.mainView]}>
       <View style={styles.instructionsContainer}>
         <Text style={[appStyles.insetHeader, styles.instructionsHeader]}>Playing Posele:</Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
@@ -29,7 +29,10 @@ export default function Warning() {
           3. Then you have 5 seconds to match the pose.
         </Text>
         <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
-          4. Our ML model will predict your pose match.
+          4. Make sure to fit your entire body.
+        </Text>
+        <Text style={[appStyles.text, appStyles.insetText, styles.instructionsText]}>
+          5. Our ML model will predict your pose match.
         </Text>
         <Text style={[appStyles.text, appStyles.insetHeader]}>Good luck!</Text>
       </View>
@@ -55,15 +58,21 @@ export default function Warning() {
           <Text style={[appStyles.secondaryButtonText, styles.buttonText]}>Pose Now!</Text>
         </TouchableOpacity>
       </View>
-      <StatusBar style="auto" />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  instructionsContainer: {
+    flex: 2,
+    borderRadius: 5,
+    paddingHorizontal: 5,
+    justifyContent: 'space-between',
+    marginTop: 65,
+  },
   imageContainer: {
     backgroundColor: colors.primary,
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -81,12 +90,6 @@ const styles = StyleSheet.create({
     width: '35%',
     height: '100%',
     margin: 5,
-  },
-  instructionsContainer: {
-    flex: 1,
-    borderRadius: 5,
-    paddingHorizontal: 5,
-    marginTop: 65,
   },
   buttonContainer: {
     flex: 1,
