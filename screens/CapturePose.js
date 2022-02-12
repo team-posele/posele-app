@@ -93,7 +93,6 @@ export default ({route}) => {
       };
       const mirrorImage = await manipulateAsync(image.uri, actions, saveOptions);
       if (mediaPermission) await MediaLibrary.saveToLibraryAsync(mirrorImage.uri);
-      else console.log('🧑🏻‍💻 Media permission not granted!');
       navigation.replace('Results', {
         image: mirrorImage,
         model: modelRef.current,

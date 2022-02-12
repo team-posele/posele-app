@@ -27,7 +27,7 @@ import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
 const PREDICTION_THRESHOLD = 0.8;
-const NON_MATCH_LABEL = 'idle';
+const MATCH_LABEL = 'target';
 
 const MATCH_MESSAGE = 'You Got It~!🥳';
 const NO_MATCH_MESSAGE = 'You Missed It...😢';
@@ -43,7 +43,6 @@ export default function SinglePoseResults({route}) {
   const [isModelReady, setIsModelReady] = useState(false);
   const [userImage, setUserImage] = useState();
   const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
-  const [modelPrediction, setModelPrediction] = useState('');
   const [resultMessage, setResultMessage] = useState('');
 
   const deviceHeight = useWindowDimensions().height;
@@ -81,8 +80,7 @@ export default function SinglePoseResults({route}) {
           const {posenetOutput} = await model.estimatePose(cropTensor);
           setPoseStatus('yes');
           const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-          setModelPrediction(prediction);
-          if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+          if (prediction === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
             setResultMessage(MATCH_MESSAGE);
             await incrementUserScore(true);
           } else {
@@ -96,7 +94,7 @@ export default function SinglePoseResults({route}) {
     else {
       setPoseStatus('yes');
       const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-      if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+      if (prediction === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
         setResultMessage(MATCH_MESSAGE);
         await incrementUserScore(true);
       } else {
@@ -151,35 +149,36 @@ export default function SinglePoseResults({route}) {
   };
 
   const handleShare = async () => {
-    // const targetPixelCount = 1080; // If you want full HD pictures
-    const pixelRatio = PixelRatio.get(); // The pixel ratio of the device
-    // pixels * pixelratio = targetPixelCount, so pixels = targetPixelCount / pixelRatio
-    const pixelHeight = deviceHeight / pixelRatio;
-    const pixelWidth = deviceWidth / pixelRatio;
+    if (Platform.OS === 'web') {
+      alert('To share your POSEle results, please download the POSEle mobile app!📱');
+      return;
+    }
 
-    const snapshot = await captureRef(mainViewRef, {
-      height: pixelHeight,
-      width: pixelWidth,
-    });
+    let content = {
+      message:
+        'Check out my daily POSEle! Can you beat me? Try it out at https://posele.netlify.app/!',
+    };
+
+    if (Platform.OS === 'ios') {
+      const pixelRatio = PixelRatio.get(); // The pixel ratio of the device
+      // pixels * pixelratio = targetPixelCount, so pixels = targetPixelCount / pixelRatio
+      const pixelHeight = deviceHeight / pixelRatio;
+      const pixelWidth = deviceWidth / pixelRatio;
+
+      const snapshot = await captureRef(mainViewRef, {
+        height: pixelHeight,
+        width: pixelWidth,
+      });
+
+      content.url = snapshot;
+    } else if (Platform.OS === 'android') {
+      content.title = 'POSEle Results';
+    }
 
     try {
-      const content = {
-        url: snapshot,
-        message:
-          'Checkout my daily POSEle! Can you beat me? Try it out at https://posele.netlify.app/!',
-      };
-      const result = await Share.share(content);
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
+      await Share.share(content);
     } catch (error) {
-      alert(error.message);
+      console.error('🧑🏻‍💻 Error', error);
     }
   };
 
