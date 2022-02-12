@@ -2,15 +2,18 @@ import {MaterialCommunityIcons} from '@expo/vector-icons';
 import React, {useEffect, useRef, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
   ActivityIndicator,
+  Image,
+  PixelRatio,
   Platform,
   Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from 'react-native';
+import {captureRef} from 'react-native-view-shot';
 import {useNavigation} from '@react-navigation/native';
 import * as tmPose from '@teachablemachine/pose';
 import * as tf from '@tensorflow/tfjs';
@@ -34,6 +37,7 @@ const OUT_MESSAGE = 'Out of bounds! Maybe next time.😉';
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
+  const mainViewRef = useRef();
   const modelRef = useRef();
 
   const [isModelReady, setIsModelReady] = useState(false);
@@ -41,6 +45,9 @@ export default function SinglePoseResults({route}) {
   const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
   const [modelPrediction, setModelPrediction] = useState('');
   const [resultMessage, setResultMessage] = useState('');
+
+  const deviceHeight = useWindowDimensions().height;
+  const deviceWidth = useWindowDimensions().width;
 
   useEffect(async () => {
     modelRef.current = route.params?.model;
@@ -144,15 +151,24 @@ export default function SinglePoseResults({route}) {
   };
 
   const handleShare = async () => {
+    // const targetPixelCount = 1080; // If you want full HD pictures
+    const pixelRatio = PixelRatio.get(); // The pixel ratio of the device
+    // pixels * pixelratio = targetPixelCount, so pixels = targetPixelCount / pixelRatio
+    const pixelHeight = deviceHeight / pixelRatio;
+    const pixelWidth = deviceWidth / pixelRatio;
+
+    const snapshot = await captureRef(mainViewRef, {
+      height: pixelHeight,
+      width: pixelWidth,
+    });
+
     try {
-      const result = await Share.share({
+      const content = {
+        url: snapshot,
         message:
-          modelPrediction === 'target'
-            ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
-            : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
-        url: 'https://www.posele.com',
-        title: "I'm a poser!",
-      });
+          'Checkout my daily POSEle! Can you beat me? Try it out at https://posele.netlify.app/!',
+      };
+      const result = await Share.share(content);
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
           // shared with activity type of result.activityType
@@ -168,7 +184,7 @@ export default function SinglePoseResults({route}) {
   };
 
   return (
-    <View style={appStyles.mainView}>
+    <View style={appStyles.mainView} ref={mainViewRef}>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <Image
