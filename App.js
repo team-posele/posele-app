@@ -34,7 +34,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
         <Stack.Screen
           name="LandingScreen"
           options={{headerShown: false}}
@@ -44,6 +43,7 @@ export default function App() {
         <Stack.Screen name="SignUp" options={{headerShown: false}} component={SignUp} />
         <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
         <Stack.Screen name="MyTabsGuest" options={{headerShown: false}} component={MyTabsGuest} />
+        <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />
         <Stack.Screen name="DisplayPose" options={{headerShown: false}} component={DisplayPose} />
         <Stack.Screen name="CapturePose" options={{headerShown: false}} component={CapturePose} />
         <Stack.Screen name="Results" options={{headerShown: false}} component={SinglePoseResults} />
