@@ -42,6 +42,7 @@ export default function SinglePoseResults({route}) {
 
   const [isModelReady, setIsModelReady] = useState(false);
   const [userImage, setUserImage] = useState();
+  const [isPoseMatch, setIsPoseMatch] = useState('wait');
   const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
   const [resultMessage, setResultMessage] = useState('');
 
@@ -81,9 +82,11 @@ export default function SinglePoseResults({route}) {
           setPoseStatus('yes');
           const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
           if (prediction === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+            setIsPoseMatch('yes');
             setResultMessage(MATCH_MESSAGE);
             await incrementUserScore(true);
           } else {
+            setIsPoseMatch('no');
             setResultMessage(NO_MATCH_MESSAGE);
             await incrementUserScore(false);
           }
@@ -95,9 +98,11 @@ export default function SinglePoseResults({route}) {
       setPoseStatus('yes');
       const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
       if (prediction === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+        setIsPoseMatch('yes');
         setResultMessage(MATCH_MESSAGE);
         await incrementUserScore(true);
       } else {
+        setIsPoseMatch('no');
         setResultMessage(NO_MATCH_MESSAGE);
         await incrementUserScore(false);
       }
@@ -234,7 +239,7 @@ export default function SinglePoseResults({route}) {
             {poseStatus === 'wait' && (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
             )}
-            {poseStatus === 'yes' && (
+            {isPoseMatch === 'yes' && (
               <MaterialCommunityIcons
                 style={styles.statusIcon}
                 name="check-circle"
@@ -250,7 +255,7 @@ export default function SinglePoseResults({route}) {
                 color="gray"
               />
             )}
-            {poseStatus === 'no' && (
+            {(poseStatus === 'no' || isPoseMatch === 'no') && (
               <MaterialCommunityIcons
                 style={styles.statusIcon}
                 name="close-circle"
