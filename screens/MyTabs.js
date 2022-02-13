@@ -18,6 +18,7 @@ import {colors, appStyles} from '../colorConstants';
 import {getAllUsers, getUser, incrementUserScore, score} from '../firebase/firestore';
 
 const Tab = createBottomTabNavigator();
+let currentUserName = '';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -50,6 +51,10 @@ const HomeScreen = () => {
       setCurrentUser(currentUserDoc.data());
     }
   }, []);
+
+  useEffect(() => {
+    currentUserName = currentUser.username;
+  }, [currentUser]);
 
   return (
     <View style={appStyles.mainView}>
@@ -108,6 +113,7 @@ const wait = timeout => {
 const LeaderBoard = () => {
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
@@ -149,11 +155,30 @@ const LeaderBoard = () => {
             data={users}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             renderItem={({item}) => (
-              <View style={styles.leaderBoardItems}>
-                <Text style={styles.nameItem} ellipsizeMode={'tail'} numberOfLines={1}>
+              <View
+                style={[
+                  styles.leaderBoardItems,
+                  item.username === currentUserName ? {backgroundColor: colors.accent} : '',
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.nameItem,
+                    item.username === currentUserName ? styles.leaderBoardSelfText : '',
+                  ]}
+                  ellipsizeMode={'tail'}
+                  numberOfLines={1}
+                >
                   {item.username}
                 </Text>
-                <Text style={styles.scoreItem}>{item.score}</Text>
+                <Text
+                  style={[
+                    styles.scoreItem,
+                    item.username === currentUserName ? styles.leaderBoardSelfText : '',
+                  ]}
+                >
+                  {item.score}
+                </Text>
               </View>
             )}
             keyExtractor={item => item.id}
@@ -240,6 +265,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     marginVertical: 10,
+    borderRadius: 3,
   },
   leaderboard: {
     flex: 3,
@@ -247,6 +273,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     width: '85%',
   },
+  leaderBoardSelfText: {
+    fontWeight: 'bold',
+    color: 'black',
   },
   header: {
     fontWeight: 'bold',
