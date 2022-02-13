@@ -150,7 +150,9 @@ const LeaderBoard = () => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             renderItem={({item}) => (
               <View style={styles.leaderBoardItems}>
-                <Text style={styles.nameItem}>{item.username}</Text>
+                <Text style={styles.nameItem} ellipsizeMode={'tail'} numberOfLines={1}>
+                  {item.username}
+                </Text>
                 <Text style={styles.scoreItem}>{item.score}</Text>
               </View>
             )}
@@ -250,15 +252,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   nameItem: {
-    marginLeft: '20%',
-    flex: 1,
+    marginLeft: '15%',
+    // flex: 1,
     textAlign: 'left',
     fontSize: 20,
+    width: '60%',
+    paddingRight: 10,
   },
   scoreItem: {
     marginRight: '10%',
     textAlign: 'center',
-    flex: 0.3,
+    // flex: 0.3,
     fontSize: 20,
   },
 });
