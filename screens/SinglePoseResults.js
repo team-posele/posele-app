@@ -169,12 +169,18 @@ export default function SinglePoseResults({route}) {
 
   return (
     <View style={appStyles.mainView}>
+      <Text style={appStyles.insetHeader}>Your Results:</Text>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <Image
           style={[appStyles.image, {width: '100%'}]}
           source={userImage ? {uri: userImage.uri} : {uri: route.params.poseImage}}
         ></Image>
+        {poseImage ? (
+          <Image style={[appStyles.image, {width: '100%'}]} source={{uri: poseImage.uri}}></Image>
+        ) : (
+          <></>
+        )}
       </View>
       <View style={styles.statusBox}>
         <Text style={styles.statusText}>{resultMessage}</Text>
@@ -287,9 +293,11 @@ export default function SinglePoseResults({route}) {
 
 const styles = StyleSheet.create({
   imageContainer: {
-    flex: 3,
+    flex: 2,
+    flexDirection: 'row',
     paddingVertical: 20,
-    width: '90%',
+    justifyContent: 'space-evenly',
+    width: '100%',
   },
   statusBox: {
     flex: 1,

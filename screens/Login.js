@@ -68,30 +68,21 @@ const Login = () => {
           value={password}
           onChangeText={text => setPassword(text)}
         />
-        {/* <TouchableOpacity
-          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
-          onPress={handleLogin}
-        >
-          <Text style={appStyles.primaryButtonText}>Login</Text>
-        </TouchableOpacity> */}
-      </View>
-      <View style={[appStyles.container, {flexDirection: 'row'}]}>
-        <Text style={appStyles.warningText}>{errorText}</Text>
         <TouchableOpacity
-          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
+          style={[appStyles.secondaryButton, styles.primaryButton]}
           onPress={handleLogin}
         >
-          <Text style={[appStyles.primaryButtonText, styles.primaryButtonText]}>Login</Text>
+          <Text style={appStyles.secondaryButtonText}>Login</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.secondaryButton]}
+          style={[appStyles.primaryButton, styles.secondaryButton]}
           onPress={() => {
-            navigate.replace('LandingScreen');
+            navigate.replace('SignUp');
           }}
         >
-          <Text style={appStyles.secondaryButtonText}>{`Back to Main Menu`}</Text>
+          <Text style={appStyles.primaryButtonText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

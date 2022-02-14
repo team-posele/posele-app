@@ -10,9 +10,19 @@ export const colors = {
 export const appStyles = {
   // styles to be imported and used across the app
   // these styles should not set layout, e.g. do not set height here
+  mainViewScreen: {
+    flex: 1,
+    backgroundColor: colors.primary,
+  },
   mainView: {
     flex: 1,
     backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  formScreen: {
+    flex: 1,
+    backgroundColor: colors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -34,7 +44,7 @@ export const appStyles = {
     alignItems: 'center',
   },
   primaryButtonText: {
-    color: 'white',
+    color: 'black',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -46,14 +56,13 @@ export const appStyles = {
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: colors.primary,
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
   },
   insetBox: {
     flex: 1,
 
-    borderRadius: 5,
     paddingHorizontal: 5,
     marginVertical: 65,
   },
@@ -65,6 +74,7 @@ export const appStyles = {
     padding: 10,
   },
   insetText: {
+    flex: 1,
     color: 'white',
     padding: 5,
   },
