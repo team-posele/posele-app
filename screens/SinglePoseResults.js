@@ -195,6 +195,11 @@ export default function SinglePoseResults({route}) {
           style={[appStyles.image, {width: '100%'}]}
           source={userImage ? {uri: userImage.uri} : {uri: route.params.poseImage}}
         ></Image>
+        {poseImage ? (
+          <Image style={[appStyles.image, {width: '100%'}]} source={{uri: poseImage.uri}}></Image>
+        ) : (
+          <></>
+        )}
       </View>
       <View style={styles.statusBox}>
         <Text style={styles.statusText}>{resultMessage}</Text>
@@ -267,9 +272,18 @@ export default function SinglePoseResults({route}) {
         </View>
       </View>
       <View style={[appStyles.container, styles.buttonContainer]}>
-        <TouchableOpacity style={[appStyles.secondaryButton, styles.button]} onPress={handleDone}>
+        <TouchableOpacity
+          style={[
+            appStyles.secondaryButton,
+            styles.button,
+            poseStatus === 'wait' && styles.disabledButton,
+          ]}
+          onPress={() => handleDone()}
+          disabled={poseStatus === 'wait' ? true : false}
+        >
           <Text style={appStyles.secondaryButtonText}>Back Home</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[
             appStyles.primaryButton,
@@ -298,9 +312,11 @@ export default function SinglePoseResults({route}) {
 
 const styles = StyleSheet.create({
   imageContainer: {
-    flex: 3,
+    flex: 2,
+    flexDirection: 'row',
     paddingVertical: 20,
-    width: '90%',
+    justifyContent: 'space-evenly',
+    width: '100%',
   },
   statusBox: {
     flex: 1,

@@ -23,6 +23,8 @@
     "@teachablemachine/pose": "^0.8.6",
     "@tensorflow/tfjs": "^3.13.0",
     "@tensorflow/tfjs-react-native": "^0.8.0",
+    "@unimodules/core": "^7.1.2",
+    "@unimodules/react-native-adapter": "^6.3.9",
     "expo": "~44.0.0",
     "expo-camera": "~12.1.2",
     "expo-cli": "^5.1.2",

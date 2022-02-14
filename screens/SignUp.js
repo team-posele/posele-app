@@ -60,15 +60,13 @@ const SignUp = () => {
         <Text style={appStyles.heading2}>This will just take a moment.</Text>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={[appStyles.text, styles.inputLabel]}>Enter a valid email address:</Text>
-
         <TextInput
           style={[appStyles.textInputBox, styles.input]}
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
         />
-        <Text style={[appStyles.text, styles.inputLabel]}>Create a password:</Text>
+
         <TextInput
           style={[appStyles.textInputBox, styles.input]}
           placeholder="Password"
@@ -76,9 +74,7 @@ const SignUp = () => {
           value={password}
           onChangeText={text => setPassword(text)}
         />
-        <Text style={[appStyles.text, styles.inputLabel]}>
-          Your username will be visible to others:
-        </Text>
+
         <TextInput
           style={[appStyles.textInputBox, styles.input]}
           placeholder="Username"
@@ -89,20 +85,20 @@ const SignUp = () => {
       <View style={[appStyles.container, {flexDirection: 'row'}]}>
         <Text style={appStyles.warningText}>{errorText}</Text>
         <TouchableOpacity
-          style={[appStyles.primaryButton, styles.primaryButton, appStyles.highlight]}
+          style={[appStyles.secondaryButton, styles.primaryButton]}
           onPress={handleSignUp}
         >
-          <Text style={appStyles.primaryButtonText}>Create Account</Text>
+          <Text style={appStyles.secondaryButtonText}>Create Account</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.secondaryButton]}
+          style={[appStyles.primaryButtonText, appStyles.primaryButton, styles.secondaryButton]}
           onPress={() => {
-            navigate.replace('LandingScreen');
+            navigate.replace('SignIn');
           }}
         >
-          <Text style={appStyles.secondaryButtonText}>{`<< Back to Main Menu`}</Text>
+          <Text style={appStyles.primaryButtonText}>SignIn</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -119,19 +115,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonContainer: {
-    width: '100%',
-    flex: 0.5,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: Platform.OS === 'ios' ? 30 : 15,
+    position: 'absolute',
+    left: 85,
+    bottom: 0,
+    right: 0,
   },
   primaryButton: {
     width: '65%',
-    marginTop: 70,
+    marginBottom: 20,
   },
   secondaryButton: {
     width: '65%',
     alignItems: 'center',
+    marginBottom: 15,
   },
 
   inputContainer: {
@@ -139,6 +135,7 @@ const styles = StyleSheet.create({
     width: '85%',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 30,
   },
   input: {
     width: '100%',
