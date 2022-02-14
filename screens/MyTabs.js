@@ -6,6 +6,7 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
@@ -17,6 +18,7 @@ import {colors, appStyles} from '../colorConstants';
 import {getAllUsers, getUser, incrementUserScore, score} from '../firebase/firestore';
 
 const Tab = createBottomTabNavigator();
+let currentUserName = '';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -49,6 +51,10 @@ const HomeScreen = () => {
       setCurrentUser(currentUserDoc.data());
     }
   }, []);
+
+  useEffect(() => {
+    currentUserName = currentUser.username;
+  }, [currentUser]);
 
   return (
     <View style={appStyles.mainView}>
@@ -101,8 +107,17 @@ const HomeScreen = () => {
   );
 };
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
 const LeaderBoard = () => {
   const [users, setUsers] = useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   useEffect(async () => {
     const userz = []; // temporary holder
@@ -122,7 +137,7 @@ const LeaderBoard = () => {
       // cleanup: clear users on unmount
       setUsers([]);
     };
-  }, []);
+  }, [refreshing]);
 
   return (
     <View style={appStyles.mainView}>
@@ -138,10 +153,32 @@ const LeaderBoard = () => {
         {users[0] ? (
           <FlatList
             data={users}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             renderItem={({item}) => (
-              <View style={styles.leaderBoardItems}>
-                <Text style={styles.nameItem}>{item.username}</Text>
-                <Text style={styles.scoreItem}>{item.score}</Text>
+              <View
+                style={[
+                  styles.leaderBoardItems,
+                  item.username === currentUserName ? {backgroundColor: colors.accent} : '',
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.nameItem,
+                    item.username === currentUserName ? styles.leaderBoardSelfText : '',
+                  ]}
+                  ellipsizeMode={'tail'}
+                  numberOfLines={1}
+                >
+                  {item.username}
+                </Text>
+                <Text
+                  style={[
+                    styles.scoreItem,
+                    item.username === currentUserName ? styles.leaderBoardSelfText : '',
+                  ]}
+                >
+                  {item.score}
+                </Text>
               </View>
             )}
             keyExtractor={item => item.id}
@@ -219,7 +256,7 @@ const styles = StyleSheet.create({
   statusIcon: {},
   LeaderBoardHeader: {
     flex: 0.2,
-    width: '100%',
+    width: '85%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     paddingTop: 10,
@@ -228,27 +265,36 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     marginVertical: 10,
+    borderRadius: 3,
   },
   leaderboard: {
     flex: 3,
     justifyContent: 'space-around',
     paddingTop: 20,
-    width: '100%',
+    width: '85%',
+  },
+  leaderBoardSelfText: {
+    fontWeight: 'bold',
+    color: 'black',
   },
   header: {
     fontWeight: 'bold',
     fontSize: 20,
   },
   nameItem: {
-    marginLeft: '20%',
-    flex: 1,
+    // marginLeft: '15%',
+    // flex: 1,
     textAlign: 'left',
     fontSize: 20,
+    width: '70%',
+    paddingRight: 10,
+    marginLeft: 8,
   },
   scoreItem: {
-    marginRight: '10%',
-    textAlign: 'center',
-    flex: 0.3,
+    // marginRight: '10%',
+    textAlign: 'right',
+    // flex: 0.3,
     fontSize: 20,
+    width: '18%',
   },
 });
