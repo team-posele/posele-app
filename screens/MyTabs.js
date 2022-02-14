@@ -170,7 +170,8 @@ const LeaderBoard = () => {
 
 const Friends = () => {
   return (
-    <View style={styles.container}>
+    <View style={appStyles.mainView}>
+      <Image source={require('../assets/comingSoon.png')} style={styles.image} />
       <Text>This feature is coming soon!</Text>
     </View>
   );

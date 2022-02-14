@@ -95,10 +95,10 @@ const SignUp = () => {
         <TouchableOpacity
           style={[appStyles.primaryButtonText, appStyles.primaryButton, styles.secondaryButton]}
           onPress={() => {
-            navigate.replace('LandingScreen');
+            navigate.replace('SignIn');
           }}
         >
-          <Text style={appStyles.primaryButtonText}>{` Back to Main Menu`}</Text>
+          <Text style={appStyles.primaryButtonText}>SignIn</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
