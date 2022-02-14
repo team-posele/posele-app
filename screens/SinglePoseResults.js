@@ -253,9 +253,18 @@ export default function SinglePoseResults({route}) {
         </View>
       </View>
       <View style={[appStyles.container, styles.buttonContainer]}>
-        <TouchableOpacity style={[appStyles.secondaryButton, styles.button]} onPress={handleDone}>
+        <TouchableOpacity
+          style={[
+            appStyles.secondaryButton,
+            styles.button,
+            poseStatus === 'wait' && styles.disabledButton,
+          ]}
+          onPress={() => handleDone()}
+          disabled={poseStatus === 'wait' ? true : false}
+        >
           <Text style={appStyles.secondaryButtonText}>Back Home</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[
             appStyles.primaryButton,

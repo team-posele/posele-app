@@ -115,19 +115,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonContainer: {
-    width: '100%',
-    flex: 0.5,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: Platform.OS === 'ios' ? 30 : 15,
+    position: 'absolute',
+    left: 85,
+    bottom: 0,
+    right: 0,
   },
   primaryButton: {
     width: '65%',
-    marginTop: 70,
+    marginBottom: 20,
   },
   secondaryButton: {
     width: '65%',
     alignItems: 'center',
+    marginBottom: 15,
   },
 
   inputContainer: {
@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     width: '85%',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 30,
   },
   input: {
     width: '100%',

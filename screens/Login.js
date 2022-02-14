@@ -76,16 +76,6 @@ const Login = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
-        {/* <Text style={appStyles.text}>Don't have an account? Sign up for free!</Text> */}
-
-        {/* <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.secondaryButton]}
-          onPress={() => {
-            navigate.replace('SignUp');
-          }}
-        >
-          <Text style={appStyles.secondaryButtonText}>Sign Up</Text>
-        </TouchableOpacity> */}
         <TouchableOpacity
           style={[appStyles.primaryButton, styles.secondaryButton]}
           onPress={() => {
@@ -109,20 +99,26 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   buttonContainer: {
-    width: '100%',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: Platform.OS === 'ios' ? 30 : 15,
+    // width: '100%',
+    // flex: 1,
+    // alignItems: 'center',
+    // justifyContent: 'flex-end',
+    // marginBottom: Platform.OS === 'ios' ? 30 : 15,
+    position: 'absolute',
+    left: 35,
+    bottom: 0,
+    right: 0,
   },
   primaryButton: {
     width: '85%',
-    marginTop: 20,
+    marginBottom: 100,
+    paddingBottom: 5,
   },
   secondaryButton: {
     width: '85%',
     alignItems: 'center',
     marginTop: 20,
+    marginBottom: 20,
   },
 
   inputContainer: {
@@ -136,5 +132,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginVertical: 10,
+  },
+  primaryButtonText: {
+    paddingBottom: 10,
   },
 });
