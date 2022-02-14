@@ -189,14 +189,14 @@ export default function SinglePoseResults({route}) {
 
   return (
     <View style={appStyles.mainView} ref={mainViewRef}>
+      <Text style={appStyles.insetHeader}>Your Results:</Text>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
-        <Text style={appStyles.insetHeader}>Your Results:</Text>
         <Image
           style={[appStyles.image, {width: '100%'}]}
-          source={userImage ? {uri: userImage.uri} : {uri: route.params.poseImage}}
+          source={{uri: route.params.poseImage}}
         ></Image>
-        {poseImage ? (
-          <Image style={[appStyles.image, {width: '100%'}]} source={{uri: poseImage.uri}}></Image>
+        {userImage ? (
+          <Image style={[appStyles.image, {width: '100%'}]} source={{uri: userImage.uri}}></Image>
         ) : (
           <></>
         )}
