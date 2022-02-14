@@ -2,15 +2,18 @@ import {MaterialCommunityIcons} from '@expo/vector-icons';
 import React, {useEffect, useRef, useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
   ActivityIndicator,
+  Image,
+  PixelRatio,
   Platform,
   Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from 'react-native';
+import {captureRef} from 'react-native-view-shot';
 import {useNavigation} from '@react-navigation/native';
 import * as tmPose from '@teachablemachine/pose';
 import * as tf from '@tensorflow/tfjs';
@@ -24,7 +27,7 @@ import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
 const PREDICTION_THRESHOLD = 0.8;
-const NON_MATCH_LABEL = 'idle';
+const MATCH_LABEL = 'target';
 
 const MATCH_MESSAGE = 'You Got It~!🥳';
 const NO_MATCH_MESSAGE = 'You Missed It...😢';
@@ -34,13 +37,17 @@ const OUT_MESSAGE = 'Out of bounds! Maybe next time.😉';
 export default function SinglePoseResults({route}) {
   const navigation = useNavigation();
 
+  const mainViewRef = useRef();
   const modelRef = useRef();
 
   const [isModelReady, setIsModelReady] = useState(false);
   const [userImage, setUserImage] = useState();
+  const [isPoseMatch, setIsPoseMatch] = useState('wait');
   const [poseStatus, setPoseStatus] = useState('wait'); // 'yes', 'no', 'out'
-  const [modelPrediction, setModelPrediction] = useState('');
   const [resultMessage, setResultMessage] = useState('');
+
+  const deviceHeight = useWindowDimensions().height;
+  const deviceWidth = useWindowDimensions().width;
 
   useEffect(async () => {
     modelRef.current = route.params?.model;
@@ -74,11 +81,12 @@ export default function SinglePoseResults({route}) {
           const {posenetOutput} = await model.estimatePose(cropTensor);
           setPoseStatus('yes');
           const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-          setModelPrediction(prediction);
-          if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+          if (prediction === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+            setIsPoseMatch('yes');
             setResultMessage(MATCH_MESSAGE);
             await incrementUserScore(true);
           } else {
+            setIsPoseMatch('no');
             setResultMessage(NO_MATCH_MESSAGE);
             await incrementUserScore(false);
           }
@@ -89,10 +97,12 @@ export default function SinglePoseResults({route}) {
     else {
       setPoseStatus('yes');
       const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-      if (prediction !== NON_MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+      if (prediction === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+        setIsPoseMatch('yes');
         setResultMessage(MATCH_MESSAGE);
         await incrementUserScore(true);
       } else {
+        setIsPoseMatch('no');
         setResultMessage(NO_MATCH_MESSAGE);
         await incrementUserScore(false);
       }
@@ -144,32 +154,41 @@ export default function SinglePoseResults({route}) {
   };
 
   const handleShare = async () => {
-    try {
-      const result = await Share.share({
-        message:
-          modelPrediction === 'target'
-            ? `I matched today's posele! Can you? Play posele today and find out! www.posele.com`
-            : `I didn't match today's posele! Think you can do better? www.posele.com #posele`,
-        url: 'https://www.posele.com',
-        title: "I'm a poser!",
+    if (Platform.OS === 'web') {
+      alert('To share your POSEle results, please download the POSEle mobile app!📱');
+      return;
+    }
+
+    let content = {
+      message:
+        'Check out my daily POSEle! Can you beat me? Try it out at https://posele.netlify.app/!',
+    };
+
+    if (Platform.OS === 'ios') {
+      const pixelRatio = PixelRatio.get(); // The pixel ratio of the device
+      // pixels * pixelratio = targetPixelCount, so pixels = targetPixelCount / pixelRatio
+      const pixelHeight = deviceHeight / pixelRatio;
+      const pixelWidth = deviceWidth / pixelRatio;
+
+      const snapshot = await captureRef(mainViewRef, {
+        height: pixelHeight,
+        width: pixelWidth,
       });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
+
+      content.url = snapshot;
+    } else if (Platform.OS === 'android') {
+      content.title = 'POSEle Results';
+    }
+
+    try {
+      await Share.share(content);
     } catch (error) {
-      alert(error.message);
+      console.error('🧑🏻‍💻 Error', error);
     }
   };
 
   return (
-    <View style={appStyles.mainView}>
-      <Text style={appStyles.insetHeader}>Your Results:</Text>
+    <View style={appStyles.mainView} ref={mainViewRef}>
       <View style={[appStyles.insetBox, styles.imageContainer]}>
         <Text style={appStyles.insetHeader}>Your Results:</Text>
         <Image
@@ -225,7 +244,7 @@ export default function SinglePoseResults({route}) {
             {poseStatus === 'wait' && (
               <ActivityIndicator size="small" style={styles.statusIcon} color={colors.secondary} />
             )}
-            {poseStatus === 'yes' && (
+            {isPoseMatch === 'yes' && (
               <MaterialCommunityIcons
                 style={styles.statusIcon}
                 name="check-circle"
@@ -241,7 +260,7 @@ export default function SinglePoseResults({route}) {
                 color="gray"
               />
             )}
-            {poseStatus === 'no' && (
+            {(poseStatus === 'no' || isPoseMatch === 'no') && (
               <MaterialCommunityIcons
                 style={styles.statusIcon}
                 name="close-circle"

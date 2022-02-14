@@ -46,9 +46,7 @@ const HomeScreen = () => {
       .collection('users')
       .doc(auth.currentUser.email) // order by score
       .get();
-    if (!currentUserDoc.exists) {
-      console.log(`get current user FAILED.`);
-    } else {
+    if (currentUserDoc.exists) {
       setCurrentUser(currentUserDoc.data());
     }
   }, []);
