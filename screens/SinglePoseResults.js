@@ -27,7 +27,7 @@ import {incrementUserScore} from '../firebase/firestore';
 // import {score} from '../firebase/firestore';
 
 const PREDICTION_THRESHOLD = 0.8;
-const MATCH_LABEL = 'target';
+const MATCH_LABEL = 'TARGET';
 
 const MATCH_MESSAGE = 'You Got It~!🥳';
 const NO_MATCH_MESSAGE = 'You Missed It...😢';
@@ -75,13 +75,13 @@ export default function SinglePoseResults({route}) {
           setPoseStatus('out');
           setResultMessage(OUT_MESSAGE);
         } else {
-          const cropImage = await cropImageToPose(image, minY, maxY);
+          const {cropImage, resizeImage} = await cropImageToPose(image, minY, maxY);
           setUserImage(cropImage);
-          const cropTensor = convertImageToTensor(cropImage);
+          const cropTensor = convertImageToTensor(resizeImage);
           const {posenetOutput} = await model.estimatePose(cropTensor);
           setPoseStatus('yes');
           const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-          if (prediction === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+          if (prediction.toUpperCase() === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
             setIsPoseMatch('yes');
             setResultMessage(MATCH_MESSAGE);
             await incrementUserScore(true);
@@ -97,7 +97,7 @@ export default function SinglePoseResults({route}) {
     else {
       setPoseStatus('yes');
       const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
-      if (prediction === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
+      if (prediction.toUpperCase() === MATCH_LABEL && probability > PREDICTION_THRESHOLD) {
         setIsPoseMatch('yes');
         setResultMessage(MATCH_MESSAGE);
         await incrementUserScore(true);

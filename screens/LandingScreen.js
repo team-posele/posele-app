@@ -18,7 +18,7 @@ const LandingScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.mainView}>
       <Image
         style={styles.image}
         source={require('../assets/sammy-girl-in-a-yoga-pose-stands-on-one-leg.png')}
@@ -33,7 +33,7 @@ const LandingScreen = () => {
         <Text style={appStyles.secondaryButtonText}>I'm New Here</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.signinButton}
+        style={styles.signInButton}
         onPress={() => {
           navigate.replace('SignIn');
         }}
@@ -41,7 +41,7 @@ const LandingScreen = () => {
         <Text style={appStyles.primaryButtonText}>Log In</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.signinButton}
+        style={styles.signInButton}
         onPress={() => {
           navigate.replace('MyTabsGuest');
         }}
@@ -54,22 +54,21 @@ const LandingScreen = () => {
 export default LandingScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  mainView: {
     backgroundColor: '#FFAF4E',
   },
   image: {
+    alignSelf: 'center',
     width: 329,
     height: 417,
     marginTop: 70,
     marginLeft: 20,
   },
-
   heading: {
+    alignSelf: 'center',
     marginTop: 20,
     marginLeft: 20,
     marginBottom: 20,
-
     padding: 0,
     fontSize: 36,
     fontWeight: '500',
@@ -79,8 +78,9 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 15,
   },
-  signinButton: {
+  signInButton: {
     // margin: 5,
+    backgroundColor: '#FFAF4E',
     marginTop: 15,
     marginBottom: 10,
     alignItems: 'center',
