@@ -52,22 +52,22 @@ const SignUp = () => {
 
   return (
     <KeyboardAvoidingView
-      style={appStyles.mainView}
+      style={styles.mainView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={[appStyles.screenTitleContainer, {marginTop: 10}]}>
+      <View style={styles.screenTitleContainer}>
         <Text style={appStyles.heading1}>Create Account</Text>
       </View>
       <View style={styles.inputContainer}>
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
         />
 
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Password"
           secureTextEntry
           value={password}
@@ -75,39 +75,34 @@ const SignUp = () => {
         />
 
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Username"
           value={username}
           onChangeText={text => setUsername(text)}
         />
+        <Text style={styles.warningText}>{errorText}</Text>
       </View>
-      <View style={[appStyles.container, {flexDirection: 'row'}]}>
-        <Text style={appStyles.warningText}>{errorText}</Text>
-        <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.primaryButton]}
-          onPress={handleSignUp}
-        >
-          <Text style={appStyles.secondaryButtonText}>Create Account</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[appStyles.primaryButtonText, appStyles.primaryButton, styles.secondaryButton]}
-          onPress={() => {
-            navigate.replace('SignIn');
-          }}
-        >
-          <Text style={appStyles.primaryButtonText}>SignIn</Text>
-        </TouchableOpacity>
-      </View>
+      {/* <View style={styles.buttonContainer}> */}
+      <TouchableOpacity style={styles.primaryButton} onPress={handleSignUp}>
+        <Text style={appStyles.secondaryButtonText}>Create Account</Text>
+      </TouchableOpacity>
       <TouchableOpacity
-        style={styles.signinButton}
+        style={styles.secondaryButton}
+        onPress={() => {
+          navigate.replace('SignIn');
+        }}
+      >
+        <Text style={appStyles.primaryButtonText}>Log In</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.secondaryButton}
         onPress={() => {
           navigate.replace('MyTabsGuest');
         }}
       >
         <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
       </TouchableOpacity>
+      {/* </View> */}
     </KeyboardAvoidingView>
   );
 };
@@ -115,39 +110,49 @@ const SignUp = () => {
 export default SignUp;
 
 const styles = StyleSheet.create({
-  inputLabel: {
-    color: colors.primary,
-    textAlign: 'left',
-    alignSelf: 'flex-start',
-    marginTop: 10,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    left: 85,
-    bottom: 0,
-    right: 0,
-  },
-  primaryButton: {
-    width: '65%',
-    marginBottom: 20,
-  },
-  secondaryButton: {
-    width: '65%',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-
-  inputContainer: {
+  mainView: {
     flex: 1,
-    width: '85%',
+    backgroundColor: colors.primary,
+  },
+  screenTitleContainer: {
+    flex: 5,
+    justifyContent: 'flex-end',
+  },
+  inputContainer: {
+    flex: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 30,
+    marginHorizontal: 15,
   },
   input: {
+    backgroundColor: '#414BB222',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    color: 'black',
+    borderRadius: 5,
     width: '100%',
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginVertical: 10,
+  },
+  warningText: {
+    color: 'red',
+  },
+  primaryButton: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 20,
+  },
+  secondaryButton: {
+    flex: 1,
+    alignItems: 'center',
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 10,
   },
 });
