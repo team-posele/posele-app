@@ -58,14 +58,20 @@ const HomeScreen = () => {
   return (
     <View style={appStyles.mainViewScreen}>
       <View style={styles.logOutButton}>
-        <TouchableOpacity style={styles.logOutText} onPress={handleLogout}>
-          <Text style={appStyles.primaryButtonText}>Logout</Text>
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={styles.logOutBtnText}>Logout</Text>
         </TouchableOpacity>
       </View>
       <View style={appStyles.mainView}>
         <View style={styles.container}>
           <Image
             source={require('../assets/posele-logo.png')}
+            style={[appStyles.image, styles.image]}
+          />
+        </View>
+        <View style={styles.imgContainer}>
+          <Image
+            source={require('../assets/sammy-man-and-girl-dancing-at-a-party.png')}
             style={[appStyles.image, styles.image]}
           />
         </View>
@@ -76,12 +82,7 @@ const HomeScreen = () => {
           </Text>
           <Text style={appStyles.heading2}>Welcome back to Posele!</Text>
         </View>
-        <View style={styles.container}>
-          <Image
-            source={require('../assets/sammy-man-and-girl-dancing-at-a-party.png')}
-            style={[appStyles.image, styles.image]}
-          />
-        </View>
+
         <View style={[styles.container]}>
           <Text style={appStyles.heading2}>
             {currentUser ? (
@@ -207,7 +208,7 @@ const Friends = () => {
   return (
     <View style={appStyles.mainView}>
       <Image source={require('../assets/comingSoon.png')} style={styles.image} />
-      <Text>This feature is coming soon!</Text>
+      <Text style={appStyles.heading1}>This feature is coming soon!</Text>
     </View>
   );
 };
@@ -292,6 +293,7 @@ const styles = StyleSheet.create({
   header: {
     fontWeight: 'bold',
     fontSize: 20,
+    color: 'white',
   },
   nameItem: {
     // marginLeft: '15%',
@@ -301,6 +303,7 @@ const styles = StyleSheet.create({
     width: '70%',
     paddingRight: 10,
     marginLeft: 8,
+    color: 'white',
   },
   scoreItem: {
     // marginRight: '10%',
@@ -308,10 +311,18 @@ const styles = StyleSheet.create({
     // flex: 0.3,
     fontSize: 20,
     width: '18%',
+    color: 'white',
   },
   logOutButton: {
     marginLeft: 25,
     marginTop: 54,
     textAlign: 'left',
+  },
+  logOutBtnText: {
+    color: 'white',
+  },
+  imgContainer: {
+    width: 388,
+    height: 274,
   },
 });
