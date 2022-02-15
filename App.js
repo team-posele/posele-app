@@ -36,9 +36,9 @@ export default function App() {
         <Stack.Screen
           name="LandingScreen"
           options={{headerShown: false}}
-          <Stack.Screen name="SignUp" options={{headerShown: false}} component={SignUp} />
           component={LandingScreen}
         />
+        <Stack.Screen name="SignUp" options={{headerShown: false}} component={SignUp} />
         <Stack.Screen name="SignIn" options={{headerShown: false}} component={SignIn} />
         <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
         <Stack.Screen name="MyTabsGuest" options={{headerShown: false}} component={MyTabsGuest} />
