@@ -114,9 +114,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   screenTitleContainer: {
-    flex: 5,
+    flex: 3,
     justifyContent: 'center',
-    marginTop: 20,
+    paddingTop: 30,
   },
   image: {
     flex: 8,
