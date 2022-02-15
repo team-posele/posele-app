@@ -57,8 +57,8 @@ const HomeScreen = () => {
 
   return (
     <View style={appStyles.mainViewScreen}>
-      <View style={styles.logOutButton}>
-        <TouchableOpacity onPress={handleLogout}>
+      <View style={styles.logOut}>
+        <TouchableOpacity style={styles.logOutButton} onPress={handleLogout}>
           <Text style={styles.logOutBtnText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -313,13 +313,24 @@ const styles = StyleSheet.create({
     width: '18%',
     color: 'white',
   },
-  logOutButton: {
+  logOut: {
     marginLeft: 25,
-    marginTop: 54,
+    marginTop: 50,
     textAlign: 'left',
   },
+  logOutButton: {
+    // flex: 1,
+    // alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    // justifyContent: 'center',
+    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    padding: 5,
+  },
   logOutBtnText: {
-    color: 'white',
+    fontWeight: 'bold',
   },
   imgContainer: {
     width: 388,
