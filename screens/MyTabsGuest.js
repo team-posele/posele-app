@@ -6,6 +6,7 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
@@ -17,12 +18,6 @@ import {colors, appStyles} from '../colorConstants';
 import {getAllUsers, getUser, incrementUserScore, score} from '../firebase/firestore';
 
 const Tab = createBottomTabNavigator();
-let users = [];
-
-// created function to add users to array
-const pushToArray = doc => {
-  users.push({...doc.data(), id: doc.id});
-};
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -74,7 +69,39 @@ const HomeScreen = () => {
   );
 };
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
+
 const LeaderBoard = () => {
+  const [users, setUsers] = useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  useEffect(async () => {
+    const userz = []; // temporary holder
+    await db
+      .collection('users') // access users collection
+      .orderBy('score', 'desc') // order by score
+      .limit(10) // limit to top 10 results
+      .get()
+      .then(snapshot => {
+        // push each result to holder array
+        snapshot.docs.forEach(doc => {
+          userz.push({...doc.data(), id: doc.id});
+        });
+      });
+    setUsers(userz); // setUsers to the contents of the holder array
+    return function resetLeaderboard() {
+      // cleanup: clear users on unmount
+      setUsers([]);
+    };
+  }, [refreshing]);
+
   return (
     <View style={appStyles.mainView}>
       <View style={[appStyles.screenTitleContainer, styles.title]}>
@@ -89,9 +116,12 @@ const LeaderBoard = () => {
         {users[0] ? (
           <FlatList
             data={users}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             renderItem={({item}) => (
               <View style={styles.leaderBoardItems}>
-                <Text style={styles.nameItem}>{item.username}</Text>
+                <Text style={styles.nameItem} ellipsizeMode={'tail'} numberOfLines={1}>
+                  {item.username}
+                </Text>
                 <Text style={styles.scoreItem}>{item.score}</Text>
               </View>
             )}
@@ -114,19 +144,6 @@ const Friends = () => {
 };
 
 const MyTabs = () => {
-  useEffect(async () => {
-    // gets all the users from the database
-    await db
-      .collection('users')
-      .orderBy('score', 'desc') // order by score
-      .limit(10) // limit to top 10 results
-      .get()
-      .then(snapshot => {
-        snapshot.docs.forEach(doc => {
-          pushToArray(doc);
-        });
-      });
-  }, []);
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
