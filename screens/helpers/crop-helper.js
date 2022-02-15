@@ -1,7 +1,7 @@
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const DIMENSION = 256;
-const HEIGHT_MARGIN_PERCENTAGE = 0.05;
+const HEIGHT_MARGIN_PERCENTAGE = 0.1;
 
 export const getMinMaxXY = (width, height, pose) => {
   let {minX, maxX, minY, maxY} = pose.keypoints.reduce(
