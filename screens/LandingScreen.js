@@ -51,13 +51,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFAF4E',
   },
   image: {
-    flex: 15,
+    flex: 16,
     resizeMode: 'contain',
     width: '80%',
     alignSelf: 'center',
+    marginTop: 30,
   },
   heading: {
-    flex: 5,
+    flex: 4,
     color: 'white',
     textAlign: 'center',
     fontSize: 40,
