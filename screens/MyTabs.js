@@ -29,16 +29,14 @@ const HomeScreen = () => {
     navigation.replace('Warning');
   }
 
-  const handleLogout = () => {
-    auth
-      .signOut()
-      .then(() => {
-        console.log(`logged out!`);
-        navigation.replace('LandingScreen');
-      })
-      .catch(error => {
-        console.log(`error in handleLogout: ${error}`);
-      });
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      console.log(`logged out!`);
+      navigation.replace('LandingScreen');
+    } catch (error) {
+      console.log(`error in handleLogout: ${error}`);
+    }
   };
 
   useEffect(async () => {
