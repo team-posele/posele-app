@@ -57,7 +57,6 @@ const SignUp = () => {
     >
       <View style={[appStyles.screenTitleContainer, {marginTop: 10}]}>
         <Text style={appStyles.heading1}>Create Account</Text>
-        <Text style={appStyles.heading2}>This will just take a moment.</Text>
       </View>
       <View style={styles.inputContainer}>
         <TextInput
@@ -101,6 +100,14 @@ const SignUp = () => {
           <Text style={appStyles.primaryButtonText}>SignIn</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        style={styles.signinButton}
+        onPress={() => {
+          navigate.replace('MyTabsGuest');
+        }}
+      >
+        <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };

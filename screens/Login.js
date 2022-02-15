@@ -50,8 +50,7 @@ const Login = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={appStyles.screenTitleContainer}>
-        <Text style={appStyles.heading1}>Welcome to Posele!</Text>
-        <Text style={appStyles.heading2}>Please log in to your account to get posing.</Text>
+        <Text style={appStyles.heading1}>Sign In</Text>
       </View>
       <View style={styles.inputContainer}>
         <Text style={[appStyles.warningText, {width: '85%'}]}>{errorText}</Text>

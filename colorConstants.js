@@ -79,11 +79,14 @@ export const appStyles = {
   },
 
   heading1: {
+    color: 'white',
     textAlign: 'center',
     fontSize: 24,
     fontWeight: 'bold',
   },
   heading2: {
+    color: 'white',
+
     textAlign: 'center',
     fontSize: 22,
     fontStyle: 'italic',
