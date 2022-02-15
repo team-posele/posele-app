@@ -23,11 +23,10 @@ export default function Pose() {
 
   useEffect(async () => {
     try {
-      // pick pose based on date
-      const date = new Date().getDate();
+      // pick pose randomly
       const numPoses = (await db.collection('pose-models').get()).size;
-      const index = date % numPoses;
-      const pose = db.collection('pose-models').doc(`${index}`);
+      const randPoseIndex = Math.floor(Math.random() * numPoses);
+      const pose = db.collection('pose-models').doc(`${randPoseIndex}`);
       const poseDoc = await pose.get();
       const {image, name, url} = poseDoc.data();
       modelRef.current = url;
