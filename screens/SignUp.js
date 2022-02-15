@@ -60,29 +60,29 @@ const SignUp = () => {
         <Text style={appStyles.heading1}>Create Account</Text>
       </View>
       <Image style={styles.image} source={require('../assets/sammy-telephone-2.png')}></Image>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={text => setEmail(text)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={text => setPassword(text)}
-        />
+      {/* <View style={styles.inputContainer}> */}
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={text => setEmail(text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={text => setPassword(text)}
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          value={username}
-          onChangeText={text => setUsername(text)}
-        />
-        <Text style={styles.warningText}>{errorText}</Text>
-      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={text => setUsername(text)}
+      />
+      <Text style={styles.warningText}>{errorText}</Text>
+      {/* </View> */}
       <TouchableOpacity style={styles.primaryButton} onPress={handleSignUp}>
         <Text style={appStyles.secondaryButtonText}>Create Account</Text>
       </TouchableOpacity>
@@ -116,36 +116,32 @@ const styles = StyleSheet.create({
   screenTitleContainer: {
     flex: 5,
     justifyContent: 'center',
-    marginTop: 30,
+    marginTop: 20,
   },
   image: {
-    flex: 10,
+    flex: 8,
     width: '100%',
     resizeMode: 'contain',
     alignSelf: 'center',
-  },
-  inputContainer: {
-    flex: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 15,
+    marginBottom: 10,
   },
   input: {
+    flex: 1,
     backgroundColor: '#414BB222',
     borderWidth: 1,
     borderColor: colors.primary,
     color: 'black',
     borderRadius: 5,
-    width: '100%',
     paddingHorizontal: 15,
     paddingVertical: 10,
+    marginHorizontal: 15,
     marginVertical: 10,
   },
   warningText: {
     color: 'red',
   },
   primaryButton: {
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
     backgroundColor: colors.secondary,
     borderRadius: 100,
@@ -154,7 +150,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   secondaryButton: {
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
     borderRadius: 100,
     justifyContent: 'center',

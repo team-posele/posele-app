@@ -95,16 +95,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
   },
+  screenTitleContainer: {
+    flex: 5,
+    justifyContent: 'center',
+    marginTop: 30,
+  },
   image: {
     flex: 10,
     width: '100%',
     resizeMode: 'contain',
     alignSelf: 'center',
-  },
-  screenTitleContainer: {
-    flex: 5,
-    justifyContent: 'center',
-    marginTop: 30,
   },
   inputContainer: {
     flex: 10,
