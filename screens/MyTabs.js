@@ -29,16 +29,14 @@ const HomeScreen = () => {
     navigation.replace('Warning');
   }
 
-  const handleLogout = () => {
-    auth
-      .signOut()
-      .then(() => {
-        console.log(`logged out!`);
-        navigation.replace('LandingScreen');
-      })
-      .catch(error => {
-        console.log(`error in handleLogout: ${error}`);
-      });
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      console.log(`logged out!`);
+      navigation.replace('LandingScreen');
+    } catch (error) {
+      console.log(`error in handleLogout: ${error}`);
+    }
   };
 
   useEffect(async () => {
@@ -57,8 +55,8 @@ const HomeScreen = () => {
 
   return (
     <View style={appStyles.mainViewScreen}>
-      <View style={styles.logOutButton}>
-        <TouchableOpacity onPress={handleLogout}>
+      <View style={styles.logOut}>
+        <TouchableOpacity style={styles.logOutButton} onPress={handleLogout}>
           <Text style={styles.logOutBtnText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -107,14 +105,9 @@ const HomeScreen = () => {
             )}
           </Text>
         </View>
-        <View style={styles.container}>
-          <TouchableOpacity
-            onPress={handlePlay}
-            style={[appStyles.secondaryButton, styles.primaryButton]}
-          >
-            <Text style={appStyles.secondaryButtonText}>Let's Play</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={handlePlay} style={styles.primaryButton}>
+          <Text style={appStyles.secondaryButtonText}>Let's Play</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -255,8 +248,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   primaryButton: {
+    flex: 0.5,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    marginVertical: 20,
     width: '60%',
-    marginTop: 20,
   },
   secondaryButton: {
     width: '60%',
@@ -265,6 +264,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '55%',
+    resizeMode: 'contain',
   },
   statusIcon: {},
   LeaderBoardHeader: {
@@ -313,13 +313,24 @@ const styles = StyleSheet.create({
     width: '18%',
     color: 'white',
   },
-  logOutButton: {
+  logOut: {
     marginLeft: 25,
-    marginTop: 54,
+    marginTop: 50,
     textAlign: 'left',
   },
+  logOutButton: {
+    // flex: 1,
+    // alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    // justifyContent: 'center',
+    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    padding: 5,
+  },
   logOutBtnText: {
-    color: 'white',
+    fontWeight: 'bold',
   },
   imgContainer: {
     width: 388,

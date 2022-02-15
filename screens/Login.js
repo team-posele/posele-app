@@ -1,4 +1,5 @@
 import {
+  Image,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
@@ -16,7 +17,7 @@ import {colors, appStyles} from '../colorConstants';
 // import {updateUser} from '../firebase/firestore';
 
 const Login = () => {
-  const navigate = useNavigation();
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorText, setErrorText] = useState('');
@@ -24,7 +25,7 @@ const Login = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        navigate.replace('MyTabs');
+        navigation.replace('MyTabs');
       }
     });
 
@@ -44,95 +45,128 @@ const Login = () => {
       });
   };
 
+  const handleBack = () => {
+    navigation.replace('LandingScreen');
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={appStyles.mainView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View style={appStyles.screenTitleContainer}>
-        <Text style={appStyles.heading1}>Sign In</Text>
+    <View style={styles.mainView}>
+      <View style={styles.back}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.inputContainer}>
-        <Text style={[appStyles.warningText, {width: '85%'}]}>{errorText}</Text>
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View style={styles.screenTitleContainer}>
+          <Text style={appStyles.heading1}>Sign In</Text>
+        </View>
+        <Image
+          style={styles.image}
+          source={require('../assets/sammy-big-mobile-phone-with-lock.png')}
+        ></Image>
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
         />
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Password"
           secureTextEntry
           value={password}
           onChangeText={text => setPassword(text)}
         />
-        <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.primaryButton]}
-          onPress={handleLogin}
-        >
+        <Text style={styles.warningText}>{errorText}</Text>
+        <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
           <Text style={appStyles.secondaryButtonText}>Login</Text>
         </TouchableOpacity>
-      </View>
-      <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[appStyles.primaryButton, styles.secondaryButton]}
+          style={[styles.secondaryButton, {marginBottom: 20}]}
           onPress={() => {
-            navigate.replace('SignUp');
+            navigation.replace('SignUp');
           }}
         >
           <Text style={appStyles.primaryButtonText}>Sign Up</Text>
         </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
 export default Login;
 
 const styles = StyleSheet.create({
-  headerContainer: {
+  mainView: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    width: '85%',
+    backgroundColor: colors.primary,
   },
-  buttonContainer: {
-    // width: '100%',
-    // flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'flex-end',
-    // marginBottom: Platform.OS === 'ios' ? 30 : 15,
-    position: 'absolute',
-    left: 35,
-    bottom: 0,
-    right: 0,
+  back: {
+    marginLeft: 25,
+    marginTop: 50,
+    textAlign: 'left',
   },
-  primaryButton: {
-    width: '85%',
-    marginBottom: 100,
-    paddingBottom: 5,
+  backButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    padding: 5,
   },
-  secondaryButton: {
-    width: '85%',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
+  backButtonText: {
+    fontWeight: 'bold',
   },
-
-  inputContainer: {
+  keyboardView: {
     flex: 1,
-    width: '100%',
-    alignItems: 'center',
+    backgroundColor: colors.primary,
+  },
+  screenTitleContainer: {
+    flex: 3,
     justifyContent: 'center',
   },
+  image: {
+    flex: 8,
+    width: '100%',
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginBottom: 10,
+  },
   input: {
-    width: '85%',
+    flex: 1,
+    backgroundColor: '#414BB222',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    color: 'black',
+    borderRadius: 5,
     paddingHorizontal: 15,
     paddingVertical: 10,
+    marginHorizontal: 15,
     marginVertical: 10,
   },
-  primaryButtonText: {
+  warningText: {
+    textAlign: 'center',
+    color: 'red',
     paddingBottom: 10,
+  },
+  primaryButton: {
+    // flex: 1,
+    alignItems: 'center',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 20,
+  },
+  secondaryButton: {
+    // flex: 1,
+    alignItems: 'center',
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 10,
   },
 });
