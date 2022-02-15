@@ -75,9 +75,9 @@ export default function SinglePoseResults({route}) {
           setPoseStatus('out');
           setResultMessage(OUT_MESSAGE);
         } else {
-          const cropImage = await cropImageToPose(image, minY, maxY);
+          const {cropImage, resizeImage} = await cropImageToPose(image, minY, maxY);
           setUserImage(cropImage);
-          const cropTensor = convertImageToTensor(cropImage);
+          const cropTensor = convertImageToTensor(resizeImage);
           const {posenetOutput} = await model.estimatePose(cropTensor);
           setPoseStatus('yes');
           const {prediction, probability} = await getHighestPredProb(model, posenetOutput);
