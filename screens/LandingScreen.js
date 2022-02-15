@@ -18,7 +18,7 @@ const LandingScreen = () => {
   }, []);
 
   return (
-    <View style={appStyles.mainViewScreen}>
+    <View style={styles.mainView}>
       <Image
         style={styles.image}
         source={require('../assets/sammy-girl-in-a-yoga-pose-stands-on-one-leg.png')}
@@ -54,6 +54,9 @@ const LandingScreen = () => {
 export default LandingScreen;
 
 const styles = StyleSheet.create({
+  mainView: {
+    backgroundColor: '#FFAF4E',
+  },
   image: {
     alignSelf: 'center',
     width: 329,
