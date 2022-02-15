@@ -1,4 +1,5 @@
 import {
+  Image,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
@@ -58,6 +59,7 @@ const SignUp = () => {
       <View style={styles.screenTitleContainer}>
         <Text style={appStyles.heading1}>Create Account</Text>
       </View>
+      <Image style={styles.image} source={require('../assets/sammy-telephone-2.png')}></Image>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -90,10 +92,10 @@ const SignUp = () => {
           navigate.replace('SignIn');
         }}
       >
-        <Text style={appStyles.primaryButtonText}>Login/</Text>
+        <Text style={appStyles.primaryButtonText}>Login</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.secondaryButton}
+        style={[styles.secondaryButton, {marginBottom: 30}]}
         onPress={() => {
           navigate.replace('MyTabsGuest');
         }}
@@ -113,10 +115,17 @@ const styles = StyleSheet.create({
   },
   screenTitleContainer: {
     flex: 5,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    marginTop: 30,
+  },
+  image: {
+    flex: 10,
+    width: '100%',
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
   inputContainer: {
-    flex: 15,
+    flex: 10,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 15,
