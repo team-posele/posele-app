@@ -17,7 +17,7 @@ import {colors, appStyles} from '../colorConstants';
 // import {updateUser} from '../firebase/firestore';
 
 const Login = () => {
-  const navigate = useNavigation();
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorText, setErrorText] = useState('');
@@ -25,7 +25,7 @@ const Login = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        navigate.replace('MyTabs');
+        navigation.replace('MyTabs');
       }
     });
 
@@ -45,44 +45,55 @@ const Login = () => {
       });
   };
 
+  const handleBack = () => {
+    navigation.replace('LandingScreen');
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={styles.mainView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View style={styles.screenTitleContainer}>
-        <Text style={appStyles.heading1}>Sign In</Text>
+    <View style={styles.mainView}>
+      <View style={styles.back}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
       </View>
-      <Image
-        style={styles.image}
-        source={require('../assets/sammy-big-mobile-phone-with-lock.png')}
-      ></Image>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={text => setEmail(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={text => setPassword(text)}
-      />
-      <Text style={styles.warningText}>{errorText}</Text>
-      <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
-        <Text style={appStyles.secondaryButtonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.secondaryButton, {marginBottom: 30}]}
-        onPress={() => {
-          navigate.replace('SignUp');
-        }}
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Text style={appStyles.primaryButtonText}>Sign Up</Text>
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+        <View style={styles.screenTitleContainer}>
+          <Text style={appStyles.heading1}>Sign In</Text>
+        </View>
+        <Image
+          style={styles.image}
+          source={require('../assets/sammy-big-mobile-phone-with-lock.png')}
+        ></Image>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={text => setEmail(text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={text => setPassword(text)}
+        />
+        <Text style={styles.warningText}>{errorText}</Text>
+        <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
+          <Text style={appStyles.secondaryButtonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.secondaryButton, {marginBottom: 20}]}
+          onPress={() => {
+            navigation.replace('SignUp');
+          }}
+        >
+          <Text style={appStyles.primaryButtonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -93,10 +104,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
   },
+  back: {
+    marginLeft: 25,
+    marginTop: 50,
+    textAlign: 'left',
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    padding: 5,
+  },
+  backButtonText: {
+    fontWeight: 'bold',
+  },
+  keyboardView: {
+    flex: 1,
+    backgroundColor: colors.primary,
+  },
   screenTitleContainer: {
     flex: 3,
     justifyContent: 'center',
-    marginTop: 30,
   },
   image: {
     flex: 8,

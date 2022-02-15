@@ -20,7 +20,7 @@ import {updateUser} from '../firebase/firestore';
 LogBox.ignoreLogs(['AsyncStorage', 'Platform browser']); // hide unnecessary warnings
 
 const SignUp = () => {
-  const navigate = useNavigation();
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorText, setErrorText] = useState('');
@@ -29,7 +29,7 @@ const SignUp = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        navigate.replace('MyTabs');
+        navigation.replace('MyTabs');
       }
     });
 
@@ -51,58 +51,69 @@ const SignUp = () => {
       });
   };
 
-  return (
-    <KeyboardAvoidingView
-      style={styles.mainView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View style={styles.screenTitleContainer}>
-        <Text style={appStyles.heading1}>Create Account</Text>
-      </View>
-      <Image style={styles.image} source={require('../assets/sammy-telephone-2.png')}></Image>
-      {/* <View style={styles.inputContainer}> */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={text => setEmail(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={text => setPassword(text)}
-      />
+  const handleBack = () => {
+    navigation.replace('LandingScreen');
+  };
 
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={text => setUsername(text)}
-      />
-      <Text style={styles.warningText}>{errorText}</Text>
-      {/* </View> */}
-      <TouchableOpacity style={styles.primaryButton} onPress={handleSignUp}>
-        <Text style={appStyles.secondaryButtonText}>Create Account</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.secondaryButton}
-        onPress={() => {
-          navigate.replace('SignIn');
-        }}
+  return (
+    <View style={styles.mainView}>
+      <View style={styles.back}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+      </View>
+      <KeyboardAvoidingView
+        style={styles.mainView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Text style={appStyles.primaryButtonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.secondaryButton, {marginBottom: 30}]}
-        onPress={() => {
-          navigate.replace('MyTabsGuest');
-        }}
-      >
-        <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+        <View style={styles.screenTitleContainer}>
+          <Text style={appStyles.heading1}>Create Account</Text>
+        </View>
+        <Image style={styles.image} source={require('../assets/sammy-telephone-2.png')}></Image>
+        {/* <View style={styles.inputContainer}> */}
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={text => setEmail(text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={text => setPassword(text)}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={text => setUsername(text)}
+        />
+        <Text style={styles.warningText}>{errorText}</Text>
+        {/* </View> */}
+        <TouchableOpacity style={styles.primaryButton} onPress={handleSignUp}>
+          <Text style={appStyles.secondaryButtonText}>Create Account</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={() => {
+            navigation.replace('SignIn');
+          }}
+        >
+          <Text style={appStyles.primaryButtonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.secondaryButton, {marginBottom: 20}]}
+          onPress={() => {
+            navigation.replace('MyTabsGuest');
+          }}
+        >
+          <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -113,10 +124,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
   },
+  back: {
+    marginLeft: 25,
+    marginTop: 50,
+    textAlign: 'left',
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    padding: 5,
+  },
+  backButtonText: {
+    fontWeight: 'bold',
+  },
   screenTitleContainer: {
     flex: 3,
     justifyContent: 'center',
-    paddingTop: 30,
   },
   image: {
     flex: 8,
