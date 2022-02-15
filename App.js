@@ -33,13 +33,13 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="SignIn" options={{headerShown: false}} component={SignIn} />
         <Stack.Screen
           name="LandingScreen"
           options={{headerShown: false}}
           component={LandingScreen}
         />
         <Stack.Screen name="SignUp" options={{headerShown: false}} component={SignUp} />
-        <Stack.Screen name="SignIn" options={{headerShown: false}} component={SignIn} />
         <Stack.Screen name="MyTabs" options={{headerShown: false}} component={MyTabs} />
         <Stack.Screen name="MyTabsGuest" options={{headerShown: false}} component={MyTabsGuest} />
         <Stack.Screen name="Warning" options={{headerShown: false}} component={Warning} />

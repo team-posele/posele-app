@@ -65,7 +65,6 @@ const SignUp = () => {
           value={email}
           onChangeText={text => setEmail(text)}
         />
-
         <TextInput
           style={styles.input}
           placeholder="Password"
@@ -82,7 +81,6 @@ const SignUp = () => {
         />
         <Text style={styles.warningText}>{errorText}</Text>
       </View>
-      {/* <View style={styles.buttonContainer}> */}
       <TouchableOpacity style={styles.primaryButton} onPress={handleSignUp}>
         <Text style={appStyles.secondaryButtonText}>Create Account</Text>
       </TouchableOpacity>
@@ -92,7 +90,7 @@ const SignUp = () => {
           navigate.replace('SignIn');
         }}
       >
-        <Text style={appStyles.primaryButtonText}>Log In</Text>
+        <Text style={appStyles.primaryButtonText}>Login/</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.secondaryButton}
@@ -102,7 +100,6 @@ const SignUp = () => {
       >
         <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
       </TouchableOpacity>
-      {/* </View> */}
     </KeyboardAvoidingView>
   );
 };

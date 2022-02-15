@@ -1,4 +1,5 @@
 import {
+  Image,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
@@ -46,44 +47,43 @@ const Login = () => {
 
   return (
     <KeyboardAvoidingView
-      style={appStyles.mainView}
+      style={styles.mainView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={appStyles.screenTitleContainer}>
+      <View style={styles.screenTitleContainer}>
         <Text style={appStyles.heading1}>Sign In</Text>
       </View>
+      <Image
+        style={styles.image}
+        source={require('../assets/sammy-big-mobile-phone-with-lock.png')}
+      ></Image>
       <View style={styles.inputContainer}>
-        <Text style={[appStyles.warningText, {width: '85%'}]}>{errorText}</Text>
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
         />
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Password"
           secureTextEntry
           value={password}
           onChangeText={text => setPassword(text)}
         />
-        <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.primaryButton]}
-          onPress={handleLogin}
-        >
-          <Text style={appStyles.secondaryButtonText}>Login</Text>
-        </TouchableOpacity>
+        <Text style={styles.warningText}>{errorText}</Text>
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[appStyles.primaryButton, styles.secondaryButton]}
-          onPress={() => {
-            navigate.replace('SignUp');
-          }}
-        >
-          <Text style={appStyles.primaryButtonText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
+        <Text style={appStyles.secondaryButtonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.secondaryButton, {marginBottom: 30}]}
+        onPress={() => {
+          navigate.replace('SignUp');
+        }}
+      >
+        <Text style={appStyles.primaryButtonText}>Sign Up</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
@@ -91,48 +91,56 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
-  headerContainer: {
+  mainView: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    width: '85%',
+    backgroundColor: colors.primary,
   },
-  buttonContainer: {
-    // width: '100%',
-    // flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'flex-end',
-    // marginBottom: Platform.OS === 'ios' ? 30 : 15,
-    position: 'absolute',
-    left: 35,
-    bottom: 0,
-    right: 0,
-  },
-  primaryButton: {
-    width: '85%',
-    marginBottom: 100,
-    paddingBottom: 5,
-  },
-  secondaryButton: {
-    width: '85%',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-
-  inputContainer: {
-    flex: 1,
+  image: {
+    flex: 10,
     width: '100%',
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
+  screenTitleContainer: {
+    flex: 5,
+    justifyContent: 'center',
+    marginTop: 30,
+  },
+  inputContainer: {
+    flex: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: 15,
   },
   input: {
-    width: '85%',
+    backgroundColor: '#414BB222',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    color: 'black',
+    borderRadius: 5,
+    width: '100%',
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginVertical: 10,
   },
-  primaryButtonText: {
-    paddingBottom: 10,
+  warningText: {
+    color: 'red',
+  },
+  primaryButton: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 20,
+  },
+  secondaryButton: {
+    flex: 1,
+    alignItems: 'center',
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 10,
   },
 });
