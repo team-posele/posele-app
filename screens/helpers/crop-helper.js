@@ -1,7 +1,7 @@
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const DIMENSION = 256;
-const HEIGHT_MARGIN_PERCENTAGE = 0.05;
+const HEIGHT_MARGIN_PERCENTAGE = 0.1;
 
 export const getMinMaxXY = (width, height, pose) => {
   let {minX, maxX, minY, maxY} = pose.keypoints.reduce(
@@ -29,7 +29,7 @@ export const cropImageToPose = async (image, minY, maxY) => {
   if (minY < 0) minY = 0;
   if (maxY > height) maxY = height;
 
-  const actions = [
+  const cropActions = [
     {
       crop: {
         originX: 0,
@@ -38,6 +38,13 @@ export const cropImageToPose = async (image, minY, maxY) => {
         height: maxY,
       },
     },
+  ];
+  const saveOptions = {
+    base64: true,
+  };
+  const cropImage = await ImageManipulator.manipulateAsync(image.uri, cropActions, saveOptions);
+
+  const resizeActions = [
     {
       // accommodate different heights
       resize: {
@@ -46,8 +53,11 @@ export const cropImageToPose = async (image, minY, maxY) => {
       },
     },
   ];
-  const saveOptions = {
-    base64: true,
-  };
-  return await ImageManipulator.manipulateAsync(image.uri, actions, saveOptions);
+  const resizeImage = await ImageManipulator.manipulateAsync(
+    cropImage.uri,
+    resizeActions,
+    saveOptions
+  );
+
+  return {cropImage: cropImage, resizeImage: resizeImage};
 };

@@ -7,7 +7,7 @@ import {useNavigation} from '@react-navigation/native';
 
 const TIME_LIMIT = 5;
 const TIME_ZERO_ICON = '📸';
-const DIMENSION = 256;
+const DIMENSION = 256 * 2;
 
 export default ({route}) => {
   const navigation = useNavigation();
