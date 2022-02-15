@@ -105,14 +105,9 @@ const HomeScreen = () => {
             )}
           </Text>
         </View>
-        <View style={styles.container}>
-          <TouchableOpacity
-            onPress={handlePlay}
-            style={[appStyles.secondaryButton, styles.primaryButton]}
-          >
-            <Text style={appStyles.secondaryButtonText}>Let's Play</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={handlePlay} style={styles.primaryButton}>
+          <Text style={appStyles.secondaryButtonText}>Let's Play</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -253,8 +248,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   primaryButton: {
+    flex: 0.5,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    marginVertical: 20,
     width: '60%',
-    marginTop: 20,
   },
   secondaryButton: {
     width: '60%',
