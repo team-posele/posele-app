@@ -6,6 +6,16 @@ POSEle is a machine learning mobile game where users can compete against each ot
 
 ![posele_image](https://user-images.githubusercontent.com/65692356/154356933-a8b41370-a72a-4edd-8362-fcd4ad93e705.png)
 
+### Deployed Site
+
+Check out posele here! https://www.posele.com/
+
+### Tech Stack
+- React Native
+- Expo
+- Node
+- Firebase
+- Tensorflow.js
 
 
 <!-- ## Requirements
