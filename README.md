@@ -2,7 +2,11 @@
 
 by Luke Joo, Smit Patel, John Arroyo, and Tyler Monaghan
 
-POSEle is a machine learning mobile game where users can compete against each other by matching a random daily pose. The user gets 3 seconds to view today's full-body pose, and then has 5 seconds to match it to earn a point
+POSEle is a machine learning mobile game where users can compete against each other by matching a random daily pose. The user gets 3 seconds to view today's full-body pose, and then has 5 seconds to match it to earn a point.
+
+![posele_image](https://user-images.githubusercontent.com/65692356/154356933-a8b41370-a72a-4edd-8362-fcd4ad93e705.png)
+
+
 
 <!-- ## Requirements
 
