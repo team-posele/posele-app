@@ -2,7 +2,9 @@
 
 by Luke Joo, Smit Patel, John Arroyo, and Tyler Monaghan
 
-## Requirements
+POSEle is a machine learning mobile game where users can compete against each other by matching a random daily pose. The user gets 3 seconds to view today's full-body pose, and then has 5 seconds to match it to earn a point
+
+<!-- ## Requirements
 
 _'user' refers to a logged-in user unless otherwise specified_
 
@@ -143,3 +145,4 @@ _Users can now select a new game mode: local hot-phone multiplayer ("party mode"
 - [ ] Add license
 
 </details>
+ -->
