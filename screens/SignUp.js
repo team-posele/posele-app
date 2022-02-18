@@ -164,7 +164,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   warningText: {
+    textAlign: 'center',
     color: 'red',
+    paddingBottom: 10,
   },
   primaryButton: {
     // flex: 1,
