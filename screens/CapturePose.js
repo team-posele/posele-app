@@ -30,7 +30,7 @@ export default ({route}) => {
     const cameraResponse = await Camera.requestCameraPermissionsAsync();
     if (cameraResponse.status !== 'granted') {
       alert(
-        'To play POSEle, you must let us see your pose...👀 Please allow your camera permission to join the fun!🕺'
+        'To play POSEle, you must let us see your pose...👀 Please allow your camera permission in settings to join the fun!🕺'
       );
       navigation.replace('LandingScreen');
     } else {
