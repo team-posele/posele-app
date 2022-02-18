@@ -28,7 +28,7 @@ export default ({route}) => {
     modelRef.current = route.params.model;
     poseImageRef.current = route.params.poseImage;
     const cameraResponse = await Camera.requestCameraPermissionsAsync();
-    if (cameraResponse !== 'granted') {
+    if (cameraResponse.status !== 'granted') {
       alert(
         'To play POSEle, you must let us see your pose...👀 Please allow your camera permission to join the fun!🕺'
       );
