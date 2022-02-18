@@ -33,14 +33,11 @@ export default ({route}) => {
     setMediaPermission(mediaResponse.status === 'granted');
   }, []);
 
-  useEffect(() => {
-    if (cameraPermission === false) {
-      alert(
-        "To play POSEle, you must let us see your pose...👀 Please refresh the app and tap on 'Allow' to join the fun!🕺"
-      );
-      navigation.replace('LandingScreen');
-    }
-  }, [cameraPermission]);
+  // useEffect(() => {
+  //   if (cameraPermission === false) {
+
+  //   }
+  // }, [cameraPermission]);
 
   useEffect(() => {
     // waits until camera has loaded
@@ -108,15 +105,17 @@ export default ({route}) => {
         poseImage: poseImageRef.current,
       });
     } catch (error) {
-      alert("Where'd you go?🙁 Please stay for 5 seconds next time to see your results!");
-      navigation.replace('LandingScreen');
+      navigation.replace('NoPose');
     }
   };
 
-  // if (cameraPermission === null) return <View />;
-  // if (cameraPermission === false) {
-
-  // }
+  if (cameraPermission === null) return <View />;
+  if (cameraPermission === false) {
+    alert(
+      'To play POSEle, you must let us see your pose...👀 Please allow your camera permission to join the fun!🕺'
+    );
+    navigation.replace('LandingScreen');
+  }
   return (
     <View style={styles.container}>
       <Camera
