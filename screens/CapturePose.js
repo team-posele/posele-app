@@ -34,6 +34,15 @@ export default ({route}) => {
   }, []);
 
   useEffect(() => {
+    if (cameraPermission === false) {
+      alert(
+        "To play POSEle, you must let us see your pose...👀 Please tap on 'Allow' to join the fun!🕺"
+      );
+      navigation.replace('LandingScreen');
+    }
+  }, [cameraPermission]);
+
+  useEffect(() => {
     // waits until camera has loaded
 
     if (cameraReady) {
@@ -103,8 +112,10 @@ export default ({route}) => {
     }
   };
 
-  if (cameraPermission === null) return <View />;
-  if (cameraPermission === false) return <Text>No access to camera</Text>;
+  // if (cameraPermission === null) return <View />;
+  // if (cameraPermission === false) {
+
+  // }
   return (
     <View style={styles.container}>
       <Camera
