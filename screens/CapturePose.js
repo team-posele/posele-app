@@ -28,16 +28,17 @@ export default ({route}) => {
     modelRef.current = route.params.model;
     poseImageRef.current = route.params.poseImage;
     const cameraResponse = await Camera.requestCameraPermissionsAsync();
-    setCameraPermission(cameraResponse.status === 'granted');
-    const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
-    setMediaPermission(mediaResponse.status === 'granted');
+    if (cameraResponse !== 'granted') {
+      alert(
+        'To play POSEle, you must let us see your pose...👀 Please allow your camera permission to join the fun!🕺'
+      );
+      navigation.replace('LandingScreen');
+    } else {
+      setCameraPermission(cameraResponse.status === 'granted');
+      const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
+      setMediaPermission(mediaResponse.status === 'granted');
+    }
   }, []);
-
-  // useEffect(() => {
-  //   if (cameraPermission === false) {
-
-  //   }
-  // }, [cameraPermission]);
 
   useEffect(() => {
     // waits until camera has loaded
@@ -110,12 +111,6 @@ export default ({route}) => {
   };
 
   if (cameraPermission === null) return <View />;
-  if (cameraPermission === false) {
-    alert(
-      'To play POSEle, you must let us see your pose...👀 Please allow your camera permission to join the fun!🕺'
-    );
-    navigation.replace('LandingScreen');
-  }
   return (
     <View style={styles.container}>
       <Camera
