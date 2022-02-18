@@ -106,7 +106,8 @@ export default ({route}) => {
         poseImage: poseImageRef.current,
       });
     } catch (error) {
-      navigation.replace('NoPose');
+      alert("Where'd you go?🙁 Please stay for 5 seconds next time to see your results!");
+      navigation.replace('LandingScreen');
     }
   };
 
