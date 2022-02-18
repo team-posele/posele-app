@@ -2,7 +2,25 @@
 
 by Luke Joo, Smit Patel, John Arroyo, and Tyler Monaghan
 
-## Requirements
+POSEle is a machine learning mobile game where users can compete against each other by matching a random daily pose. The user gets 3 seconds to view today's full-body pose, and then has 5 seconds to match it to earn a point.
+
+Click on the image to watch our team's presentation
+[![github_posele](https://user-images.githubusercontent.com/65692356/154364398-22b23650-9f39-4195-ab0d-885668c952ab.png)](https://www.youtube.com/watch?v=OcnxALCibbI&t=1s)
+
+
+### Deployed Site
+
+Check out posele here! https://www.posele.com/
+
+### Tech Stack
+- React Native
+- Expo
+- Node
+- Firebase
+- Tensorflow.js
+
+
+<!-- ## Requirements
 
 _'user' refers to a logged-in user unless otherwise specified_
 
@@ -143,3 +161,4 @@ _Users can now select a new game mode: local hot-phone multiplayer ("party mode"
 - [ ] Add license
 
 </details>
+ -->
