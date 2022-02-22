@@ -28,9 +28,16 @@ export default ({route}) => {
     modelRef.current = route.params.model;
     poseImageRef.current = route.params.poseImage;
     const cameraResponse = await Camera.requestCameraPermissionsAsync();
-    setCameraPermission(cameraResponse.status === 'granted');
-    const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
-    setMediaPermission(mediaResponse.status === 'granted');
+    if (cameraResponse.status !== 'granted') {
+      alert(
+        'To play POSEle, you must let us see your pose...👀 Please refresh the app and allow camera permission to join the fun!🕺'
+      );
+      navigation.replace('LandingScreen');
+    } else {
+      setCameraPermission(cameraResponse.status === 'granted');
+      const mediaResponse = await MediaLibrary.requestPermissionsAsync(true);
+      setMediaPermission(mediaResponse.status === 'granted');
+    }
   }, []);
 
   useEffect(() => {
@@ -99,12 +106,12 @@ export default ({route}) => {
         poseImage: poseImageRef.current,
       });
     } catch (error) {
-      navigation.replace('NoPose');
+      alert("Where'd you go?🙁 Please stay for 5 seconds next time to see your results!");
+      navigation.replace('LandingScreen');
     }
   };
 
   if (cameraPermission === null) return <View />;
-  if (cameraPermission === false) return <Text>No access to camera</Text>;
   return (
     <View style={styles.container}>
       <Camera

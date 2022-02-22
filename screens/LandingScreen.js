@@ -18,19 +18,19 @@ const LandingScreen = () => {
   }, []);
 
   return (
-    <View style={styles.mainView}>
+    <View style={styles.main}>
       <Image
         style={styles.image}
         source={require('../assets/sammy-girl-in-a-yoga-pose-stands-on-one-leg.png')}
       ></Image>
       <Text style={styles.heading}>Let’s Strike a Pose and have fun</Text>
       <TouchableOpacity
-        style={[appStyles.secondaryButton, styles.signupButton]}
+        style={styles.signUpButton}
         onPress={() => {
           navigate.replace('SignUp');
         }}
       >
-        <Text style={appStyles.secondaryButtonText}>I'm New Here</Text>
+        <Text style={styles.signUpText}>I'm New Here</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.signInButton}
@@ -46,35 +46,44 @@ const LandingScreen = () => {
 export default LandingScreen;
 
 const styles = StyleSheet.create({
-  mainView: {
+  main: {
+    flex: 1,
     backgroundColor: '#FFAF4E',
   },
   image: {
+    flex: 16,
+    resizeMode: 'contain',
+    width: '80%',
     alignSelf: 'center',
-    width: 329,
-    height: 417,
-    marginTop: 70,
-    marginLeft: 20,
+    marginTop: 30,
   },
   heading: {
-    alignSelf: 'center',
-    marginTop: 20,
-    marginLeft: 20,
-    marginBottom: 20,
-    padding: 0,
-    fontSize: 36,
-    fontWeight: '500',
-    color: '#fff',
+    flex: 4,
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 40,
+    fontWeight: 'bold',
+    justifyContent: 'center',
   },
-  signupButton: {
-    marginTop: 50,
-    marginBottom: 15,
+  signUpButton: {
+    flex: 1,
+    backgroundColor: '#fff',
+    marginHorizontal: 15,
+    padding: 20,
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signUpText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   signInButton: {
-    // margin: 5,
-    backgroundColor: '#FFAF4E',
+    flex: 1,
     marginTop: 15,
-    marginBottom: 10,
+    marginBottom: 30,
     alignItems: 'center',
+    justifyContent: 'center',
   },
 });

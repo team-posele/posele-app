@@ -1,4 +1,5 @@
 import {
+  Image,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
@@ -19,7 +20,7 @@ import {updateUser} from '../firebase/firestore';
 LogBox.ignoreLogs(['AsyncStorage', 'Platform browser']); // hide unnecessary warnings
 
 const SignUp = () => {
-  const navigate = useNavigation();
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorText, setErrorText] = useState('');
@@ -28,7 +29,7 @@ const SignUp = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        navigate.replace('MyTabs');
+        navigation.replace('MyTabs');
       }
     });
 
@@ -50,24 +51,34 @@ const SignUp = () => {
       });
   };
 
+  const handleBack = () => {
+    navigation.replace('LandingScreen');
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={appStyles.mainView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View style={[appStyles.screenTitleContainer, {marginTop: 10}]}>
-        <Text style={appStyles.heading1}>Create Account</Text>
+    <View style={styles.mainView}>
+      <View style={styles.back}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.inputContainer}>
+      <KeyboardAvoidingView
+        style={styles.mainView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View style={styles.screenTitleContainer}>
+          <Text style={appStyles.heading1}>Create Account</Text>
+        </View>
+        <Image style={styles.image} source={require('../assets/sammy-telephone-2.png')}></Image>
+        {/* <View style={styles.inputContainer}> */}
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
         />
-
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Password"
           secureTextEntry
           value={password}
@@ -75,79 +86,103 @@ const SignUp = () => {
         />
 
         <TextInput
-          style={[appStyles.textInputBox, styles.input]}
+          style={styles.input}
           placeholder="Username"
           value={username}
           onChangeText={text => setUsername(text)}
         />
-      </View>
-      <View style={[appStyles.container, {flexDirection: 'row'}]}>
-        <Text style={appStyles.warningText}>{errorText}</Text>
-        <TouchableOpacity
-          style={[appStyles.secondaryButton, styles.primaryButton]}
-          onPress={handleSignUp}
-        >
+        <Text style={styles.warningText}>{errorText}</Text>
+        {/* </View> */}
+        <TouchableOpacity style={styles.primaryButton} onPress={handleSignUp}>
           <Text style={appStyles.secondaryButtonText}>Create Account</Text>
         </TouchableOpacity>
-      </View>
-      <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[appStyles.primaryButtonText, appStyles.primaryButton, styles.secondaryButton]}
+          style={styles.secondaryButton}
           onPress={() => {
-            navigate.replace('SignIn');
+            navigation.replace('SignIn');
           }}
         >
-          <Text style={appStyles.primaryButtonText}>SignIn</Text>
+          <Text style={appStyles.primaryButtonText}>Login</Text>
         </TouchableOpacity>
-      </View>
-      <TouchableOpacity
-        style={styles.signinButton}
-        onPress={() => {
-          navigate.replace('MyTabsGuest');
-        }}
-      >
-        <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+        <TouchableOpacity
+          style={[styles.secondaryButton, {marginBottom: 20}]}
+          onPress={() => {
+            navigation.replace('MyTabsGuest');
+          }}
+        >
+          <Text style={appStyles.primaryButtonText}>Play as Guest</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
 export default SignUp;
 
 const styles = StyleSheet.create({
-  inputLabel: {
-    color: colors.primary,
-    textAlign: 'left',
-    alignSelf: 'flex-start',
-    marginTop: 10,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    left: 85,
-    bottom: 0,
-    right: 0,
-  },
-  primaryButton: {
-    width: '65%',
-    marginBottom: 20,
-  },
-  secondaryButton: {
-    width: '65%',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-
-  inputContainer: {
+  mainView: {
     flex: 1,
-    width: '85%',
-    alignItems: 'center',
+    backgroundColor: colors.primary,
+  },
+  back: {
+    marginLeft: 25,
+    marginTop: 50,
+    textAlign: 'left',
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    padding: 5,
+  },
+  backButtonText: {
+    fontWeight: 'bold',
+  },
+  screenTitleContainer: {
+    flex: 3,
     justifyContent: 'center',
-    marginBottom: 30,
+  },
+  image: {
+    flex: 8,
+    width: '100%',
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginBottom: 10,
   },
   input: {
-    width: '100%',
+    flex: 1,
+    backgroundColor: '#414BB222',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    color: 'black',
+    borderRadius: 5,
     paddingHorizontal: 15,
     paddingVertical: 10,
+    marginHorizontal: 15,
     marginVertical: 10,
+  },
+  warningText: {
+    textAlign: 'center',
+    color: 'red',
+    paddingBottom: 10,
+  },
+  primaryButton: {
+    // flex: 1,
+    alignItems: 'center',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 20,
+  },
+  secondaryButton: {
+    // flex: 1,
+    alignItems: 'center',
+    borderRadius: 100,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 10,
   },
 });

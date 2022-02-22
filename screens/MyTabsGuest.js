@@ -137,8 +137,9 @@ const LeaderBoard = () => {
 
 const Friends = () => {
   return (
-    <View style={styles.container}>
-      <Text>This feature is coming soon!</Text>
+    <View style={appStyles.mainView}>
+      <Image source={require('../assets/comingSoon.png')} style={styles.image} />
+      <Text style={appStyles.heading1}>This feature is coming soon!</Text>
     </View>
   );
 };
@@ -194,13 +195,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   image: {
-    width: '35%',
-    height: '35%',
+    width: '100%',
+    height: '55%',
+    resizeMode: 'contain',
   },
   statusIcon: {},
   LeaderBoardHeader: {
     flex: 0.2,
-    width: '100%',
+    width: '85%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     paddingTop: 10,
@@ -209,27 +211,62 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     marginVertical: 10,
+    borderRadius: 3,
   },
   leaderboard: {
     flex: 3,
     justifyContent: 'space-around',
     paddingTop: 20,
-    width: '100%',
+    width: '85%',
+  },
+  leaderBoardSelfText: {
+    fontWeight: 'bold',
+    color: 'black',
   },
   header: {
     fontWeight: 'bold',
     fontSize: 20,
+    color: 'white',
   },
   nameItem: {
-    marginLeft: '20%',
-    flex: 1,
+    // marginLeft: '15%',
+    // flex: 1,
     textAlign: 'left',
     fontSize: 20,
+    width: '70%',
+    paddingRight: 10,
+    marginLeft: 8,
+    color: 'white',
   },
   scoreItem: {
-    marginRight: '10%',
-    textAlign: 'center',
-    flex: 0.3,
+    // marginRight: '10%',
+    textAlign: 'right',
+    // flex: 0.3,
     fontSize: 20,
+    width: '18%',
+    color: 'white',
+  },
+  logOut: {
+    marginLeft: 25,
+    marginTop: 50,
+    textAlign: 'left',
+  },
+  logOutButton: {
+    // flex: 1,
+    // alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: colors.secondary,
+    borderRadius: 100,
+    // justifyContent: 'center',
+    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    padding: 5,
+  },
+  logOutBtnText: {
+    fontWeight: 'bold',
+  },
+  imgContainer: {
+    width: 388,
+    height: 274,
   },
 });
