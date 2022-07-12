@@ -13,7 +13,7 @@ export const getUser = async () => {
       score = doc.data().score;
     }
   } catch (error) {
-    console.log('error occured in getting user', error);
+    console.log('error occurred in getting user', error);
   }
 };
 
